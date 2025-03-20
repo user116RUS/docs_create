@@ -74,7 +74,39 @@ class Documents (models.Model):
         verbose_name='адрес и время проведения',
         help_text='г. Набережные Челны, ул. Шамиля Усманова, д.19. Время проведения: с 09:30',
     )
+    number_of_people = models.CharField(
+        max_length=100,
+        verbose_name='количество людей',
+        help_text='100'
+    )
+    date = models.CharField(
+        max_length=100,
+        verbose_name='дата',
+        help_text='15 июня 2023'
+    )
+    price_in_figures = models.CharField(
+        max_length=100,
+        verbose_name='цена(цифрами)',
+        help_text='17 000'
+    )
+    price_in_words = models.TextField(
+        max_length=100,
+        verbose_name="цена(словами)",
+        help_text='семнадцать тысяч',
+    )
+    time = models.CharField(
+        max_length=100,
+        verbose_name='время проведения',
+        help_text='09:30-10:30',
+    )
+    act_and_account_number = models.CharField(
+        max_length=100,
+        verbose_name='номер акта и счета',
+        help_text='50/1 от 15 июня 2023 г.',
+    )
+    number_basis_of_the_contract = models.CharField(
+        max_length=100,
+        verbose_name='номер основание договора',
+        help_text='Nº 50/23-11 от 18.05.2023 г.'
+    )
 
-
-
-        #человек число, скобках словами:дату:адрес и время проведения:Введите цену (цифрами):Введите цену (Словами):Время проведения:номер акта и счета:номер основание договора:
