@@ -11,11 +11,11 @@ from django.views.generic.edit import CreateView
 
 
 def index(request):
-    render(request, template_name='main/index.html')
+    print('> tested')
+    return render(request, template_name='main/index.html')
 
 
 class CreateDocs(CreateView):
     form_class = DocsForm
     template_name = 'main/create_docs.html'
     success_url = '/'
-    return render(request, template_name='main/index.html')
