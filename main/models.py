@@ -66,9 +66,15 @@ class Organisation(models.Model):
         verbose_name="Адрес",
         help_text="423822, Республика Татарстан, г. Набережные Челны, проспект Чулман, д. 8, пом. 4",
     )
+    is_our = models.BooleanField(
+        default=False,
+        verbose_name="Наша организация?",
+    )
+    def __str__(self):
+        return self.name
 
 
-class Documents (models.Model):
+class Document(models.Model):
     address_and_time = models.CharField(
         max_length=100,
         verbose_name='адрес и время проведения',
@@ -109,4 +115,16 @@ class Documents (models.Model):
         verbose_name='номер основание договора',
         help_text='Nº 50/23-11 от 18.05.2023 г.'
     )
-
+    doer = models.ForeignKey(
+        Organisation,
+        on_delete=models.CASCADE,
+        verbose_name='Исполнитель (мы)',
+        related_name='documents_as_doer',
+        limit_choices_to={'is_our': True},
+    )
+    customer = models.ForeignKey(
+        Organisation,
+        on_delete=models.CASCADE,
+        verbose_name='Заказчик (не мы)',
+        related_name='documents_as_customer',
+    )
