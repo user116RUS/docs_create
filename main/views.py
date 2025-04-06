@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, JsonResponse
 from django.template.loader import get_template
 import os
 import io
@@ -17,6 +17,7 @@ from main.models import Document, Organisation, Service, ViewerCategory
 from .forms import DocsForm, OrganisationForm, ServiceForm, ViewerCategoryForm, ViewerCategoryFormset
 
 from django.views.generic.edit import CreateView
+import json
 
 
 def index(request):
@@ -645,3 +646,108 @@ def download_all_docs(request, document_id):
     response['Content-Disposition'] = f'attachment; filename="{safe_name}.zip"'
     
     return response
+
+
+@login_required
+def service_ajax(request):
+    """Функция для обработки AJAX-запросов для создания/редактирования/удаления услуг"""
+    if request.method == 'POST':
+        try:
+            # Чтение и декодирование JSON-данных из запроса
+            data = json.loads(request.body)
+            action = data.get('action')
+            
+            if action == 'create':
+                # Создание новой услуги
+                service_data = data.get('service', {})
+                form = ServiceForm(service_data)
+                if form.is_valid():
+                    service = form.save()
+                    
+                    # Обработка категорий зрителей
+                    categories_data = data.get('categories', [])
+                    for category_data in categories_data:
+                        ViewerCategory.objects.create(
+                            service=service,
+                            viewers=category_data.get('viewers', 0),
+                            price=category_data.get('price', 0)
+                        )
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'service': {
+                            'id': service.id,
+                            'name': service.name,
+                            'date': service.date,
+                            'total_viewers': service.total_viewers,
+                            'total_price': service.total_price,
+                            'categories': [
+                                {
+                                    'id': category.id,
+                                    'viewers': category.viewers,
+                                    'price': category.price
+                                } for category in service.viewer_categories.all()
+                            ]
+                        }
+                    })
+                else:
+                    return JsonResponse({'success': False, 'errors': form.errors})
+            
+            elif action == 'edit':
+                # Редактирование существующей услуги
+                service_id = data.get('service_id')
+                service = get_object_or_404(Service, id=service_id)
+                
+                service_data = data.get('service', {})
+                form = ServiceForm(service_data, instance=service)
+                if form.is_valid():
+                    service = form.save()
+                    
+                    # Удаляем существующие категории
+                    service.viewer_categories.all().delete()
+                    
+                    # Добавляем новые категории
+                    categories_data = data.get('categories', [])
+                    for category_data in categories_data:
+                        ViewerCategory.objects.create(
+                            service=service,
+                            viewers=category_data.get('viewers', 0),
+                            price=category_data.get('price', 0)
+                        )
+                    
+                    return JsonResponse({
+                        'success': True,
+                        'service': {
+                            'id': service.id,
+                            'name': service.name,
+                            'date': service.date,
+                            'total_viewers': service.total_viewers,
+                            'total_price': service.total_price,
+                            'categories': [
+                                {
+                                    'id': category.id,
+                                    'viewers': category.viewers,
+                                    'price': category.price
+                                } for category in service.viewer_categories.all()
+                            ]
+                        }
+                    })
+                else:
+                    return JsonResponse({'success': False, 'errors': form.errors})
+            
+            elif action == 'delete':
+                # Удаление услуги
+                service_id = data.get('service_id')
+                service = get_object_or_404(Service, id=service_id)
+                service.delete()
+                return JsonResponse({'success': True})
+            
+            else:
+                return JsonResponse({'success': False, 'error': 'Неизвестное действие'})
+                
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Неверный формат JSON данных'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Метод не поддерживается'})

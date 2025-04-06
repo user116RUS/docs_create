@@ -64,4 +64,5 @@ urlpatterns = [
         views.download_all_docs,
         name='download_all_docs'
     ),
+    path('service-ajax/', views.service_ajax, name='service_ajax'),
 ]

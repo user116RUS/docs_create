@@ -55,6 +55,23 @@
         width: 20px;
         height: 20px;
     }
+    .modal-backdrop {
+        opacity: 0.5 !important;
+    }
+    .category-form-row {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+    .remove-category {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+        color: #dc3545;
+    }
 </style>
 <div class="row my-4">
     <div class="col-lg-10 mx-auto">
@@ -180,7 +197,7 @@
                     <div class="card mb-4">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Услуги</h5>
-                            <a href="{% url 'main:create_service' %}" class="btn btn-sm btn-success">
+                            <a href="#" id="createServiceBtn" class="btn btn-sm btn-success">
                                 <i class="bi bi-plus-circle me-1"></i>Добавить новую услугу
                             </a>
                         </div>
@@ -221,7 +238,7 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <a href="{% url 'main:edit_service' service.id %}" class="btn btn-sm btn-outline-primary">
+                                                <a href="#" class="btn btn-sm btn-outline-primary edit-service-btn">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                             </div>
@@ -318,6 +335,71 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для создания/редактирования услуги -->
+<div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="serviceModalLabel">Создание новой услуги</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="serviceForm">
+                    <input type="hidden" id="serviceId" value="">
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="form-group mb-3">
+                                <label for="serviceName" class="form-label">Название услуги</label>
+                                <input type="text" class="form-control" id="serviceName" required>
+                                <div class="invalid-feedback" id="serviceNameError"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="serviceDate" class="form-label">Срок оказания услуг</label>
+                                <input type="text" class="form-control" id="serviceDate" required>
+                                <div class="invalid-feedback" id="serviceDateError"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mb-3">Категории зрителей</h5>
+                    <div id="categoriesContainer"></div>
+                    
+                    <button type="button" id="addCategoryBtn" class="btn btn-outline-success mb-4">
+                        <i class="bi bi-plus-circle me-1"></i>Добавить категорию
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="saveServiceBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно подтверждения удаления -->
+<div class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteServiceModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы действительно хотите удалить услугу "<span id="deleteServiceName"></span>"?</p>
+                <p class="text-danger">Это действие нельзя отменить.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
             </div>
         </div>
     </div>
@@ -526,6 +608,323 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Инициализируем сводку
     updateServicesSummary();
+    
+    // Функции для модального окна услуг
+    const serviceModalElement = document.getElementById('serviceModal');
+    const deleteServiceModalElement = document.getElementById('deleteServiceModal');
+    
+    // Проверяем, что элементы существуют и bootstrap доступен
+    let serviceModal, deleteServiceModal;
+    if (typeof bootstrap !== 'undefined') {
+        if (serviceModalElement) {
+            serviceModal = new bootstrap.Modal(serviceModalElement);
+        }
+        if (deleteServiceModalElement) {
+            deleteServiceModal = new bootstrap.Modal(deleteServiceModalElement);
+        }
+    } else {
+        console.error('Bootstrap не найден! Убедитесь, что библиотека правильно подключена.');
+    }
+    
+    const serviceForm = document.getElementById('serviceForm');
+    const serviceIdField = document.getElementById('serviceId');
+    const serviceNameField = document.getElementById('serviceName');
+    const serviceDateField = document.getElementById('serviceDate');
+    const categoriesContainer = document.getElementById('categoriesContainer');
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+    const saveServiceBtn = document.getElementById('saveServiceBtn');
+    const deleteServiceName = document.getElementById('deleteServiceName');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    
+    // Добавляем обработчик на кнопку "Добавить новую услугу"
+    const createServiceBtn = document.getElementById('createServiceBtn');
+    if (createServiceBtn) {
+        createServiceBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openServiceModal();
+        });
+    }
+    
+    // Модифицируем кнопки редактирования услуг
+    const editButtons = document.querySelectorAll('.service-header .edit-service-btn');
+    editButtons.forEach(function(button) {
+        // Удаляем атрибут href
+        button.removeAttribute('href');
+        // Добавляем класс edit-service-btn для идентификации
+        button.classList.add('edit-service-btn');
+    });
+    
+    // Обработчик на кнопки редактирования услуг
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.edit-service-btn')) {
+            e.preventDefault();
+            const serviceCard = e.target.closest('.service-card');
+            const serviceId = serviceCard.dataset.serviceId;
+            openServiceModal(serviceId);
+        }
+    });
+    
+    // Добавляем кнопки удаления услуг
+    const serviceHeaders = document.querySelectorAll('.service-header');
+    serviceHeaders.forEach(function(header) {
+        const buttonsContainer = header.querySelector('div:last-child');
+        if (buttonsContainer) {
+            // Проверяем, нет ли уже кнопки удаления
+            if (!buttonsContainer.querySelector('.delete-service-btn')) {
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-sm btn-outline-danger ms-2 delete-service-btn';
+                deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
+                buttonsContainer.appendChild(deleteButton);
+            }
+        }
+    });
+    
+    // Обработчик на кнопки удаления услуг
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-service-btn')) {
+            e.preventDefault();
+            const serviceCard = e.target.closest('.service-card');
+            const serviceId = serviceCard.dataset.serviceId;
+            const serviceName = serviceCard.querySelector('.form-check-label').textContent.trim();
+            openDeleteModal(serviceId, serviceName);
+        }
+    });
+    
+    // Функция открытия модального окна услуги
+    function openServiceModal(serviceId = null) {
+        // Проверяем, инициализировано ли модальное окно
+        if (!serviceModal) {
+            alert('Не удалось открыть модальное окно. Проблема с Bootstrap.');
+            return;
+        }
+        
+        // Очищаем форму
+        serviceForm.reset();
+        serviceIdField.value = '';
+        categoriesContainer.innerHTML = '';
+        
+        if (serviceId) {
+            // Редактирование существующей услуги
+            const serviceCard = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
+            if (serviceCard) {
+                // Заполняем поля формы
+                serviceIdField.value = serviceId;
+                const nameLabel = serviceCard.querySelector('.form-check-label').textContent.trim();
+                const nameParts = nameLabel.split('(');
+                serviceNameField.value = nameParts[0].trim();
+                serviceDateField.value = nameParts[1].replace(')', '').trim();
+                
+                // Добавляем категории
+                const categoryItems = serviceCard.querySelectorAll('.category-item');
+                categoryItems.forEach(function(item) {
+                    const viewersText = item.querySelector('div:first-child').textContent.trim();
+                    const priceText = item.querySelector('div:last-child').textContent.trim();
+                    
+                    const viewers = parseInt(viewersText.replace(' чел.', ''));
+                    const price = parseFloat(priceText.replace(' руб.', ''));
+                    
+                    addCategoryRow(viewers, price);
+                });
+                
+                // Меняем заголовок
+                document.getElementById('serviceModalLabel').textContent = 'Редактирование услуги';
+            }
+        } else {
+            // Создание новой услуги
+            document.getElementById('serviceModalLabel').textContent = 'Создание новой услуги';
+            // Добавляем пустую категорию
+            addCategoryRow();
+        }
+        
+        // Открываем модальное окно
+        serviceModal.show();
+    }
+    
+    // Функция добавления строки категории
+    function addCategoryRow(viewers = '', price = '') {
+        const index = document.querySelectorAll('.category-form-row').length;
+        
+        const row = document.createElement('div');
+        row.className = 'category-form-row';
+        row.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Кол-во зрителей</label>
+                        <input type="number" class="form-control category-viewers" min="1" value="${viewers}" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Цена за единицу</label>
+                        <input type="number" class="form-control category-price" min="0.01" step="0.01" value="${price}" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+            <span class="remove-category"><i class="bi bi-x-circle"></i></span>
+        `;
+        
+        categoriesContainer.appendChild(row);
+        
+        // Добавляем обработчик на кнопку удаления категории
+        row.querySelector('.remove-category').addEventListener('click', function() {
+            // Не позволяем удалить последнюю категорию
+            if (document.querySelectorAll('.category-form-row').length > 1) {
+                row.remove();
+            } else {
+                alert('Должна быть как минимум одна категория зрителей');
+            }
+        });
+    }
+    
+    // Обработчик на кнопку добавления категории
+    addCategoryBtn.addEventListener('click', function() {
+        addCategoryRow();
+    });
+    
+    // Обработчик на кнопку сохранения услуги
+    saveServiceBtn.addEventListener('click', function() {
+        // Проверяем валидность формы
+        if (!serviceForm.checkValidity()) {
+            serviceForm.classList.add('was-validated');
+            return;
+        }
+        
+        // Собираем данные формы
+        const serviceId = serviceIdField.value;
+        const serviceName = serviceNameField.value;
+        const serviceDate = serviceDateField.value;
+        
+        const categories = [];
+        const categoryRows = document.querySelectorAll('.category-form-row');
+        categoryRows.forEach(function(row) {
+            const viewers = parseInt(row.querySelector('.category-viewers').value);
+            const price = parseFloat(row.querySelector('.category-price').value);
+            
+            if (viewers && price) {
+                categories.push({
+                    viewers,
+                    price
+                });
+            }
+        });
+        
+        // Проверяем, что есть хотя бы одна категория
+        if (categories.length === 0) {
+            alert('Добавьте хотя бы одну категорию зрителей');
+            return;
+        }
+        
+        // Отправляем данные на сервер
+        const action = serviceId ? 'edit' : 'create';
+        const data = {
+            action,
+            service_id: serviceId,
+            service: {
+                name: serviceName,
+                date: serviceDate
+            },
+            categories
+        };
+        
+        // Отправляем AJAX-запрос
+        fetch('{% url "main:service_ajax" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Закрываем модальное окно (проверяем инициализацию)
+                if (serviceModal) {
+                    serviceModal.hide();
+                }
+                
+                // Обновляем страницу для отображения изменений
+                window.location.reload();
+            } else {
+                // Отображаем ошибки
+                if (data.errors) {
+                    if (data.errors.name) {
+                        serviceNameField.classList.add('is-invalid');
+                        document.getElementById('serviceNameError').textContent = data.errors.name.join(', ');
+                    }
+                    if (data.errors.date) {
+                        serviceDateField.classList.add('is-invalid');
+                        document.getElementById('serviceDateError').textContent = data.errors.date.join(', ');
+                    }
+                } else {
+                    alert('Произошла ошибка при сохранении услуги');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Произошла ошибка при сохранении услуги');
+        });
+    });
+    
+    // Функция открытия модального окна подтверждения удаления
+    function openDeleteModal(serviceId, serviceName) {
+        // Проверяем, инициализировано ли модальное окно
+        if (!deleteServiceModal) {
+            alert('Не удалось открыть модальное окно. Проблема с Bootstrap.');
+            return;
+        }
+        
+        document.getElementById('deleteServiceName').textContent = serviceName;
+        confirmDeleteBtn.dataset.serviceId = serviceId;
+        deleteServiceModal.show();
+    }
+    
+    // Обработчик на кнопку подтверждения удаления
+    confirmDeleteBtn.addEventListener('click', function() {
+        const serviceId = this.dataset.serviceId;
+        
+        // Отправляем AJAX-запрос
+        fetch('{% url "main:service_ajax" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+            },
+            body: JSON.stringify({
+                action: 'delete',
+                service_id: serviceId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Закрываем модальное окно (проверяем инициализацию)
+                if (deleteServiceModal) {
+                    deleteServiceModal.hide();
+                }
+                
+                // Удаляем карточку услуги из DOM
+                const serviceCard = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
+                if (serviceCard) {
+                    serviceCard.remove();
+                }
+                
+                // Обновляем выбранные услуги
+                updateServicesField();
+                updateServicesSummary();
+            } else {
+                alert('Произошла ошибка при удалении услуги');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Произошла ошибка при удалении услуги');
+        });
+    });
 });
 </script>
 {% endblock %}
