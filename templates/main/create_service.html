@@ -1,0 +1,196 @@
+{% extends '../wrapper.html' %}
+
+{% block title %}{% if service %}Редактирование{% else %}Новая{% endif %} услуга{% endblock %}
+
+{% block content %}
+{% load user_filters %}
+<style>
+    .input-sm {
+        height: 38px !important;
+    }
+    .select-sm {
+        height: 38px !important;
+    }
+    .form-row {
+        display: flex;
+        margin-right: -5px;
+        margin-left: -5px;
+        flex-wrap: wrap;
+    }
+    .form-row>.col {
+        padding-right: 5px;
+        padding-left: 5px;
+        flex-basis: 0;
+        flex-grow: 1;
+        max-width: 100%;
+    }
+    .viewer-category {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+    }
+    .viewer-category:hover {
+        background-color: #e9ecef;
+    }
+    .category-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="row my-4">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-tag me-2"></i>{% if service %}Редактирование{% else %}Добавление новой{% endif %} услуги</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>Укажите информацию об услуге, а затем добавьте категории зрителей с их ценами.
+                    </div>
+                    
+                    <h5 class="mb-3">Информация об услуге</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                                {{ form.name|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.name.help_text }}</div>
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.name.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
+                                {{ form.date|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.date.help_text }}</div>
+                                {% if form.date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.date.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mb-3">Категории зрителей</h5>
+                    {{ formset.management_form }}
+                    
+                    <div id="viewer-categories">
+                        {% for form in formset.forms %}
+                        <div class="viewer-category">
+                            {% if form.instance.pk %}
+                            {{ form.id }}
+                            {% endif %}
+                            
+                            <div class="category-header">
+                                <strong>Категория #{{ forloop.counter }}</strong>
+                                <div class="delete-container">
+                                    {{ form.DELETE|addclass:"form-check-input" }} 
+                                    <label class="form-check-label">Удалить</label>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="{{ form.viewers.id_for_label }}" class="form-label">{{ form.viewers.label }}</label>
+                                        {{ form.viewers|addclass:"form-control input-sm" }}
+                                        <div class="form-text">{{ form.viewers.help_text }}</div>
+                                        {% if form.viewers.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.viewers.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
+                                        {{ form.price|addclass:"form-control input-sm" }}
+                                        <div class="form-text">{{ form.price.help_text }}</div>
+                                        {% if form.price.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.price.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="add-category" class="btn btn-outline-success mb-4">
+                        <i class="bi bi-plus-circle me-1"></i>Добавить еще категорию
+                    </button>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'main:create_docs' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Вернуться
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-1"></i>Сохранить услугу
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addCategoryBtn = document.getElementById('add-category');
+        const categoryContainer = document.getElementById('viewer-categories');
+        const totalForms = document.getElementById('id_viewer_categories-TOTAL_FORMS');
+        
+        // Функция для добавления новой категории
+        addCategoryBtn.addEventListener('click', function() {
+            const formCount = parseInt(totalForms.value);
+            
+            // Клонируем первую форму
+            const firstForm = categoryContainer.querySelector('.viewer-category');
+            const newForm = firstForm.cloneNode(true);
+            
+            // Обновляем ID и имена полей
+            const inputs = newForm.querySelectorAll('input, select');
+            inputs.forEach(function(input) {
+                const name = input.getAttribute('name').replace('-0-', `-${formCount}-`);
+                input.setAttribute('name', name);
+                input.setAttribute('id', `id_${name}`);
+                
+                // Очищаем значения
+                if (input.type !== 'checkbox') {
+                    input.value = '';
+                } else {
+                    input.checked = false;
+                }
+            });
+            
+            // Обновляем номер категории
+            const categoryHeader = newForm.querySelector('.category-header strong');
+            categoryHeader.textContent = `Категория #${formCount + 1}`;
+            
+            // Добавляем новую форму в DOM
+            categoryContainer.appendChild(newForm);
+            
+            // Увеличиваем счетчик форм
+            totalForms.value = formCount + 1;
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 

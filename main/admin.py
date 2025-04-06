@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Organisation, Document
+from .models import Organisation, Document, Service, ViewerCategory
 
 @admin.register(Organisation)
 class OrganisationAdmin(admin.ModelAdmin):
@@ -17,7 +17,7 @@ class OrganisationAdmin(admin.ModelAdmin):
             'fields': ('bik', 'bank_name', 'bank_account', 'correspondent_bank_account')
         }),
         ('Дополнительная информация', {
-            'fields': ('fio', 'address')
+            'fields': ('fio', 'function', 'address')
         }),
     )
 
@@ -34,9 +34,19 @@ class DocumentsAdmin(admin.ModelAdmin):
             'fields': ('price_in_figures', 'price_in_words')
         }),
         ('Детали проведения', {
-            'fields': ('address_and_time', 'number_of_people')
+            'fields': ('address_and_time',)
         }),
         ('Участники', {
-            'fields': ('doer', 'customer')
+            'fields': ('doer', 'customer', 'services')
         }),
     )
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'date', 'total_viewers', 'total_price')
+    search_fields = ('name',)
+
+@admin.register(ViewerCategory)
+class ViewerCategoryAdmin(admin.ModelAdmin):
+    list_display = ('service', 'viewers', 'price')
+    list_filter = ('service',)

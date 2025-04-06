@@ -1,0 +1,110 @@
+{% extends '../wrapper.html' %}
+
+{% block title %}Скачать документы{% endblock %}
+
+{% block content %}
+{% load user_filters %}
+<div class="row my-5">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="bi bi-file-earmark-check me-2"></i>Документы успешно созданы</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-success mb-4">
+                    <h5 class="alert-heading"><i class="bi bi-check-circle-fill me-2"></i>Готово!</h5>
+                    <p>Документы для <strong>{{ document.customer.name }}</strong> успешно сформированы. Вы можете скачать их, используя кнопки ниже.</p>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="mb-3">Информация о документе:</h5>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td class="fw-bold" style="width: 40%">Организация-заказчик:</td>
+                                <td>{{ document.customer.name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Организация-исполнитель:</td>
+                                <td>{{ document.doer.name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Дата:</td>
+                                <td>{{ document.date }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Номер акта и счета:</td>
+                                <td>{{ document.act_and_account_number }}</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Адрес и время проведения:</td>
+                                <td>{{ document.address_and_time }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body text-center">
+                                <i class="bi bi-file-earmark-text display-4 text-primary mb-3"></i>
+                                <h5>Акт приемки</h5>
+                                <p class="small mb-3">Акт выполненных работ для предоставления заказчику</p>
+                                <a href="{% url 'main:download_act' document.id %}" class="btn btn-primary w-100">
+                                    <i class="bi bi-download me-1"></i>Скачать
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-success">
+                            <div class="card-body text-center">
+                                <i class="bi bi-cash-coin display-4 text-success mb-3"></i>
+                                <h5>Счет</h5>
+                                <p class="small mb-3">Счет на оплату оказанных услуг</p>
+                                <a href="{% url 'main:download_invoice' document.id %}" class="btn btn-success w-100">
+                                    <i class="bi bi-download me-1"></i>Скачать
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-info">
+                            <div class="card-body text-center">
+                                <i class="bi bi-file-earmark-ruled display-4 text-info mb-3"></i>
+                                <h5>Договор</h5>
+                                <p class="small mb-3">Договор между заказчиком и исполнителем</p>
+                                <a href="{% url 'main:download_contract' document.id %}" class="btn btn-info w-100 text-white">
+                                    <i class="bi bi-download me-1"></i>Скачать
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Добавляем кнопку "Скачать все" -->
+                <div class="my-4 text-center">
+                    <a href="{% url 'main:download_all_docs' document.id %}" class="btn btn-danger btn-lg">
+                        <i class="bi bi-file-earmark-zip me-2"></i>Скачать все документы
+                    </a>
+                    <div class="mt-2 text-muted small">
+                        Загрузить все документы в одном ZIP-архиве
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'main:index' %}" class="btn btn-secondary">
+                        <i class="bi bi-house-door me-1"></i>На главную
+                    </a>
+                    <a href="{% url 'main:create_docs' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Создать еще документ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,9 +3,529 @@
 {% block title %}Новый документ{% endblock %}
 
 {% block content %}
-<form method="post" action="{% url 'main:create_docs' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Отправить">
-</form>
+{% load user_filters %}
+<style>
+    .input-sm {
+        height: 38px !important;
+    }
+    .select-sm {
+        height: 38px !important;
+    }
+    .service-card {
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .service-card.selected {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    .service-header {
+        background-color: #f8f9fa;
+        padding: 10px 15px;
+        border-bottom: 1px solid #dee2e6;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .service-card.selected .service-header {
+        background-color: #e9f0fd;
+    }
+    .service-body {
+        padding: 15px;
+    }
+    .category-item {
+        padding: 8px 12px;
+        border-bottom: 1px solid #eee;
+    }
+    .category-item:last-child {
+        border-bottom: none;
+    }
+    .selected-services-summary {
+        background-color: #f0f9ff;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        border: 1px solid #cfe2ff;
+    }
+    .service-checkbox {
+        width: 20px;
+        height: 20px;
+    }
+</style>
+<div class="row my-4">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-file-earmark-plus me-2"></i>Создание нового документа</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>Заполните информацию для создания документов. После заполнения вы сможете скачать акт приемки, счет и договор.
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.doer.id_for_label }}" class="form-label">{{ form.doer.label }}</label>
+                                {{ form.doer|addclass:"form-control select-sm" }}
+                                <div class="form-text">{{ form.doer.help_text }}</div>
+                                {% if form.doer.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.doer.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.customer.id_for_label }}" class="form-label">{{ form.customer.label }}</label>
+                                {{ form.customer|addclass:"form-control select-sm" }}
+                                <div class="form-text">{{ form.customer.help_text }}</div>
+                                {% if form.customer.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.customer.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
+                                {{ form.date|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.date.help_text }}</div>
+                                {% if form.date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.date.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.time.id_for_label }}" class="form-label">{{ form.time.label }}</label>
+                                {{ form.time|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.time.help_text }}</div>
+                                {% if form.time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.time.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.address_and_time.id_for_label }}" class="form-label">{{ form.address_and_time.label }}</label>
+                                {{ form.address_and_time|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.address_and_time.help_text }}</div>
+                                {% if form.address_and_time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.address_and_time.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Добавляем поле для количества зрителей -->
+                            <div class="form-group mb-3">
+                                <label for="{{ form.viewers.id_for_label }}" class="form-label">
+                                    {{ form.viewers.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.viewers|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.viewers.help_text }}</div>
+                                {% if form.viewers.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.viewers.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.act_and_account_number.id_for_label }}" class="form-label">{{ form.act_and_account_number.label }}</label>
+                                {{ form.act_and_account_number|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.act_and_account_number.help_text }}</div>
+                                {% if form.act_and_account_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.act_and_account_number.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.number_basis_of_the_contract.id_for_label }}" class="form-label">{{ form.number_basis_of_the_contract.label }}</label>
+                                {{ form.number_basis_of_the_contract|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.number_basis_of_the_contract.help_text }}</div>
+                                {% if form.number_basis_of_the_contract.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.number_basis_of_the_contract.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Скрытые поля для автоматически рассчитываемых значений -->
+                    {{ form.price_in_figures.as_hidden }}
+                    
+                    <!-- Раздел услуг -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Услуги</h5>
+                            <a href="{% url 'main:create_service' %}" class="btn btn-sm btn-success">
+                                <i class="bi bi-plus-circle me-1"></i>Добавить новую услугу
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <!-- Скрытое поле для правильной обработки формы -->
+                            {{ form.services.as_hidden }}
+                            
+                            <div class="alert alert-info mb-3">
+                                <i class="bi bi-info-circle-fill me-2"></i>Выберите услуги, которые требуется включить в документы. Вы можете выбрать несколько услуг.
+                            </div>
+                            
+                            <!-- Отображение ошибок формы -->
+                            {% if form.non_field_errors %}
+                            <div class="alert alert-danger mb-3">
+                                {% for error in form.non_field_errors %}
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="mt-3">
+                                {% if services %}
+                                    {% for service in services %}
+                                    <!-- Добавляем отладочную информацию -->
+                                    <!-- Debug: {{ service.name }} - viewers: {{ service.total_viewers }}, price: {{ service.total_price }} -->
+                                    <div class="service-card" data-service-id="{{ service.id }}" 
+                                         data-viewers="{{ service.total_viewers|default:'0' }}" 
+                                         data-price="{{ service.total_price|default:'0' }}">
+                                        <div class="service-header">
+                                            <div class="d-flex align-items-center">
+                                                <div class="form-check form-check-inline me-3">
+                                                    <input class="form-check-input service-checkbox" type="checkbox" name="service_checkbox" 
+                                                        id="service_{{ service.id }}" value="{{ service.id }}"
+                                                        {% if service in form.instance.services.all %}checked{% endif %}>
+                                                    <label class="form-check-label" for="service_{{ service.id }}">
+                                                        {{ service.name }} ({{ service.date }})
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <a href="{% url 'main:edit_service' service.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="service-body">
+                                            {% with categories=service.viewer_categories.all %}
+                                                {% if categories %}
+                                                    <div class="mb-2"><strong>Категории зрителей:</strong></div>
+                                                    {% for category in categories %}
+                                                    <div class="category-item">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>{{ category.viewers }} чел.</div>
+                                                            <div>{{ category.price }} руб.</div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                    <div class="mt-2 text-end">
+                                                        <span class="badge bg-info text-white">Всего: {{ service.total_viewers }} чел.</span>
+                                                        <span class="badge bg-success text-white">Итого: {{ service.total_price }} руб.</span>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="text-muted">Нет добавленных категорий зрителей</div>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>Нет доступных услуг. Добавьте услугу с помощью кнопки выше.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Перемещаем блок сводки сюда -->
+                    <div class="selected-services-summary d-none" id="selectedServicesSummary">
+                        <h6 class="mb-3"><i class="bi bi-check-circle-fill me-2"></i>Сводная информация:</h6>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="card bg-light h-100">
+                                    <div class="card-body py-2 px-3">
+                                        <h6 class="mb-2">Выбранные услуги</h6>
+                                        <div class="h4"><span id="selectedServicesCount" class="fw-bold">0</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light h-100">
+                                    <div class="card-body py-2 px-3">
+                                        <h6 class="mb-2">Количество зрителей</h6>
+                                        <div class="h4"><span id="selectedServicesTotal" class="fw-bold">0</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-primary text-white h-100">
+                                    <div class="card-body py-2 px-3">
+                                        <h6 class="mb-2">Общая стоимость</h6>
+                                        <div class="h4"><span id="selectedServicesPrice" class="fw-bold">0 руб.</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-success mb-0">
+                            <i class="bi bi-info-circle-fill me-2"></i>Цена будет автоматически вставлена в документы в числовом и текстовом формате.
+                        </div>
+                        
+                        <!-- Добавляем поле для суммы прописью -->
+                        <div class="form-group mt-3">
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Внимание!</strong> Укажите сумму прописью для документов:
+                            </div>
+                            <label for="{{ form.price_in_words.id_for_label }}" class="form-label">
+                                {{ form.price_in_words.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.price_in_words|addclass:"form-control" }}
+                            <div class="form-text">{{ form.price_in_words.help_text }}</div>
+                            {% if form.price_in_words.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.price_in_words.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'main:index' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Вернуться
+                        </a>
+                        <button type="submit" id="submitButton" class="btn btn-primary">
+                            <i class="bi bi-file-earmark-check me-1"></i>Создать документы
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Получаем форму и кнопку отправки
+    const form = document.querySelector('form');
+    const submitButton = document.getElementById('submitButton');
+    
+    // Обработчик отправки формы для предотвращения двойной отправки
+    if (form && submitButton) {
+        form.addEventListener('submit', function(e) {
+            // Проверяем, есть ли выбранные услуги
+            const selectedServices = document.querySelectorAll('.hidden-service-input');
+            if (selectedServices.length === 0) {
+                e.preventDefault();
+                alert('Пожалуйста, выберите хотя бы одну услугу.');
+                return false;
+            }
+            
+            // Блокируем кнопку отправки
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Создание...';
+        });
+    }
+    
+    // Получаем скрытое поле и все чекбоксы услуг
+    const servicesField = document.getElementById('id_services');
+    const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+    const serviceCards = document.querySelectorAll('.service-card');
+    const selectedServicesSummary = document.getElementById('selectedServicesSummary');
+    
+    // Получаем элементы для обновления информации, проверяя их существование
+    let selectedServicesCount = null;
+    let selectedServicesTotal = null;
+    let selectedServicesPrice = null;
+    
+    if (selectedServicesSummary) {
+        selectedServicesCount = document.getElementById('selectedServicesCount');
+        selectedServicesTotal = document.getElementById('selectedServicesTotal');
+        selectedServicesPrice = document.getElementById('selectedServicesPrice');
+        
+        console.log('Found elements:', {
+            count: selectedServicesCount,
+            total: selectedServicesTotal,
+            price: selectedServicesPrice
+        });
+    }
+    
+    const priceInFigures = document.getElementById('id_price_in_figures');
+    const priceInWords = document.getElementById('id_price_in_words');
+    const viewersField = document.getElementById('id_viewers');
+    
+    // Обновляем сводку по выбранным услугам
+    function updateServicesSummary() {
+        let count = 0;
+        let totalViewers = 0;
+        let totalPrice = 0;
+        
+        serviceCheckboxes.forEach(function(checkbox) {
+            if (checkbox.checked) {
+                count++;
+                const card = checkbox.closest('.service-card');
+                if (card) {
+                    // Добавляем отладочную информацию
+                    console.log('Card data:', {
+                        id: card.dataset.serviceId,
+                        viewers: card.dataset.viewers,
+                        price: card.dataset.price
+                    });
+                    
+                    // Преобразуем строковые значения в числа
+                    const viewers = parseInt(card.dataset.viewers) || 0;
+                    const price = parseFloat(card.dataset.price) || 0;
+                    
+                    console.log(`Service ${card.dataset.serviceId}: viewers=${viewers}, price=${price}`);
+                    
+                    totalViewers += viewers;
+                    totalPrice += price;
+                }
+            }
+        });
+        
+        console.log(`Total: count=${count}, viewers=${totalViewers}, price=${totalPrice}`);
+        
+        // Обновляем информацию в сводке
+        if (selectedServicesCount) {
+            selectedServicesCount.textContent = count;
+            console.log('Updated count:', count);
+        }
+        if (selectedServicesTotal) {
+            selectedServicesTotal.textContent = totalViewers;
+            console.log('Updated viewers:', totalViewers);
+        }
+        if (selectedServicesPrice) {
+            selectedServicesPrice.textContent = totalPrice.toFixed(2) + ' руб.';
+            console.log('Updated price:', totalPrice);
+        }
+        
+        // Автоматически заполняем поля с ценой в форме
+        if (priceInFigures && totalPrice > 0) {
+            priceInFigures.value = totalPrice.toFixed(2);
+        }
+        
+        // Показываем или скрываем блок сводки
+        if (selectedServicesSummary) {
+            if (count > 0) {
+                selectedServicesSummary.classList.remove('d-none');
+                console.log('Showing summary block');
+            } else {
+                selectedServicesSummary.classList.add('d-none');
+                console.log('Hiding summary block');
+            }
+        }
+    }
+    
+    // Обновляем скрытое поле формы при изменении чекбокса
+    function updateServicesField() {
+        const selectedServices = [];
+        
+        // Собираем все выбранные ID услуг
+        serviceCheckboxes.forEach(function(checkbox) {
+            if (checkbox.checked) {
+                selectedServices.push(checkbox.value);
+            }
+        });
+        
+        // Создаем скрытые поля для каждой выбранной услуги
+        // Сначала удаляем существующие скрытые поля
+        document.querySelectorAll('.hidden-service-input').forEach(function(input) {
+            input.remove();
+        });
+        
+        // Создаем новые скрытые поля для каждого выбранного сервиса
+        if (form) {
+            selectedServices.forEach(function(serviceId) {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'services';
+                hiddenInput.value = serviceId;
+                hiddenInput.className = 'hidden-service-input';
+                form.appendChild(hiddenInput);
+            });
+        }
+    }
+    
+    // Устанавливаем обработчики на чекбоксы
+    serviceCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            console.log('Checkbox changed:', this.checked);
+            updateServicesField();
+            updateServiceCardSelection(this);
+            updateServicesSummary();
+        });
+    });
+    
+    // Добавляем обработчик клика на карточку услуги
+    serviceCards.forEach(function(card) {
+        card.addEventListener('click', function(e) {
+            // Проверяем, что клик не был на кнопке редактирования или чекбоксе
+            if (!e.target.closest('a') && !e.target.closest('.form-check-input')) {
+                const checkbox = this.querySelector('.service-checkbox');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    
+                    // Имитируем событие change на чекбоксе
+                    const event = new Event('change');
+                    checkbox.dispatchEvent(event);
+                }
+            }
+        });
+    });
+    
+    // Обновляем классы карточек при выборе/отмене
+    function updateServiceCardSelection(checkbox) {
+        const card = checkbox.closest('.service-card');
+        if (card) {
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        }
+    }
+    
+    // Инициализируем поле и стили при загрузке страницы
+    updateServicesField();
+    
+    // Инициализируем стили выбранных карточек
+    serviceCheckboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+            const card = checkbox.closest('.service-card');
+            if (card) {
+                card.classList.add('selected');
+                // Добавляем отладочную информацию при инициализации
+                console.log('Initial card data:', {
+                    id: card.dataset.serviceId,
+                    viewers: card.dataset.viewers,
+                    price: card.dataset.price
+                });
+            }
+        }
+    });
+    
+    // Инициализируем сводку
+    updateServicesSummary();
+});
+</script>
 {% endblock %}
