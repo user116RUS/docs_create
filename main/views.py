@@ -10,6 +10,7 @@ from docx import Document as DocxDocument
 from docx.shared import Pt
 from docxtpl import DocxTemplate
 from django.forms import modelformset_factory
+from django.utils.decorators import method_decorator
 
 from main.models import Document, Organisation, Service, ViewerCategory
 
@@ -23,6 +24,7 @@ def index(request):
     return render(request, template_name='main/index.html')
 
 
+@method_decorator(login_required, name='dispatch')
 class CreateDocs(CreateView):
     form_class = DocsForm
     template_name = 'main/create_docs.html'
@@ -82,12 +84,14 @@ class CreateDocs(CreateView):
         return reverse('main:document_detail', kwargs={'document_id': self.object.id})
 
 
+@method_decorator(login_required, name='dispatch')
 class OrganisationView(CreateView):
     form_class = OrganisationForm
     template_name = 'main/create_organisation.html'
     success_url = '/'
 
 
+@login_required
 def create_service(request):
     if request.method == 'POST':
         form = ServiceForm(request.POST)
@@ -109,6 +113,7 @@ def create_service(request):
     })
 
 
+@login_required
 def edit_service(request, service_id):
     service = get_object_or_404(Service, id=service_id)
     
@@ -133,11 +138,13 @@ def edit_service(request, service_id):
     })
 
 
+@login_required
 def document_detail(request, document_id):
     document = get_object_or_404(Document, id=document_id)
     return render(request, 'main/download_docs.html', {'document': document})
 
 
+@login_required
 def download_act(request, document_id):
     document = get_object_or_404(Document, id=document_id)
     
@@ -241,6 +248,7 @@ def download_act(request, document_id):
     return response
 
 
+@login_required
 def download_invoice(request, document_id):
     document = get_object_or_404(Document, id=document_id)
     
@@ -345,6 +353,7 @@ def download_invoice(request, document_id):
     return response
 
 
+@login_required
 def download_contract(request, document_id):
     document = get_object_or_404(Document, id=document_id)
     
@@ -449,6 +458,7 @@ def download_contract(request, document_id):
     return response
 
 
+@login_required
 def download_all_docs(request, document_id):
     """Функция для скачивания всех документов в одном ZIP-архиве"""
     import zipfile
