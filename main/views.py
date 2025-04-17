@@ -7,12 +7,12 @@ from django.template.loader import get_template
 import os
 import io
 from django.shortcuts import render, redirect
-from .forms import OrgForm
+from .forms import OrganisationForm
 from django.contrib import messages
 import json
 from docx import Document as DocxDocument
 from docx.shared import Pt
-from docxtpl import DocxTemplate
+from .forms import DocsForm
 from django.forms import modelformset_factory
 from django.utils.decorators import method_decorator
 
@@ -26,7 +26,7 @@ import json
 
 def create_org(request):
     if request.method == 'POST':
-        form = OrgForm(request.POST, request.FILES)
+        form = OrganisationForm(request.POST, request.FILES)
         files = request.FILES.getlist('files')  # Get the uploaded files
         if form.is_valid():
             org = form.save()  # Save the Organization object (without files)
@@ -51,7 +51,7 @@ def create_org(request):
             return HttpResponse(json.dumps(response_data), content_type='application/json', status=400)
 
     else:
-        form = OrgForm()
+        form = OrganisationForm()
     return render(request, 'org_form.html', {'form': form})
 
 
@@ -268,7 +268,7 @@ def download_act(request, document_id):
     }
 
     # Используем DocxTemplate для рендеринга
-    doc = DocxTemplate(template_path)
+    doc = DocsForm(template_path)
     doc.render(context)
 
     # Сохраняем во временный буфер
@@ -373,7 +373,7 @@ def download_invoice(request, document_id):
     }
 
     # Используем DocxTemplate для рендеринга
-    doc = DocxTemplate(template_path)
+    doc = DocsForm(template_path)
     doc.render(context)
 
     # Сохраняем во временный буфер
@@ -478,7 +478,7 @@ def download_contract(request, document_id):
     }
 
     # Используем DocxTemplate для рендеринга
-    doc = DocxTemplate(template_path)
+    doc = DocsForm(template_path)
     doc.render(context)
 
     # Сохраняем во временный буфер
@@ -597,7 +597,7 @@ def download_all_docs(request, document_id):
         }
 
         # Рендерим акт и добавляем в архив
-        act_doc = DocxTemplate(act_template_path)
+        act_doc = DocsForm(act_template_path)
         act_doc.render(act_context)
         act_doc.save(act_buffer)
         act_buffer.seek(0)
@@ -630,7 +630,7 @@ def download_all_docs(request, document_id):
         }
 
         # Рендерим счет и добавляем в архив
-        invoice_doc = DocxTemplate(invoice_template_path)
+        invoice_doc = DocsForm(invoice_template_path)
         invoice_doc.render(invoice_context)
         invoice_doc.save(invoice_buffer)
         invoice_buffer.seek(0)
@@ -663,7 +663,7 @@ def download_all_docs(request, document_id):
         }
 
         # Рендерим договор и добавляем в архив
-        contract_doc = DocxTemplate(contract_template_path)
+        contract_doc = DocsForm(contract_template_path)
         contract_doc.render(contract_context)
         contract_doc.save(contract_buffer)
         contract_buffer.seek(0)
