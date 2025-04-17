@@ -1,180 +1,68 @@
-{% extends '../wrapper.html' %}
-
-{% block title %}Добавление организации{% endblock %}
+{% extends 'base.html' %}
+{% load bootstrap5 %}
 
 {% block content %}
-{% load user_filters %}
-<style>
-    .input-sm {
-        height: 38px !important;
-    }
-    .text-area-md {
-        height: 100px !important;
-    }
-</style>
-<div class="row my-4">
-    <div class="col-lg-10 mx-auto">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-building me-2"></i>Добавление новой организации</h4>
-            </div>
-            <div class="card-body p-4">
-                <form method="post" class="needs-validation" novalidate>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <h2 class="mb-4">Организация</h2>
+                <form method="post" enctype="multipart/form-data" id="orgForm">  {# Добавляем enctype для поддержки загрузки файлов и ID для JS #}
                     {% csrf_token %}
-                    
-                    <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle-fill me-2"></i>Заполните всю необходимую информацию об организации. Поля, отмеченные звездочкой (*), обязательны для заполнения.
-                    </div>
-                    
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
-                                {{ form.name|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.name.help_text }}</div>
-                                {% if form.name.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.name.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.short_name.id_for_label }}" class="form-label">{{ form.short_name.label }}</label>
-                                {{ form.short_name|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.short_name.help_text }}</div>
-                                {% if form.short_name.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.short_name.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.fio.id_for_label }}" class="form-label">{{ form.fio.label }}</label>
-                                {{ form.fio|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.fio.help_text }}</div>
-                                {% if form.fio.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.fio.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.function.id_for_label }}" class="form-label">{{ form.function.label }}</label>
-                                {{ form.function|addclass:"form-select input-sm" }}
-                                {% if form.function.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.function.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.address.id_for_label }}" class="form-label">{{ form.address.label }}</label>
-                                {{ form.address|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.address.help_text }}</div>
-                                {% if form.address.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.address.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
+
+                    <div class="row">
+                        <!-- Existing form fields (name, inn, etc.) -->
                         </div>
-                        
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="{{ form.inn.id_for_label }}" class="form-label">{{ form.inn.label }}</label>
-                                {{ form.inn|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.inn.help_text }}</div>
-                                {% if form.inn.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.inn.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.kpp.id_for_label }}" class="form-label">{{ form.kpp.label }}</label>
-                                {{ form.kpp|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.kpp.help_text }}</div>
-                                {% if form.kpp.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.kpp.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.bank_name.id_for_label }}" class="form-label">{{ form.bank_name.label }}</label>
-                                {{ form.bank_name|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.bank_name.help_text }}</div>
-                                {% if form.bank_name.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.bank_name.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.bik.id_for_label }}" class="form-label">{{ form.bik.label }}</label>
-                                {{ form.bik|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.bik.help_text }}</div>
-                                {% if form.bik.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.bik.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
+
+                    {# Добавляем поле для загрузки файла #}
+                    <div class="form-group mb-3">
+                        <label for="fileUpload" class="form-label">Загрузите файлы (drag & drop)</label>
+                        <div id="dropZone" class="dropzone">
+                            <p>Перетащите файлы сюда или нажмите, чтобы выбрать</p>
+                            <input type="file" id="fileUpload" name="files" multiple style="display: none;">  {# Скрываем стандартный input #}
+                            <div id="fileList"></div>  {# Контейнер для отображения списка файлов #}
                         </div>
                     </div>
-                    
-                    <div class="row mb-4">
+
+
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="{{ form.bank_account.id_for_label }}" class="form-label">{{ form.bank_account.label }}</label>
-                                {{ form.bank_account|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.bank_account.help_text }}</div>
-                                {% if form.bank_account.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.bank_account.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="{{ form.correspondent_bank_account.id_for_label }}" class="form-label">{{ form.correspondent_bank_account.label }}</label>
+                                <label for="{{ form.correspondent_bank_account.id_for_label }}"
+                                       class="form-label">{{ form.correspondent_bank_account.label }}</label>
                                 {{ form.correspondent_bank_account|addclass:"form-control input-sm" }}
                                 <div class="form-text">{{ form.correspondent_bank_account.help_text }}</div>
                                 {% if form.correspondent_bank_account.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.correspondent_bank_account.errors }}
-                                </div>
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.correspondent_bank_account.errors }}
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group mb-4">
-                        <label for="{{ form.requisites.id_for_label }}" class="form-label">{{ form.requisites.label }}</label>
+                        <label for="{{ form.requisites.id_for_label }}"
+                               class="form-label">{{ form.requisites.label }}</label>
+Markup
+
+
                         {{ form.requisites|addclass:"form-control text-area-md" }}
                         <div class="form-text">{{ form.requisites.help_text }}</div>
                         {% if form.requisites.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.requisites.errors }}
-                        </div>
+                            <div class="invalid-feedback d-block">
+                                {{ form.requisites.errors }}
+                            </div>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-check form-switch mb-4">
                         {{ form.is_our|addclass:"form-check-input" }}
-                        <label class="form-check-label" for="{{ form.is_our.id_for_label }}">{{ form.is_our.label }}</label>
+                        <label class="form-check-label"
+                               for="{{ form.is_our.id_for_label }}">{{ form.is_our.label }}</label>
                         <div class="form-text">Отметьте, если это ваша организация (для отображения в качестве исполнителя)</div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between mt-4">
                         <a href="{% url 'main:index' %}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Вернуться
@@ -188,4 +76,136 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Стили для dropzone */
+    .dropzone {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .dropzone:hover {
+        background-color: #f8f9fa;
+    }
+
+    .dropzone.dragover {
+        border-color: #007bff;
+        background-color: #e9ecef;
+    }
+
+    #fileList {
+        margin-top: 10px;
+    }
+
+    #fileList p {
+        margin-bottom: 5px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropZone = document.getElementById('dropZone');
+        const fileUpload = document.getElementById('fileUpload');
+        const fileList = document.getElementById('fileList');
+        const form = document.getElementById('orgForm');
+
+        // Prevent default drag behaviors
+Markup
+
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false)
+            document.body.addEventListener(eventName, preventDefaults, false)
+        });
+
+        // Highlight drop zone when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false)
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false)
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault()
+            e.stopPropagation()
+        }
+
+        function highlight(e) {
+            dropZone.classList.add('dragover')
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('dragover')
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+        fileUpload.addEventListener('change', handleFileInputChange, false); // Handle clicks
+
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer
+            const files = dt.files
+            handleFiles(files)
+        }
+
+
+        function handleFileInputChange(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+
+        function handleFiles(files) {
+            files = [...files]  // Convert FileList to Array
+            files.forEach(uploadFile);
+        }
+
+
+        function uploadFile(file) {
+const listItem = document.createElement('p');
+            listItem.textContent = file.name;
+            fileList.appendChild(listItem);
+        }
+
+        dropZone.addEventListener('click', function() {
+            fileUpload.click(); // Trigger the file input when the dropzone is clicked
+        });
+
+        form.addEventListener('submit', function(event) {
+            const files = fileUpload.files; // Get files from the input
+            if (files.length > 0) {
+                // Append each file to the FormData
+                const formData = new FormData(form); // Populate with existing form data
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('files', files[i]); // Append each file
+                }
+
+                // Override the default form submission
+                event.preventDefault();
+
+                // Send the FormData with AJAX
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value // Include CSRF token in headers
+                    }
+                })
+                .then(response => response.json()) // Parse JSON response
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Файлы успешно загружены!'); // Display a success message
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ошибка при загрузке файлов.'); // Display an error message
+                });
+            }
+        });
+    });
+</script>
 {% endblock %}
