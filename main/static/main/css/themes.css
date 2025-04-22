@@ -1,0 +1,1127 @@
+/* Minecraft шрифт */
+@font-face {
+    font-family: 'Minecraft';
+    src: url('../fonts/minecraft.woff2') format('woff2'),
+         url('https://fonts.cdnfonts.com/s/17079/MinecraftRegular-Bmg3.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --light-bg-color: #ffffff;
+    --light-text-color: #333333;
+    --light-link-color: #007bff;
+    --light-btn-primary: #007bff;
+    --light-btn-secondary: #6c757d;
+    --light-border-color: #dee2e6;
+    --light-header-bg: #f8f9fa;
+    --light-footer-bg: #f8f9fa;
+    
+    --dark-bg-color: #121212;
+    --dark-text-color: #e0e0e0;
+    --dark-link-color: #00b0ff;
+    --dark-btn-primary: #00b0ff;
+    --dark-btn-secondary: #424242;
+    --dark-border-color: #424242;
+    --dark-header-bg: #212121;
+    --dark-footer-bg: #212121;
+    
+    --minecraft-bg-color: #5c8d44;
+    --minecraft-text-color: #ffffff;
+    --minecraft-link-color: #f9c55e;
+    --minecraft-btn-primary: #8b6d3f;
+    --minecraft-btn-secondary: #6b6b6b;
+    --minecraft-border-color: #3b3b3b;
+    --minecraft-header-bg: #3d593e;
+    --minecraft-footer-bg: #3d593e;
+}
+
+/* Светлая тема (по умолчанию) */
+body {
+    background-color: var(--light-bg-color);
+    color: var(--light-text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+header {
+    background-color: var(--light-header-bg);
+    border-bottom: 1px solid var(--light-border-color);
+}
+
+footer {
+    background-color: var(--light-footer-bg);
+    border-top: 1px solid var(--light-border-color);
+}
+
+a {
+    color: var(--light-link-color);
+}
+
+.btn-primary {
+    background-color: var(--light-btn-primary);
+    border-color: var(--light-btn-primary);
+}
+
+.btn-secondary {
+    background-color: var(--light-btn-secondary);
+    border-color: var(--light-btn-secondary);
+}
+
+/* Стилизация scrollbar для светлой темы */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Выделение текста для светлой темы */
+::selection {
+    background-color: rgba(0, 123, 255, 0.3);
+    color: #000;
+}
+
+/* Темная тема */
+body.dark-theme {
+    background-color: var(--dark-bg-color);
+    color: #ffffff;
+}
+
+body.dark-theme header {
+    background-color: var(--dark-header-bg);
+    border-bottom: 1px solid var(--dark-border-color);
+}
+
+body.dark-theme footer {
+    background-color: var(--dark-footer-bg);
+    border-top: 1px solid var(--dark-border-color);
+}
+
+body.dark-theme a {
+    color: #4fc3f7;
+    text-decoration: underline;
+}
+
+body.dark-theme .btn-primary {
+    background-color: var(--dark-btn-primary);
+    border-color: var(--dark-btn-primary);
+}
+
+body.dark-theme .btn-secondary {
+    background-color: var(--dark-btn-secondary);
+    border-color: var(--dark-btn-secondary);
+}
+
+body.dark-theme .card,
+body.dark-theme .modal-content {
+    background-color: #2a2a2a;
+    border-color: var(--dark-border-color);
+}
+
+body.dark-theme .form-control,
+body.dark-theme .form-select {
+    background-color: #333;
+    border-color: #444;
+    color: var(--dark-text-color);
+}
+
+body.dark-theme .table {
+    color: var(--dark-text-color);
+    border-color: var(--dark-border-color);
+}
+
+body.dark-theme .table th,
+body.dark-theme .table td {
+    border-color: var(--dark-border-color);
+    background-color: #1e1e1e;
+}
+
+body.dark-theme .table thead th {
+    background-color: #333;
+}
+
+body.dark-theme .nav-link {
+    color: #4fc3f7;
+}
+
+body.dark-theme .nav-link:hover,
+body.dark-theme .nav-link:focus {
+    color: #4fc3f7;
+}
+
+/* Стилизация scrollbar для темной темы */
+body.dark-theme ::-webkit-scrollbar {
+    width: 12px;
+}
+
+body.dark-theme ::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+body.dark-theme ::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 6px;
+}
+
+body.dark-theme ::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* Выделение текста для темной темы */
+body.dark-theme ::selection {
+    background-color: rgba(0, 176, 255, 0.5);
+    color: #fff;
+}
+
+/* Minecraft тема */
+body.minecraft-theme {
+    background-color: var(--minecraft-bg-color);
+    color: #ffffff;
+    font-family: 'Minecraft', 'Courier New', monospace;
+    text-shadow: 1px 1px 0 #000;
+}
+
+body.minecraft-theme header {
+    background-color: var(--minecraft-header-bg);
+    border-bottom: 2px solid #000000;
+}
+
+body.minecraft-theme footer {
+    background-color: var(--minecraft-footer-bg);
+    border-top: 2px solid #000000;
+}
+
+body.minecraft-theme a {
+    color: #ffdd00;
+    text-decoration: none;
+    text-shadow: 1px 1px 0 #000;
+}
+
+body.minecraft-theme a:hover {
+    color: #ffa500;
+    text-decoration: underline;
+}
+
+body.minecraft-theme .btn {
+    border-radius: 0;
+    box-shadow: 3px 3px 0 #000;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+body.minecraft-theme .btn-primary {
+    background-color: var(--minecraft-btn-primary);
+    border-color: #65482c;
+}
+
+body.minecraft-theme .btn-secondary {
+    background-color: var(--minecraft-btn-secondary);
+    border-color: #4e4e4e;
+}
+
+body.minecraft-theme .card,
+body.minecraft-theme .modal-content {
+    background-color: #8b8b8b;
+    border: 3px solid #000;
+    border-radius: 0;
+}
+
+body.minecraft-theme .form-control,
+body.minecraft-theme .form-select {
+    background-color: #c6c6c6;
+    border: 2px solid #000;
+    border-radius: 0;
+    color: #000;
+}
+
+body.minecraft-theme .table {
+    border: 3px solid #000;
+}
+
+body.minecraft-theme .table th,
+body.minecraft-theme .table td {
+    border: 2px solid #000;
+    background-color: #a9a9a9;
+    color: #000;
+}
+
+body.minecraft-theme .table thead th {
+    background-color: #8b6d3f;
+    color: #fff;
+}
+
+body.minecraft-theme .nav-link {
+    background-color: #8b6d3f;
+    color: #fff;
+    border: 2px solid #000;
+    margin: 2px;
+    border-radius: 0;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #000;
+}
+
+body.minecraft-theme .nav-link:hover {
+    background-color: #65482c;
+    transform: translate(-2px, -2px);
+    box-shadow: 3px 3px 0 #000;
+}
+
+body.minecraft-theme h1, 
+body.minecraft-theme h2, 
+body.minecraft-theme h3, 
+body.minecraft-theme h4, 
+body.minecraft-theme h5, 
+body.minecraft-theme h6 {
+    text-transform: uppercase;
+    font-weight: bold;
+    text-shadow: 2px 2px 0 #000;
+}
+
+/* Стилизация scrollbar для Minecraft темы */
+body.minecraft-theme ::-webkit-scrollbar {
+    width: 16px;
+}
+
+body.minecraft-theme ::-webkit-scrollbar-track {
+    background: #5c8d44;
+    border: 2px solid #000;
+    border-radius: 0;
+}
+
+body.minecraft-theme ::-webkit-scrollbar-thumb {
+    background: #8b6d3f;
+    border: 2px solid #000;
+    border-radius: 0;
+}
+
+body.minecraft-theme ::-webkit-scrollbar-thumb:hover {
+    background: #65482c;
+}
+
+/* Выделение текста для Minecraft темы */
+body.minecraft-theme ::selection {
+    background-color: #f9c55e;
+    color: #000;
+}
+
+/* Переключатель тем */
+.theme-switcher {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 25px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.theme-switcher:hover {
+    transform: scale(1.05);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    border-color: rgba(0, 0, 0, 0.5);
+}
+
+.theme-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.light-theme-btn {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.light-theme-btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(255, 255, 0, 0.6) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.light-theme-btn:hover::after {
+    opacity: 1;
+}
+
+.dark-theme-btn {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-theme-btn::after {
+    content: '';
+    position: absolute;
+    width: 150%;
+    height: 150%;
+    top: -25%;
+    left: -25%;
+    background: radial-gradient(circle at center, #3a3a3a 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.dark-theme-btn:hover::after {
+    opacity: 1;
+}
+
+.minecraft-theme-btn {
+    background-image: linear-gradient(45deg, #5c8d44 25%, #8b6d3f 25%, #8b6d3f 50%, #5c8d44 50%, #5c8d44 75%, #8b6d3f 75%);
+    background-size: 10px 10px;
+}
+
+.minecraft-theme-btn i {
+    filter: drop-shadow(1px 1px 0 black);
+}
+
+.theme-btn i {
+    font-size: 20px;
+    z-index: 1;
+}
+
+/* Анимация перехода между темами */
+.theme-transition {
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease !important;
+}
+
+.theme-transition * {
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+}
+
+/* Стилизация активной кнопки переключения темы */
+.theme-btn.active {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .theme-switcher {
+        bottom: 10px;
+        right: 10px;
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    body.minecraft-theme {
+        font-size: 14px;
+    }
+    
+    body.minecraft-theme .btn {
+        font-size: 12px;
+    }
+}
+
+/* Дополнительные стили для Minecraft темы */
+body.minecraft-theme .btn:active,
+body.minecraft-theme .btn:focus {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #000;
+}
+
+body.minecraft-theme input::placeholder {
+    color: #555;
+    font-style: italic;
+}
+
+body.minecraft-theme .dropdown-menu {
+    background-color: #8b8b8b;
+    border: 2px solid #000;
+    border-radius: 0;
+}
+
+body.minecraft-theme .dropdown-item {
+    color: #000000;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+body.minecraft-theme .dropdown-item:hover {
+    background-color: #6b6b6b;
+    color: #fff;
+}
+
+body.minecraft-theme .alert {
+    border: 2px solid #000;
+    border-radius: 0;
+}
+
+body.minecraft-theme .alert-success {
+    background-color: #5c8d44;
+    color: #fff;
+}
+
+body.minecraft-theme .alert-danger {
+    background-color: #aa3333;
+    color: #fff;
+}
+
+body.minecraft-theme .alert-warning {
+    background-color: #de9e2d;
+    color: #000;
+}
+
+body.minecraft-theme .alert-info {
+    background-color: #3d81bc;
+    color: #fff;
+}
+
+/* Уведомление о смене темы */
+.theme-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    z-index: 1500;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.theme-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+body.dark-theme .theme-notification {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #121212;
+}
+
+body.minecraft-theme .theme-notification {
+    background-color: #8b6d3f;
+    color: white;
+    border: 2px solid black;
+    border-radius: 0;
+    font-family: 'Minecraft', 'Courier New', monospace;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    box-shadow: 3px 3px 0 #000;
+}
+
+/* Улучшенные стили для активных пунктов меню тем */
+.dropdown-item.active,
+.dropdown-item[data-theme=""].active,
+.dropdown-item[data-theme="dark-theme"].active,
+.dropdown-item[data-theme="minecraft-theme"].active {
+    font-weight: bold !important;
+    position: relative;
+}
+
+.dropdown-item.theme-switcher-light.active {
+    background-color: #f8f9fa !important;
+    color: #333 !important;
+}
+
+.dropdown-item.theme-switcher-dark.active {
+    background-color: #212529 !important;
+    color: #fff !important;
+}
+
+.dropdown-item.theme-switcher-minecraft.active {
+    background-color: #5c8d44 !important;
+    color: #fff !important;
+    font-family: 'Minecraft', 'Courier New', monospace !important;
+}
+
+.dropdown-item.active::after {
+    content: "✓";
+    position: absolute;
+    right: 10px;
+    font-weight: bold;
+}
+
+/* Улучшения для выпадающих меню в темной теме */
+body.dark-theme .dropdown-menu {
+    background-color: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .dropdown-item {
+    color: #ffffff;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+body.dark-theme .dropdown-item:hover,
+body.dark-theme .dropdown-item:focus {
+    background-color: #3a3a3a;
+    color: #4fc3f7;
+}
+
+body.dark-theme .dropdown-item.active {
+    background-color: #212529;
+    color: white;
+}
+
+body.dark-theme .dropdown-divider {
+    border-top-color: #444;
+}
+
+/* Улучшения для выпадающих меню в Minecraft теме */
+body.minecraft-theme .dropdown-menu {
+    background-color: #8b8b8b;
+    border: 2px solid #000;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.8);
+    padding: 4px;
+}
+
+body.minecraft-theme .dropdown-item {
+    color: #ffffff;
+    text-shadow: 1px 1px 0 #000;
+    padding: 8px 16px;
+    margin: 2px 0;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+body.minecraft-theme .dropdown-item:hover,
+body.minecraft-theme .dropdown-item:focus {
+    background-color: #65482c;
+    color: #ffffff;
+    border: 1px solid #000;
+    transform: translateY(-1px);
+}
+
+body.minecraft-theme .dropdown-item.active {
+    background-color: #65482c;
+    color: #ffffff;
+    border: 1px solid #000;
+    box-shadow: inset 0 0 0 1px #ffd700;
+}
+
+body.minecraft-theme .dropdown-divider {
+    border-top: 2px solid #000;
+    margin: 4px 0;
+}
+
+/* Улучшения переключателя тем в панели навигации */
+body.dark-theme .theme-switcher-light {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+body.dark-theme .theme-switcher-dark {
+    background-color: #212529;
+    color: #fff;
+}
+
+body.dark-theme .theme-switcher-minecraft {
+    background-color: #5c8d44;
+    color: #fff;
+}
+
+body.minecraft-theme .theme-switcher-light,
+body.minecraft-theme .theme-switcher-dark,
+body.minecraft-theme .theme-switcher-minecraft {
+    text-transform: uppercase;
+    font-family: 'Minecraft', 'Courier New', monospace;
+    font-size: 0.85em;
+    padding: 10px 16px;
+}
+
+/* Темная тема для дропдауна */
+body.dark-theme .navbar-brand,
+body.dark-theme .nav-item {
+    color: #ffffff; /* Светлый текст для элементов навигации */
+}
+
+body.dark-theme .text-muted {
+    color: #cccccc !important;
+}
+
+body.dark-theme label {
+    color: #e0e0e0;
+}
+
+body.dark-theme .form-control::placeholder {
+    color: #999999;
+}
+
+/* Дополнительные стили для темной темы */
+body.dark-theme .table {
+    color: #ffffff; /* Белый текст для таблиц */
+}
+
+body.dark-theme .card {
+    color: #ffffff; /* Белый текст для карточек */
+}
+
+body.dark-theme .card-header {
+    background-color: #333333; /* Темно-серый фон для заголовка карточки */
+}
+
+body.dark-theme .modal-content {
+    color: #ffffff; /* Белый текст для модальных окон */
+}
+
+body.dark-theme .modal-header {
+    border-bottom-color: #444; /* Темная граница для заголовка модального окна */
+}
+
+body.dark-theme .modal-footer {
+    border-top-color: #444; /* Темная граница для подвала модального окна */
+}
+
+body.dark-theme .list-group-item {
+    background-color: #2a2a2a; /* Темный фон для элементов списка */
+    color: #ffffff; /* Белый текст для элементов списка */
+    border-color: #444; /* Темная граница для элементов списка */
+}
+
+/* Дополнительные стили для Minecraft темы */
+body.minecraft-theme .card {
+    color: #ffffff; /* Белый текст для карточек */
+    text-shadow: 1px 1px 0 #000; /* Тень для текста */
+}
+
+body.minecraft-theme .modal-content {
+    color: #ffffff; /* Белый текст для модальных окон */
+    text-shadow: 1px 1px 0 #000; /* Тень для текста */
+}
+
+body.minecraft-theme .modal-header,
+body.minecraft-theme .modal-footer {
+    border-color: #000; /* Чёрная граница для модальных окон */
+}
+
+body.minecraft-theme .list-group-item {
+    background-color: #8b8b8b; /* Серый фон как в Minecraft */
+    color: #ffffff; /* Белый текст */
+    border: 2px solid #000; /* Чёрная граница */
+    text-shadow: 1px 1px 0 #000; /* Тень для текста */
+}
+
+body.minecraft-theme .table {
+    color: #ffffff; /* Белый текст для таблиц */
+    text-shadow: 1px 1px 0 #000; /* Тень для текста */
+}
+
+body.minecraft-theme .table thead th {
+    color: #ffffff; /* Белый текст для заголовков таблиц */
+    text-shadow: 1px 1px 0 #000; /* Тень для текста */
+}
+
+/* Стили для текстовых элементов в темной и Minecraft темах */
+body.dark-theme p,
+body.dark-theme span:not(.badge):not(.badge-primary):not(.badge-secondary):not(.badge-success):not(.badge-danger):not(.badge-warning):not(.badge-info),
+body.dark-theme div.text-content,
+body.dark-theme .h1, body.dark-theme .h2, body.dark-theme .h3, body.dark-theme .h4, body.dark-theme .h5, body.dark-theme .h6,
+body.dark-theme h1, body.dark-theme h2, body.dark-theme h3, body.dark-theme h4, body.dark-theme h5, body.dark-theme h6 {
+    color: #ffffff; /* Белый текст для всех текстовых элементов */
+}
+
+body.minecraft-theme p,
+body.minecraft-theme span:not(.badge):not(.badge-primary):not(.badge-secondary):not(.badge-success):not(.badge-danger):not(.badge-warning):not(.badge-info),
+body.minecraft-theme div.text-content {
+    color: #ffffff; /* Белый текст для всех текстовых элементов */
+    text-shadow: 1px 1px 0 #000; /* Тень для текста */
+}
+
+/* Улучшения для навигационных элементов в темной теме */
+body.dark-theme .navbar {
+    background-color: #1a1a1a !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .dropdown-toggle::after {
+    color: #ffffff; /* Белый индикатор выпадающего меню */
+}
+
+body.dark-theme .nav-link {
+    color: #4fc3f7 !important; /* Яркий синий для ссылок */
+    font-weight: 500;
+}
+
+body.dark-theme .nav-link:hover {
+    color: #81d4fa !important; /* Более светлый оттенок при наведении */
+}
+
+body.dark-theme .nav-link.active {
+    color: #ffffff !important;
+    background-color: #333333;
+}
+
+body.dark-theme .navbar-brand {
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
+/* Улучшения для навигационных элементов в Minecraft теме */
+body.minecraft-theme .navbar,
+body.minecraft-theme .navbar-collapse {
+    background-color: #3d593e !important;
+    border-bottom: 2px solid #000000;
+}
+
+body.minecraft-theme .nav-link {
+    color: #ffffff !important;
+    background-color: #8b6d3f;
+    margin: 2px;
+    padding: 8px 12px;
+    border: 2px solid #000;
+    transition: all 0.2s;
+}
+
+body.minecraft-theme .dropdown-toggle::after {
+    color: #ffffff; /* Белый индикатор выпадающего меню */
+}
+
+body.minecraft-theme .nav-link:hover {
+    background-color: #65482c !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 #000;
+}
+
+body.minecraft-theme .nav-link.active {
+    background-color: #65482c !important;
+    box-shadow: inset 0 0 0 2px #ffd700; /* Золотое свечение для активного элемента */
+}
+
+body.minecraft-theme .navbar-brand {
+    color: #ffffff !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 #000;
+    letter-spacing: 1px;
+}
+
+/* Исправление контрастности для форм */
+body.dark-theme .form-control,
+body.dark-theme .form-select,
+body.dark-theme .form-check-input,
+body.dark-theme .input-group-text {
+    background-color: #333333;
+    color: #ffffff;
+    border-color: #555555;
+}
+
+body.dark-theme .form-control:focus,
+body.dark-theme .form-select:focus {
+    background-color: #404040;
+    color: #ffffff;
+    border-color: #4fc3f7;
+    box-shadow: 0 0 0 0.25rem rgba(79, 195, 247, 0.25);
+}
+
+body.minecraft-theme .form-control,
+body.minecraft-theme .form-select,
+body.minecraft-theme .form-check-input,
+body.minecraft-theme .input-group-text {
+    background-color: #c6c6c6;
+    color: #000000;
+    border: 2px solid #000000;
+    border-radius: 0;
+    font-family: 'Minecraft', 'Courier New', monospace;
+}
+
+body.minecraft-theme .form-control:focus,
+body.minecraft-theme .form-select:focus {
+    background-color: #d6d6d6;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5); /* Золотое свечение при фокусе */
+}
+
+/* Переопределяем стили для выпадающего меню тем */
+body.dark-theme .dropdown-item.theme-switcher-light {
+    color: #333333 !important; /* Темный текст для светлой темы */
+}
+
+body.dark-theme .dropdown-item.theme-switcher-dark,
+body.dark-theme .dropdown-item.theme-switcher-minecraft {
+    color: #ffffff !important; /* Светлый текст для других тем */
+}
+
+body.minecraft-theme .dropdown-item.theme-switcher-light {
+    color: #333333 !important; /* Темный текст для светлой темы */
+    text-shadow: none; /* Убираем тень */
+}
+
+body.minecraft-theme .dropdown-item.theme-switcher-minecraft {
+    color: #ffffff !important; /* Светлый текст для Minecraft темы */
+}
+
+/* Исправляем стили для кнопок */
+body.dark-theme .btn-outline-primary,
+body.dark-theme .btn-outline-secondary {
+    color: #4fc3f7;
+    border-color: #4fc3f7;
+}
+
+body.dark-theme .btn-outline-primary:hover,
+body.dark-theme .btn-outline-secondary:hover {
+    background-color: #4fc3f7;
+    color: #121212;
+}
+
+body.dark-theme .btn-outline-danger {
+    color: #ff5252;
+    border-color: #ff5252;
+}
+
+body.dark-theme .btn-outline-danger:hover {
+    background-color: #ff5252;
+    color: #ffffff;
+}
+
+body.minecraft-theme .btn {
+    font-family: 'Minecraft', 'Courier New', monospace;
+    text-transform: uppercase;
+    padding: 8px 16px;
+}
+
+/* Исправление контрастности для пагинации */
+body.dark-theme .page-link {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #4fc3f7;
+}
+
+body.dark-theme .page-item.active .page-link {
+    background-color: #4fc3f7;
+    border-color: #4fc3f7;
+    color: #121212;
+}
+
+body.dark-theme .page-item.disabled .page-link {
+    background-color: #1a1a1a;
+    border-color: #444;
+    color: #777;
+}
+
+body.minecraft-theme .page-link {
+    background-color: #8b6d3f;
+    border: 2px solid #000;
+    color: #ffffff;
+    font-family: 'Minecraft', 'Courier New', monospace;
+    margin: 2px;
+    border-radius: 0;
+}
+
+body.minecraft-theme .page-item.active .page-link {
+    background-color: #65482c;
+    border: 2px solid #000;
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px #ffd700;
+}
+
+body.minecraft-theme .page-item.disabled .page-link {
+    background-color: #777;
+    border: 2px solid #000;
+    color: #ccc;
+}
+
+/* Стили для календаря в Minecraft теме */
+body.minecraft-theme input[type="date"],
+body.minecraft-theme .flatpickr-calendar,
+body.minecraft-theme .flatpickr-input,
+body.minecraft-theme .minecraft-datepicker {
+    font-family: 'Minecraft', 'Courier New', monospace !important;
+    color: #ffffff !important;
+    text-shadow: 1px 1px 0 #000 !important;
+    background-color: #727272 !important;
+    border: 2px solid #000000 !important;
+    border-radius: 0 !important;
+    box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.3), inset -2px -2px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+body.minecraft-theme .flatpickr-calendar {
+    background-color: #8B8B8B !important;
+    color: #ffffff !important;
+    border: 3px solid #000000 !important;
+    box-shadow: 4px 4px 0 #000000 !important;
+}
+
+body.minecraft-theme .flatpickr-months,
+body.minecraft-theme .flatpickr-month,
+body.minecraft-theme .flatpickr-current-month,
+body.minecraft-theme .flatpickr-monthDropdown-months,
+body.minecraft-theme .flatpickr-weekdays,
+body.minecraft-theme .flatpickr-weekday {
+    background-color: #65482c !important;
+    color: #ffffff !important;
+    text-shadow: 1px 1px 0 #000 !important;
+    border: none !important;
+    font-family: 'Minecraft', 'Courier New', monospace !important;
+}
+
+body.minecraft-theme .flatpickr-day {
+    background-color: #727272 !important;
+    color: #ffffff !important;
+    text-shadow: 1px 1px 0 #000 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.3) !important;
+    font-family: 'Minecraft', 'Courier New', monospace !important;
+}
+
+body.minecraft-theme .flatpickr-day:hover,
+body.minecraft-theme .flatpickr-day.selected {
+    background-color: #5C8D44 !important;
+    border: 1px solid #ffffff !important;
+    box-shadow: inset 0 0 0 2px #ffd700 !important;
+}
+
+body.minecraft-theme .flatpickr-day.today {
+    background-color: #8b6d3f !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+}
+
+body.minecraft-theme .flatpickr-day.disabled {
+    color: #aaaaaa !important;
+    background-color: #555555 !important;
+}
+
+body.minecraft-theme .flatpickr-prev-month,
+body.minecraft-theme .flatpickr-next-month {
+    fill: #ffffff !important;
+    stroke: #000000 !important;
+    stroke-width: 3px !important;
+    filter: drop-shadow(1px 1px 0 #000) !important;
+}
+
+body.minecraft-theme .flatpickr-prev-month:hover svg,
+body.minecraft-theme .flatpickr-next-month:hover svg {
+    fill: #ffd700 !important;
+}
+
+/* Стили для нативного календаря на всех темах */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+}
+
+body.dark-theme input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    background-color: #555;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+body.minecraft-theme input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    background-color: #65482c;
+    padding: 5px;
+    border: 1px solid #000;
+    box-shadow: 2px 2px 0 #000;
+}
+
+/* Исправление для полей ввода даты */
+body.minecraft-theme input[type="date"] {
+    color: #ffffff !important;
+    background-color: #727272 !important;
+    padding: 8px 10px !important;
+    letter-spacing: 1px !important;
+}
+
+body.dark-theme input[type="date"] {
+    color: #ffffff !important;
+    background-color: #333333 !important;
+    border-color: #555555 !important;
+}
+
+/* Стили для календаря в темной теме */
+body.dark-theme .flatpickr-calendar {
+    background-color: #2a2a2a !important;
+    border-color: #444 !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3) !important;
+    color: #ffffff !important;
+}
+
+body.dark-theme .flatpickr-months,
+body.dark-theme .flatpickr-month,
+body.dark-theme .flatpickr-current-month,
+body.dark-theme .flatpickr-monthDropdown-months {
+    background-color: #212121 !important;
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+body.dark-theme .flatpickr-weekdays,
+body.dark-theme .flatpickr-weekday {
+    background-color: #333 !important;
+    color: #4fc3f7 !important;
+}
+
+body.dark-theme .flatpickr-day {
+    background-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+body.dark-theme .flatpickr-day:hover {
+    background-color: #3a3a3a !important;
+    color: #4fc3f7 !important;
+}
+
+body.dark-theme .flatpickr-day.selected {
+    background-color: #4fc3f7 !important;
+    color: #121212 !important;
+    border-color: #4fc3f7 !important;
+}
+
+body.dark-theme .flatpickr-day.today {
+    background-color: #333 !important;
+    border-color: #4fc3f7 !important;
+    color: #4fc3f7 !important;
+}
+
+body.dark-theme .flatpickr-day.disabled {
+    color: #777 !important;
+    background-color: #1a1a1a !important;
+}
+
+body.dark-theme .flatpickr-prev-month,
+body.dark-theme .flatpickr-next-month {
+    fill: #e0e0e0 !important;
+}
+
+body.dark-theme .flatpickr-prev-month:hover svg,
+body.dark-theme .flatpickr-next-month:hover svg {
+    fill: #4fc3f7 !important;
+} 

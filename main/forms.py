@@ -3,6 +3,17 @@ from django.forms import inlineformset_factory
 from .models import Document, Organisation, Service, ViewerCategory
 
 
+class DateInput(forms.DateInput):
+    """Кастомный виджет для выбора даты с календарем"""
+    input_type = 'date'
+    
+    def __init__(self, attrs=None, format=None):
+        default_attrs = {'class': 'form-control minecraft-datepicker'}
+        if attrs:
+            default_attrs.update(attrs)
+        super().__init__(default_attrs, format)
+
+
 class DocsForm(forms.ModelForm):
     class Meta:
         model = Document
@@ -19,6 +30,9 @@ class DocsForm(forms.ModelForm):
             'services',
             'viewers',
         )
+        widgets = {
+            'date': DateInput(),
+        }
 
 
 class OrganisationForm(forms.ModelForm):

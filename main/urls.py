@@ -30,6 +30,21 @@ urlpatterns = [
         name='create_organisation'
     ),
     path(
+        'organisations/',
+        views.organisations_list,
+        name='organisations_list'
+    ),
+    path(
+        'organisations/edit/<int:pk>/',
+        views.OrganisationUpdateView.as_view(),
+        name='edit_organisation'
+    ),
+    path(
+        'organisations/delete/<int:pk>/',
+        views.delete_organisation,
+        name='delete_organisation'
+    ),
+    path(
         'create_service/',
         views.create_service,
         name='create_service'
@@ -64,5 +79,17 @@ urlpatterns = [
         views.download_all_docs,
         name='download_all_docs'
     ),
+    path(
+        'documents/',
+        views.documents_list,
+        name='documents_list'
+    ),
+    path(
+        'documents/edit/<int:pk>/',
+        views.DocumentUpdateView.as_view(),
+        name='edit_document'
+    ),
     path('service-ajax/', views.service_ajax, name='service_ajax'),
+    path('extract-organisation-data/', views.extract_organisation_data, name='extract_organisation_data'),
+    path('get-organisations-data/', views.get_organisations_data, name='get_organisations_data'),
 ]

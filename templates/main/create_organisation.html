@@ -1,68 +1,186 @@
-{% extends 'base.html' %}
-{% load bootstrap5 %}
+{% extends '../wrapper.html' %}
+
+{% block title %}Добавление организации{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card p-4">
-                <h2 class="mb-4">Организация</h2>
-                <form method="post" enctype="multipart/form-data" id="orgForm">  {# Добавляем enctype для поддержки загрузки файлов и ID для JS #}
+{% load user_filters %}
+<style>
+    .input-sm {
+        height: 38px !important;
+    }
+    .text-area-md {
+        height: 100px !important;
+    }
+</style>
+<div class="row my-4">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-building me-2"></i>Добавление новой организации</h4>
+            </div>
+            <div class="card-body p-4">
+                <!-- Область для отображения данных из документа -->
+                <div class="alert alert-success mb-4 d-none" id="extractedDataAlert">
+                    <h5 class="mb-2"><i class="bi bi-check-circle-fill me-2"></i>Данные загружены из документа</h5>
+                    <p class="mb-0">Форма была заполнена данными, извлеченными из загруженного документа. Пожалуйста, проверьте и отредактируйте информацию при необходимости.</p>
+                </div>
+                
+                <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
-
-                    <div class="row">
-                        <!-- Existing form fields (name, inn, etc.) -->
-                        </div>
-
-                    {# Добавляем поле для загрузки файла #}
-                    <div class="form-group mb-3">
-                        <label for="fileUpload" class="form-label">Загрузите файлы (drag & drop)</label>
-                        <div id="dropZone" class="dropzone">
-                            <p>Перетащите файлы сюда или нажмите, чтобы выбрать</p>
-                            <input type="file" id="fileUpload" name="files" multiple style="display: none;">  {# Скрываем стандартный input #}
-                            <div id="fileList"></div>  {# Контейнер для отображения списка файлов #}
-                        </div>
+                    
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>Заполните всю необходимую информацию об организации. Поля, отмеченные звездочкой (*), обязательны для заполнения.
                     </div>
-
-
-                    <div class="row">
+                    
+                    <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="{{ form.correspondent_bank_account.id_for_label }}"
-                                       class="form-label">{{ form.correspondent_bank_account.label }}</label>
-                                {{ form.correspondent_bank_account|addclass:"form-control input-sm" }}
-                                <div class="form-text">{{ form.correspondent_bank_account.help_text }}</div>
-                                {% if form.correspondent_bank_account.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.correspondent_bank_account.errors }}
-                                    </div>
+                                <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                                {{ form.name|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.name.help_text }}</div>
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.name.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.short_name.id_for_label }}" class="form-label">{{ form.short_name.label }}</label>
+                                {{ form.short_name|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.short_name.help_text }}</div>
+                                {% if form.short_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.short_name.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.fio.id_for_label }}" class="form-label">{{ form.fio.label }}</label>
+                                {{ form.fio|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.fio.help_text }}</div>
+                                {% if form.fio.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.fio.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.function.id_for_label }}" class="form-label">{{ form.function.label }}</label>
+                                {{ form.function|addclass:"form-select input-sm" }}
+                                {% if form.function.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.function.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.address.id_for_label }}" class="form-label">{{ form.address.label }}</label>
+                                {{ form.address|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.address.help_text }}</div>
+                                {% if form.address.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.address.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.inn.id_for_label }}" class="form-label">{{ form.inn.label }}</label>
+                                {{ form.inn|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.inn.help_text }}</div>
+                                {% if form.inn.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.inn.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.kpp.id_for_label }}" class="form-label">{{ form.kpp.label }}</label>
+                                {{ form.kpp|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.kpp.help_text }}</div>
+                                {% if form.kpp.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.kpp.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.bank_name.id_for_label }}" class="form-label">{{ form.bank_name.label }}</label>
+                                {{ form.bank_name|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.bank_name.help_text }}</div>
+                                {% if form.bank_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.bank_name.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="{{ form.bik.id_for_label }}" class="form-label">{{ form.bik.label }}</label>
+                                {{ form.bik|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.bik.help_text }}</div>
+                                {% if form.bik.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.bik.errors }}
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.bank_account.id_for_label }}" class="form-label">{{ form.bank_account.label }}</label>
+                                {{ form.bank_account|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.bank_account.help_text }}</div>
+                                {% if form.bank_account.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.bank_account.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.correspondent_bank_account.id_for_label }}" class="form-label">{{ form.correspondent_bank_account.label }}</label>
+                                {{ form.correspondent_bank_account|addclass:"form-control input-sm" }}
+                                <div class="form-text">{{ form.correspondent_bank_account.help_text }}</div>
+                                {% if form.correspondent_bank_account.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.correspondent_bank_account.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="form-group mb-4">
-                        <label for="{{ form.requisites.id_for_label }}"
-                               class="form-label">{{ form.requisites.label }}</label>
-Markup
-
-
+                        <label for="{{ form.requisites.id_for_label }}" class="form-label">{{ form.requisites.label }}</label>
                         {{ form.requisites|addclass:"form-control text-area-md" }}
                         <div class="form-text">{{ form.requisites.help_text }}</div>
                         {% if form.requisites.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.requisites.errors }}
-                            </div>
+                        <div class="invalid-feedback d-block">
+                            {{ form.requisites.errors }}
+                        </div>
                         {% endif %}
                     </div>
-
+                    
                     <div class="form-check form-switch mb-4">
                         {{ form.is_our|addclass:"form-check-input" }}
-                        <label class="form-check-label"
-                               for="{{ form.is_our.id_for_label }}">{{ form.is_our.label }}</label>
+                        <label class="form-check-label" for="{{ form.is_our.id_for_label }}">{{ form.is_our.label }}</label>
                         <div class="form-text">Отметьте, если это ваша организация (для отображения в качестве исполнителя)</div>
                     </div>
-
+                    
                     <div class="d-flex justify-content-between mt-4">
                         <a href="{% url 'main:index' %}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Вернуться
@@ -77,135 +195,155 @@ Markup
     </div>
 </div>
 
-<style>
-    /* Стили для dropzone */
-    .dropzone {
-        border: 2px dashed #ccc;
-        padding: 20px;
-        text-align: center;
-        cursor: pointer;
-    }
-
-    .dropzone:hover {
-        background-color: #f8f9fa;
-    }
-
-    .dropzone.dragover {
-        border-color: #007bff;
-        background-color: #e9ecef;
-    }
-
-    #fileList {
-        margin-top: 10px;
-    }
-
-    #fileList p {
-        margin-bottom: 5px;
-    }
-</style>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const dropZone = document.getElementById('dropZone');
-        const fileUpload = document.getElementById('fileUpload');
-        const fileList = document.getElementById('fileList');
-        const form = document.getElementById('orgForm');
-
-        // Prevent default drag behaviors
-Markup
-
-
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false)
-            document.body.addEventListener(eventName, preventDefaults, false)
-        });
-
-        // Highlight drop zone when item is dragged over it
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false)
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false)
-        });
-
-        function preventDefaults(e) {
-            e.preventDefault()
-            e.stopPropagation()
-        }
-
-        function highlight(e) {
-            dropZone.classList.add('dragover')
-        }
-
-        function unhighlight(e) {
-            dropZone.classList.remove('dragover')
-        }
-
-        dropZone.addEventListener('drop', handleDrop, false);
-        fileUpload.addEventListener('change', handleFileInputChange, false); // Handle clicks
-
-
-        function handleDrop(e) {
-            const dt = e.dataTransfer
-            const files = dt.files
-            handleFiles(files)
-        }
-
-
-        function handleFileInputChange(e) {
-            const files = e.target.files;
-            handleFiles(files);
-        }
-
-
-        function handleFiles(files) {
-            files = [...files]  // Convert FileList to Array
-            files.forEach(uploadFile);
-        }
-
-
-        function uploadFile(file) {
-const listItem = document.createElement('p');
-            listItem.textContent = file.name;
-            fileList.appendChild(listItem);
-        }
-
-        dropZone.addEventListener('click', function() {
-            fileUpload.click(); // Trigger the file input when the dropzone is clicked
-        });
-
-        form.addEventListener('submit', function(event) {
-            const files = fileUpload.files; // Get files from the input
-            if (files.length > 0) {
-                // Append each file to the FormData
-                const formData = new FormData(form); // Populate with existing form data
-                for (let i = 0; i < files.length; i++) {
-                    formData.append('files', files[i]); // Append each file
-                }
-
-                // Override the default form submission
-                event.preventDefault();
-
-                // Send the FormData with AJAX
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value // Include CSRF token in headers
-                    }
-                })
-                .then(response => response.json()) // Parse JSON response
-                .then(data => {
-                    console.log('Success:', data);
-                    alert('Файлы успешно загружены!'); // Display a success message
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Ошибка при загрузке файлов.'); // Display an error message
-                });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Проверяем, есть ли данные в localStorage
+        const extractedDataString = localStorage.getItem('extractedOrganisationData');
+        if (extractedDataString) {
+            try {
+                const extractedData = JSON.parse(extractedDataString);
+                
+                // Заполняем форму полученными данными
+                fillFormWithExtractedData(extractedData);
+                
+                // Показываем уведомление
+                document.getElementById('extractedDataAlert').classList.remove('d-none');
+                
+                // Удаляем данные из localStorage
+                localStorage.removeItem('extractedOrganisationData');
+            } catch (e) {
+                console.error('Error parsing extracted data:', e);
             }
-        });
+        }
+        
+        // Функция для заполнения формы данными
+        function fillFormWithExtractedData(data) {
+            // Получаем все поля формы
+            const nameField = document.getElementById('id_name');
+            const shortNameField = document.getElementById('id_short_name');
+            const fioField = document.getElementById('id_fio');
+            const functionField = document.getElementById('id_function');
+            const innField = document.getElementById('id_inn');
+            const kppField = document.getElementById('id_kpp');
+            const bikField = document.getElementById('id_bik');
+            const bankNameField = document.getElementById('id_bank_name');
+            const correspondentBankAccountField = document.getElementById('id_correspondent_bank_account');
+            const bankAccountField = document.getElementById('id_bank_account');
+            const addressField = document.getElementById('id_address');
+            const requisitesField = document.getElementById('id_requisites');
+            
+            // Заполняем поля данными
+            if (nameField && data.name) {
+                // Проверяем, содержит ли имя формат с представителем
+                if (!data.name.includes('в лице')) {
+                    // Если формат неполный, и у нас есть fio и function, то добавляем их
+                    if (data.fio && data.function) {
+                        nameField.value = `${data.name}, в лице ${data.function.toLowerCase()} ${data.fio}`;
+                    } else {
+                        nameField.value = data.name;
+                    }
+                } else {
+                    // Если формат полный, используем как есть
+                    nameField.value = data.name;
+                }
+            }
+            
+            if (shortNameField && data.short_name) shortNameField.value = data.short_name;
+            if (fioField && data.fio) fioField.value = data.fio;
+            
+            // Для select поля function нужно найти соответствующий option
+            if (functionField && data.function) {
+                const options = functionField.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].text === data.function || 
+                        options[i].value === data.function) {
+                        functionField.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            if (innField && data.inn) innField.value = data.inn;
+            if (kppField && data.kpp) kppField.value = data.kpp;
+            if (bikField && data.bik) bikField.value = data.bik;
+            if (bankNameField && data.bank_name) bankNameField.value = data.bank_name;
+            if (correspondentBankAccountField && data.correspondent_bank_account) 
+                correspondentBankAccountField.value = data.correspondent_bank_account;
+            if (bankAccountField && data.bank_account) bankAccountField.value = data.bank_account;
+            if (addressField && data.address) addressField.value = data.address;
+            
+            // Если есть полные реквизиты, используем их, иначе формируем из других полей
+            if (requisitesField) {
+                if (data.requisites && data.requisites.trim()) {
+                    requisitesField.value = data.requisites;
+                } else {
+                    // Формируем структурированные реквизиты из доступных данных
+                    let requisitesLines = [];
+                    
+                    // Название организации (краткое)
+                    if (data.short_name) {
+                        requisitesLines.push(data.short_name);
+                        requisitesLines.push(''); // Пустая строка после названия
+                    }
+                    
+                    // Адрес (возможно в 2 строки)
+                    if (data.address) {
+                        // Разбиваем длинный адрес на 2 строки, если он длиннее 60 символов
+                        if (data.address.length > 60) {
+                            const middleIndex = Math.floor(data.address.length / 2);
+                            let splitIndex = data.address.indexOf(',', middleIndex);
+                            if (splitIndex === -1) {
+                                splitIndex = data.address.indexOf(' ', middleIndex);
+                            }
+                            if (splitIndex !== -1) {
+                                requisitesLines.push(data.address.substring(0, splitIndex + 1).trim());
+                                requisitesLines.push(data.address.substring(splitIndex + 1).trim());
+                            } else {
+                                requisitesLines.push(data.address);
+                            }
+                        } else {
+                            requisitesLines.push(data.address);
+                        }
+                    }
+                    
+                    // ИНН и КПП в одной строке
+                    const innKppParts = [];
+                    if (data.inn) innKppParts.push(`ИНН ${data.inn}`);
+                    if (data.kpp) innKppParts.push(`КПП ${data.kpp}`);
+                    if (innKppParts.length > 0) {
+                        requisitesLines.push(innKppParts.join(', ') + ',');
+                    }
+                    
+                    // Расчетный счет
+                    if (data.bank_account) {
+                        requisitesLines.push(`р/с ${data.bank_account},`);
+                    }
+                    
+                    // Корреспондентский счет
+                    if (data.correspondent_bank_account) {
+                        requisitesLines.push(`к/с ${data.correspondent_bank_account},`);
+                    }
+                    
+                    // Банк
+                    if (data.bank_name) {
+                        requisitesLines.push(`банк: ${data.bank_name},`);
+                    }
+                    
+                    // БИК
+                    if (data.bik) {
+                        requisitesLines.push(`БИК: ${data.bik}.`);
+                    }
+                    
+                    // Объединяем все строки с переносами
+                    requisitesField.value = requisitesLines.join('\n');
+                }
+            }
+            
+            // По умолчанию организация не является "нашей"
+            if (document.getElementById('id_is_our')) {
+                document.getElementById('id_is_our').checked = false;
+            }
+        }
     });
 </script>
 {% endblock %}

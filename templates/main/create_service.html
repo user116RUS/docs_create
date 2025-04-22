@@ -42,6 +42,11 @@
     }
 </style>
 
+<!-- Подключаем flatpickr для календаря -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+
 <div class="row my-4">
     <div class="col-lg-10 mx-auto">
         <div class="card shadow-sm">
@@ -73,7 +78,7 @@
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
-                                {{ form.date|addclass:"form-control input-sm" }}
+                                {{ form.date|addclass:"form-control input-sm date-picker" }}
                                 <div class="form-text">{{ form.date.help_text }}</div>
                                 {% if form.date.errors %}
                                 <div class="invalid-feedback d-block">
@@ -153,6 +158,14 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Инициализируем календарь для поля даты
+        flatpickr('.date-picker', {
+            dateFormat: "d.m.Y г.",
+            locale: "ru",
+            disableMobile: true,
+            position: "below"
+        });
+        
         const addCategoryBtn = document.getElementById('add-category');
         const categoryContainer = document.getElementById('viewer-categories');
         const totalForms = document.getElementById('id_viewer_categories-TOTAL_FORMS');

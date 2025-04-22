@@ -72,6 +72,204 @@
         cursor: pointer;
         color: #dc3545;
     }
+    .drag-drop-zone {
+        border: 2px dashed #ccc;
+        border-radius: 5px;
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 20px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .drag-drop-zone.dragover {
+        background-color: #e9f0fd;
+        border-color: #0d6efd;
+    }
+    .drag-drop-icon {
+        font-size: 2rem;
+        color: #6c757d;
+        margin-bottom: 15px;
+    }
+    .processing-spinner {
+        display: none;
+    }
+    
+    /* Стили для календаря в стиле Minecraft */
+    .minecraft-datepicker {
+        /* Общие стили для поля даты */
+        padding: 8px 12px !important;
+        cursor: pointer !important;
+        letter-spacing: 1px !important;
+        border-radius: 4px !important;
+    }
+    
+    /* Основная светлая тема */
+    body:not(.dark-theme):not(.minecraft-theme) .minecraft-datepicker {
+        background-color: #ffffff !important;
+        color: #333333 !important;
+        border: 1px solid #ced4da !important;
+    }
+    
+    /* Темная тема для поля даты */
+    body.dark-theme .minecraft-datepicker {
+        background-color: #333333 !important;
+        color: #ffffff !important;
+        border: 1px solid #555555 !important;
+        box-shadow: none !important;
+    }
+    
+    /* Minecraft тема для поля даты */
+    body.minecraft-theme .minecraft-datepicker {
+        font-family: 'Minecraft', sans-serif !important;
+        background-color: #727272 !important;
+        color: #FFFFFF !important;
+        border: 2px solid #000000 !important;
+        box-shadow: inset 0 0 0 2px #555555, 2px 2px 0px #000000 !important;
+        text-shadow: 2px 2px 0px #000000 !important;
+        border-radius: 0 !important;
+    }
+    
+    body.minecraft-theme .minecraft-datepicker:hover {
+        background-color: #5E5E5E !important;
+    }
+    
+    body.minecraft-theme .minecraft-datepicker:focus {
+        outline: none !important;
+        background-color: #5E5E5E !important;
+        box-shadow: inset 0 0 0 2px #444444, 2px 2px 0px #000000, 0 0 0 2px #ffd700 !important;
+    }
+    
+    /* Стили для нативного календаря */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+    }
+    
+    body.dark-theme input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+    
+    body.minecraft-theme input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        background-color: #555555;
+        border-radius: 0;
+        box-shadow: 2px 2px 0px #000000;
+    }
+    
+    /* Стили для темной темы карточек услуг */
+    body.dark-theme .service-card {
+        border-color: #444;
+        background-color: #2a2a2a;
+    }
+    
+    body.dark-theme .service-header {
+        background-color: #333;
+        border-color: #444;
+    }
+    
+    body.dark-theme .service-card.selected {
+        border-color: #4fc3f7;
+        box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
+    }
+    
+    body.dark-theme .service-card.selected .service-header {
+        background-color: #1e3a4a;
+    }
+    
+    body.dark-theme .category-item {
+        border-color: #444;
+    }
+    
+    body.dark-theme .selected-services-summary {
+        background-color: #1e3a4a;
+        border-color: #4fc3f7;
+    }
+    
+    body.dark-theme .category-form-row {
+        background-color: #333;
+    }
+    
+    body.dark-theme .drag-drop-zone {
+        border-color: #444;
+        background-color: #333;
+    }
+    
+    body.dark-theme .drag-drop-zone.dragover {
+        background-color: #1e3a4a;
+        border-color: #4fc3f7;
+    }
+    
+    /* Стили для Minecraft темы карточек услуг */
+    body.minecraft-theme .service-card {
+        border: 2px solid #000;
+        background-color: #8b8b8b;
+        border-radius: 0;
+        margin-bottom: 15px;
+        box-shadow: 3px 3px 0 #000;
+    }
+    
+    body.minecraft-theme .service-header {
+        background-color: #65482c;
+        border-bottom: 2px solid #000;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
+    
+    body.minecraft-theme .service-card.selected {
+        border-color: #ffd700;
+        box-shadow: 0 0 0 2px #ffd700, 3px 3px 0 #000;
+    }
+    
+    body.minecraft-theme .service-card.selected .service-header {
+        background-color: #5c8d44;
+    }
+    
+    body.minecraft-theme .category-item {
+        border-bottom: 2px solid #000;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
+    
+    body.minecraft-theme .selected-services-summary {
+        background-color: #5c8d44;
+        border: 2px solid #000;
+        border-radius: 0;
+        box-shadow: 3px 3px 0 #000;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
+    
+    body.minecraft-theme .category-form-row {
+        background-color: #727272;
+        border: 2px solid #000;
+        border-radius: 0;
+        box-shadow: 2px 2px 0 #000;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
+    
+    body.minecraft-theme .drag-drop-zone {
+        border: 2px dashed #000;
+        background-color: #5c8d44;
+        border-radius: 0;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
+    
+    body.minecraft-theme .drag-drop-zone.dragover {
+        background-color: #65482c;
+        border: 2px dashed #ffd700;
+    }
+    
+    body.minecraft-theme .drag-drop-icon {
+        color: #fff;
+        text-shadow: 2px 2px 0 #000;
+        font-size: 2.5rem;
+    }
+    
+    body.minecraft-theme .form-check-input {
+        border-radius: 0 !important;
+    }
 </style>
 <div class="row my-4">
     <div class="col-lg-10 mx-auto">
@@ -80,6 +278,33 @@
                 <h4 class="mb-0"><i class="bi bi-file-earmark-plus me-2"></i>Создание нового документа</h4>
             </div>
             <div class="card-body p-4">
+                <!-- Область для Drag and Drop документа -->
+                <div class="drag-drop-zone mb-4" id="dropZone">
+                    <div class="drag-drop-icon">
+                        <i class="bi bi-file-earmark-arrow-up"></i>
+                    </div>
+                    <h5>Перетащите сюда предыдущий договор</h5>
+                    <p class="text-muted">Или нажмите, чтобы выбрать файл в формате .docx</p>
+                    <input type="file" id="fileInput" accept=".docx" style="display: none;">
+                    <div class="processing-spinner" id="processingSpinner">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                        <p class="mt-2">Обработка документа...</p>
+                    </div>
+                </div>
+                
+                <!-- Результаты анализа документа -->
+                <div class="alert alert-success d-none" id="extractionResult">
+                    <h5><i class="bi bi-check-circle-fill me-2"></i>Данные успешно извлечены!</h5>
+                    <p>Информация об организации была извлечена из документа. Вы можете использовать эти данные для создания новой организации.</p>
+                    <div class="mt-2">
+                        <a href="#" id="createOrganisationBtn" class="btn btn-sm btn-success">
+                            <i class="bi bi-plus-circle me-1"></i>Создать организацию из документа
+                        </a>
+                    </div>
+                </div>
+                
                 <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
                     
@@ -115,7 +340,8 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
-                                {{ form.date|addclass:"form-control input-sm" }}
+                                <!-- Используем виджет с классом minecraft-datepicker -->
+                                {{ form.date }}
                                 <div class="form-text">{{ form.date.help_text }}</div>
                                 {% if form.date.errors %}
                                 <div class="invalid-feedback d-block">
@@ -241,6 +467,9 @@
                                                 <a href="#" class="btn btn-sm btn-outline-primary edit-service-btn">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+                                                <button class="btn btn-sm btn-outline-danger ms-2 delete-service-btn">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
                                         <div class="service-body">
@@ -405,11 +634,328 @@
     </div>
 </div>
 
+<!-- Подключаем flatpickr для более настраиваемого календаря -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Получаем форму и кнопку отправки
     const form = document.querySelector('form');
     const submitButton = document.getElementById('submitButton');
+    
+    // Получаем элементы для автозаполнения address_and_time
+    const customerSelect = document.getElementById('id_customer');
+    const timeInput = document.getElementById('id_time');
+    const addressAndTimeInput = document.getElementById('id_address_and_time');
+    
+    // Добавляем обработчик для автозаполнения цены прописью
+    const priceInFiguresField = document.getElementById('id_price_in_figures');
+    const priceInWordsField = document.getElementById('id_price_in_words');
+    
+    // Автозаполнение цены прописью на основе цены цифрами
+    if (priceInFiguresField && priceInWordsField) {
+        // Используем глобальную функцию numberToWords из wrapper.html
+        priceInFiguresField.addEventListener('input', function() {
+            if (typeof numberToWords === 'function') {
+                const numericValue = this.value.replace(/[^\d.,]/g, '').replace(',', '.');
+                if (numericValue) {
+                    priceInWordsField.value = numberToWords(numericValue);
+                } else {
+                    priceInWordsField.value = '';
+                }
+            }
+        });
+        
+        // Также вызываем функцию при загрузке страницы, если поле уже содержит значение
+        if (priceInFiguresField.value && typeof numberToWords === 'function') {
+            priceInWordsField.value = numberToWords(priceInFiguresField.value);
+        }
+    }
+    
+    // Функция для автоматического заполнения поля address_and_time
+    function updateAddressAndTime() {
+        if (customerSelect && timeInput && addressAndTimeInput) {
+            // Получаем выбранный элемент select
+            const selectedOption = customerSelect.options[customerSelect.selectedIndex];
+            // Получаем значение времени
+            const timeValue = timeInput.value;
+            
+            // Если выбран заказчик и указано время
+            if (selectedOption && selectedOption.value && timeValue) {
+                // Получаем адрес из атрибута data-address, если он есть
+                const customerAddress = selectedOption.getAttribute('data-address');
+                if (customerAddress) {
+                    // Извлекаем первое время из диапазона (например, из "09:30-10:30" берем "09:30")
+                    const startTime = timeValue.split('-')[0].trim();
+                    // Формируем строку адреса с временем
+                    addressAndTimeInput.value = `${customerAddress}. Время проведения: с ${startTime}`;
+                }
+            }
+        }
+    }
+    
+    // Добавляем атрибуты data-address к опциям списка заказчиков
+    if (customerSelect) {
+        fetch('/get-organisations-data/')
+            .then(response => response.json())
+            .then(data => {
+                // Для каждой организации добавляем data-атрибуты в соответствующую опцию
+                for (const option of customerSelect.options) {
+                    if (option.value && data[option.value]) {
+                        option.setAttribute('data-address', data[option.value].address);
+                    }
+                }
+                // После загрузки данных вызываем функцию обновления поля
+                updateAddressAndTime();
+            })
+            .catch(error => console.error('Error loading organisations data:', error));
+    }
+    
+    // Добавляем обработчики событий для автозаполнения
+    if (customerSelect) {
+        customerSelect.addEventListener('change', updateAddressAndTime);
+    }
+    
+    if (timeInput) {
+        timeInput.addEventListener('input', updateAddressAndTime);
+        timeInput.addEventListener('change', updateAddressAndTime);
+    }
+    
+    // Инициализируем календарь Minecraft
+    const dateInput = document.querySelector('.minecraft-datepicker');
+    if (dateInput) {
+        // Загружаем шрифт Minecraft
+        const fontLink = document.createElement('link');
+        fontLink.href = 'https://fonts.cdnfonts.com/css/minecraft-4';
+        fontLink.rel = 'stylesheet';
+        document.head.appendChild(fontLink);
+        
+        // Инициализируем flatpickr (если используем его вместо нативного)
+        const fp = flatpickr(dateInput, {
+            dateFormat: "d.m.Y",
+            locale: "ru",
+            disableMobile: true,
+            position: "below",
+            onChange: function(selectedDates, dateStr) {
+                // Преобразуем дату в формат "день месяц год" (например, "15 июня 2023")
+                if (selectedDates.length > 0) {
+                    const months = [
+                        'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+                    ];
+                    const date = selectedDates[0];
+                    const day = date.getDate();
+                    const month = months[date.getMonth()];
+                    const year = date.getFullYear();
+                    
+                    // Устанавливаем отформатированное значение в поле
+                    dateInput.value = `${day} ${month} ${year}`;
+                }
+            },
+            onOpen: function(selectedDates, dateStr, instance) {
+                // Добавляем класс темы к календарю при открытии
+                if (document.body.classList.contains('dark-theme')) {
+                    instance.calendarContainer.classList.add('dark-theme');
+                } else if (document.body.classList.contains('minecraft-theme')) {
+                    instance.calendarContainer.classList.add('minecraft-theme');
+                }
+                
+                // Проигрываем звук клика Minecraft
+                if (document.body.classList.contains('minecraft-theme')) {
+                    playMinecraftSound('click');
+                }
+            },
+            onClose: function() {
+                // Проигрываем звук успеха Minecraft
+                if (document.body.classList.contains('minecraft-theme')) {
+                    playMinecraftSound('success');
+                }
+            }
+        });
+        
+        // Отслеживаем изменение темы для обновления стилей календаря
+        document.addEventListener('themeChanged', function(e) {
+            if (fp && fp.calendarContainer) {
+                // Удаляем все классы тем
+                fp.calendarContainer.classList.remove('dark-theme', 'minecraft-theme');
+                
+                // Добавляем соответствующий класс темы
+                if (e.detail.theme === 'dark-theme') {
+                    fp.calendarContainer.classList.add('dark-theme');
+                } else if (e.detail.theme === 'minecraft-theme') {
+                    fp.calendarContainer.classList.add('minecraft-theme');
+                }
+                
+                // Перерисовываем календарь
+                fp.redraw();
+            }
+        });
+        
+        // Добавляем звуки в стиле Minecraft при взаимодействии с календарем
+        dateInput.addEventListener('focus', function() {
+            if (document.body.classList.contains('minecraft-theme')) {
+                playMinecraftSound('click');
+            }
+        });
+        
+        dateInput.addEventListener('change', function() {
+            if (document.body.classList.contains('minecraft-theme')) {
+                playMinecraftSound('success');
+            }
+        });
+    }
+    
+    // Функция для воспроизведения звуков Minecraft
+    function playMinecraftSound(type) {
+        // Звуки Minecraft (можно заменить на реальные звуки из игры)
+        const sounds = {
+            click: 'https://www.myinstants.com/media/sounds/minecraft-click.mp3',
+            success: 'https://www.myinstants.com/media/sounds/minecraft_xp.mp3'
+        };
+        
+        if (sounds[type]) {
+            const audio = new Audio(sounds[type]);
+            audio.volume = 0.5;
+            audio.play();
+        }
+    }
+    
+    // Элементы для загрузки файла и обработки результатов
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const processingSpinner = document.getElementById('processingSpinner');
+    const extractionResult = document.getElementById('extractionResult');
+    const createOrganisationBtn = document.getElementById('createOrganisationBtn');
+    
+    // Храним полученные данные из документа
+    let extractedOrganisationData = null;
+    
+    // Обработчики для Drag and Drop
+    if (dropZone) {
+        // Предотвращаем стандартное поведение браузера для events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // Добавляем визуальный эффект при перетаскивании файла
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+        
+        // Обработка события сброса файла в зоне
+        dropZone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                processFile(files[0]);
+            }
+        }
+        
+        // Обработчик клика по зоне загрузки
+        dropZone.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // Обработчик выбора файла через диалог
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                processFile(fileInput.files[0]);
+            }
+        });
+    }
+    
+    // Функция обработки файла
+    function processFile(file) {
+        // Проверяем, что это документ Word
+        if (!file.name.endsWith('.docx')) {
+            alert('Пожалуйста, загрузите файл в формате .docx');
+            return;
+        }
+        
+        // Показываем спиннер загрузки
+        processingSpinner.style.display = 'block';
+        
+        // Создаем объект FormData для отправки файла
+        const formData = new FormData();
+        formData.append('document', file);
+        
+        // Добавляем CSRF-токен для Django
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        
+        // Отправляем запрос на сервер
+        fetch('{% url "main:extract_organisation_data" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Скрываем спиннер
+            processingSpinner.style.display = 'none';
+            
+            if (data.success) {
+                // Сохраняем данные организации
+                extractedOrganisationData = data.data;
+                
+                // Показываем результат
+                extractionResult.classList.remove('d-none');
+                
+                console.log('Extracted data:', extractedOrganisationData);
+            } else {
+                // Показываем ошибку
+                alert('Ошибка при обработке документа: ' + data.error);
+            }
+        })
+        .catch(error => {
+            // Скрываем спиннер
+            processingSpinner.style.display = 'none';
+            
+            console.error('Error:', error);
+            alert('Произошла ошибка при обработке документа');
+        });
+    }
+    
+    // Обработчик кнопки создания организации из извлеченных данных
+    if (createOrganisationBtn) {
+        createOrganisationBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (!extractedOrganisationData) {
+                alert('Данные организации не найдены');
+                return;
+            }
+            
+            // Сохраняем данные в localStorage для использования на странице создания организации
+            localStorage.setItem('extractedOrganisationData', JSON.stringify(extractedOrganisationData));
+            
+            // Переходим на страницу создания организации
+            window.location.href = '{% url "main:create_organisation" %}';
+        });
+    }
     
     // Обработчик отправки формы для предотвращения двойной отправки
     if (form && submitButton) {
@@ -451,9 +997,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    const priceInFigures = document.getElementById('id_price_in_figures');
-    const priceInWords = document.getElementById('id_price_in_words');
-    const viewersField = document.getElementById('id_viewers');
+    // Для доступа к этим переменным в функции updateServicesSummary
+    const priceInFigures = priceInFiguresField;
+    const priceInWords = priceInWordsField;
     
     // Обновляем сводку по выбранным услугам
     function updateServicesSummary() {
@@ -504,6 +1050,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Автоматически заполняем поля с ценой в форме
         if (priceInFigures && totalPrice > 0) {
             priceInFigures.value = totalPrice.toFixed(2);
+            
+            // Автоматически заполняем поле цены прописью при расчете из выбранных услуг
+            if (priceInWords && typeof numberToWords === 'function') {
+                priceInWords.value = numberToWords(totalPrice.toFixed(2));
+            }
         }
         
         // Показываем или скрываем блок сводки
@@ -846,8 +1397,37 @@ document.addEventListener('DOMContentLoaded', function() {
                     serviceModal.hide();
                 }
                 
-                // Обновляем страницу для отображения изменений
-                window.location.reload();
+                // Вместо перезагрузки страницы, добавляем новую услугу динамически
+                const serviceData = data.service;
+                
+                // Проверка существует ли уже такая услуга
+                const existingCard = document.querySelector(`.service-card[data-service-id="${serviceData.id}"]`);
+                
+                if (existingCard) {
+                    // Обновляем существующую карточку
+                    updateServiceCard(existingCard, serviceData);
+                } else {
+                    // Создаем новую карточку услуги
+                    const servicesList = document.querySelector('.card-body > .mt-3');
+                    if (servicesList) {
+                        // Удаляем предупреждение об отсутствии услуг, если оно есть
+                        const warningAlert = servicesList.querySelector('.alert-warning');
+                        if (warningAlert) {
+                            warningAlert.remove();
+                        }
+                        
+                        // Добавляем новую карточку
+                        const newCard = createServiceCard(serviceData);
+                        servicesList.appendChild(newCard);
+                        
+                        // Добавляем обработчики событий к новой карточке
+                        initServiceCard(newCard);
+                    }
+                }
+                
+                // Обновляем поля формы только если нужно
+                updateServicesField();
+                updateServicesSummary();
             } else {
                 // Отображаем ошибки
                 if (data.errors) {
@@ -869,6 +1449,166 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Произошла ошибка при сохранении услуги');
         });
     });
+    
+    // Создаем функцию для создания новой карточки услуги
+    function createServiceCard(serviceData) {
+        const card = document.createElement('div');
+        card.className = 'service-card';
+        card.dataset.serviceId = serviceData.id;
+        card.dataset.viewers = serviceData.total_viewers || 0;
+        card.dataset.price = serviceData.total_price || 0;
+        
+        // Создаем HTML содержимое карточки
+        let categoriesHTML = '';
+        if (serviceData.categories && serviceData.categories.length > 0) {
+            categoriesHTML += '<div class="mb-2"><strong>Категории зрителей:</strong></div>';
+            
+            serviceData.categories.forEach(category => {
+                categoriesHTML += `
+                    <div class="category-item">
+                        <div class="d-flex justify-content-between">
+                            <div>${category.viewers} чел.</div>
+                            <div>${category.price} руб.</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            categoriesHTML += `
+                <div class="mt-2 text-end">
+                    <span class="badge bg-info text-white">Всего: ${serviceData.total_viewers} чел.</span>
+                    <span class="badge bg-success text-white">Итого: ${serviceData.total_price} руб.</span>
+                </div>
+            `;
+        } else {
+            categoriesHTML = '<div class="text-muted">Нет добавленных категорий зрителей</div>';
+        }
+        
+        card.innerHTML = `
+            <div class="service-header">
+                <div class="d-flex align-items-center">
+                    <div class="form-check form-check-inline me-3">
+                        <input class="form-check-input service-checkbox" type="checkbox" name="service_checkbox" 
+                               id="service_${serviceData.id}" value="${serviceData.id}">
+                        <label class="form-check-label" for="service_${serviceData.id}">
+                            ${serviceData.name} (${serviceData.date})
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <a href="#" class="btn btn-sm btn-outline-primary edit-service-btn">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <button class="btn btn-sm btn-outline-danger ms-2 delete-service-btn">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="service-body">
+                ${categoriesHTML}
+            </div>
+        `;
+        
+        return card;
+    }
+    
+    // Функция для обновления существующей карточки услуги
+    function updateServiceCard(card, serviceData) {
+        // Обновляем атрибуты
+        card.dataset.viewers = serviceData.total_viewers || 0;
+        card.dataset.price = serviceData.total_price || 0;
+        
+        // Обновляем заголовок
+        const label = card.querySelector('.form-check-label');
+        if (label) {
+            label.textContent = `${serviceData.name} (${serviceData.date})`;
+        }
+        
+        // Обновляем категории
+        const serviceBody = card.querySelector('.service-body');
+        if (serviceBody) {
+            let categoriesHTML = '';
+            
+            if (serviceData.categories && serviceData.categories.length > 0) {
+                categoriesHTML += '<div class="mb-2"><strong>Категории зрителей:</strong></div>';
+                
+                serviceData.categories.forEach(category => {
+                    categoriesHTML += `
+                        <div class="category-item">
+                            <div class="d-flex justify-content-between">
+                                <div>${category.viewers} чел.</div>
+                                <div>${category.price} руб.</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                categoriesHTML += `
+                    <div class="mt-2 text-end">
+                        <span class="badge bg-info text-white">Всего: ${serviceData.total_viewers} чел.</span>
+                        <span class="badge bg-success text-white">Итого: ${serviceData.total_price} руб.</span>
+                    </div>
+                `;
+            } else {
+                categoriesHTML = '<div class="text-muted">Нет добавленных категорий зрителей</div>';
+            }
+            
+            serviceBody.innerHTML = categoriesHTML;
+        }
+        
+        // Если карточка была выбрана раньше, обновим расчеты
+        updateServicesField();
+        updateServicesSummary();
+    }
+    
+    // Функция для инициализации обработчиков событий карточки
+    function initServiceCard(card) {
+        // Добавляем обработчик клика на карточку
+        card.addEventListener('click', function(e) {
+            // Проверяем, что клик не был на кнопке редактирования или чекбоксе
+            if (!e.target.closest('a') && !e.target.closest('.form-check-input') && !e.target.closest('button')) {
+                const checkbox = this.querySelector('.service-checkbox');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    
+                    // Имитируем событие change на чекбоксе
+                    const event = new Event('change');
+                    checkbox.dispatchEvent(event);
+                }
+            }
+        });
+        
+        // Добавляем обработчик на чекбокс
+        const checkbox = card.querySelector('.service-checkbox');
+        if (checkbox) {
+            checkbox.addEventListener('change', function() {
+                updateServicesField();
+                updateServiceCardSelection(this);
+                updateServicesSummary();
+            });
+        }
+        
+        // Добавляем обработчик на кнопку редактирования
+        const editBtn = card.querySelector('.edit-service-btn');
+        if (editBtn) {
+            editBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const serviceId = card.dataset.serviceId;
+                openServiceModal(serviceId);
+            });
+        }
+        
+        // Добавляем обработчик на кнопку удаления
+        const deleteBtn = card.querySelector('.delete-service-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const serviceId = card.dataset.serviceId;
+                const serviceName = card.querySelector('.form-check-label').textContent.trim();
+                openDeleteModal(serviceId, serviceName);
+            });
+        }
+    }
     
     // Функция открытия модального окна подтверждения удаления
     function openDeleteModal(serviceId, serviceName) {
@@ -911,19 +1651,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 const serviceCard = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
                 if (serviceCard) {
                     serviceCard.remove();
+                    
+                    // Если удалена последняя услуга, показываем предупреждение
+                    const serviceCards = document.querySelectorAll('.service-card');
+                    if (serviceCards.length === 0) {
+                        const servicesList = document.querySelector('.card-body > .mt-3');
+                        if (servicesList) {
+                            servicesList.innerHTML = `
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Нет доступных услуг. Добавьте услугу с помощью кнопки выше.
+                                </div>
+                            `;
+                        }
+                    }
                 }
                 
                 // Обновляем выбранные услуги
                 updateServicesField();
                 updateServicesSummary();
             } else {
-                alert('Произошла ошибка при удалении услуги');
+                alert('Произошла ошибка при удалении услуги: ' + (data.error || 'Неизвестная ошибка'));
             }
         })
         .catch(error => {
             console.error('Error:', error);
             alert('Произошла ошибка при удалении услуги');
         });
+    });
+    
+    // Инициализируем flatpickr для даты услуги в модальном окне
+    flatpickr('#serviceDate', {
+        dateFormat: "d.m.Y г.",
+        locale: "ru",
+        disableMobile: true,
+        position: "below",
+        static: true
     });
 });
 </script>

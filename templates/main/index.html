@@ -3,74 +3,80 @@
 {% block title %}Главная{% endblock %}
 
 {% block content %}
-<div class="row my-5">
-    <div class="col-lg-8 mx-auto">
-        <div class="card shadow-sm">
-            <div class="card-body p-5">
-                <h1 class="text-center mb-4">Автоматическое создание документов</h1>
-                
-                <div class="alert alert-success">
-                    <h5 class="alert-heading"><i class="bi bi-info-circle-fill me-2"></i>Добро пожаловать!</h5>
-                    <p>Наш сервис поможет вам быстро и легко создать все необходимые документы для вашей организации.</p>
-                </div>
-                
-                <h4 class="mt-4 mb-3">Как пользоваться сервисом:</h4>
-                
-                {% if not user.is_authenticated %}
-                <div class="card mb-4 border-primary">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="bi bi-person-fill me-2"></i>Шаг 1: Вход в систему</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>Для начала работы войдите в систему, используя предоставленные вам учетные данные. Если у вас нет доступа, обратитесь к администратору.</p>
-                        <a href="{% url 'main:login' %}" class="btn btn-outline-primary"><i class="bi bi-box-arrow-in-right me-1"></i>Войти в систему</a>
-                    </div>
-                </div>
-                {% endif %}
-                
-                <div class="card mb-4 border-success">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>{% if user.is_authenticated %}Шаг 1{% else %}Шаг 2{% endif %}: Создание документа</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>{% if user.is_authenticated %}Перейдите{% else %}После входа в систему перейдите{% endif %} на страницу создания документов. Заполните все необходимые поля формы:</p>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><i class="bi bi-geo-alt me-2"></i><strong>Адрес и время проведения</strong> - укажите место и время мероприятия</li>
-                            <li class="list-group-item"><i class="bi bi-people me-2"></i><strong>Количество людей</strong> - укажите число участников</li>
-                            <li class="list-group-item"><i class="bi bi-calendar-event me-2"></i><strong>Дата</strong> - дата проведения мероприятия</li>
-                            <li class="list-group-item"><i class="bi bi-currency-dollar me-2"></i><strong>Стоимость</strong> - сумма цифрами и прописью</li>
-                            <li class="list-group-item"><i class="bi bi-clock me-2"></i><strong>Время</strong> - временной интервал проведения</li>
-                            <li class="list-group-item"><i class="bi bi-receipt me-2"></i><strong>Номер акта и счета</strong> - укажите номер документации</li>
-                            <li class="list-group-item"><i class="bi bi-file-earmark-ruled me-2"></i><strong>Основание договора</strong> - номер и дата договора</li>
-                        </ul>
-                        <div class="mt-3">
-                            <a href="{% url 'main:create_docs' %}" class="btn btn-outline-success"><i class="bi bi-plus-circle me-1"></i>Создать документ</a>
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm rounded-3">
+                <div class="card-body p-5">
+                    <h1 class="text-center mb-4">Система создания документов</h1>
+                    <p class="lead text-center mb-5">Создавайте акты, счета и договоры для ваших клиентов</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm border-0 rounded-3">
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <div class="mb-3 text-center">
+                                        <i class="bi bi-file-earmark-text text-primary" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h4 class="card-title text-center mb-3">Создать документы</h4>
+                                    <p class="card-text text-center flex-grow-1">Сформируйте акт, счет и договор по выбранным услугам.</p>
+                                    <a href="{% url 'main:create_docs' %}" class="btn btn-primary w-100 mt-3">
+                                        <i class="bi bi-file-earmark-plus me-2"></i>Создать документы
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm border-0 rounded-3">
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <div class="mb-3 text-center">
+                                        <i class="bi bi-clock-history text-info" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h4 class="card-title text-center mb-3">История документов</h4>
+                                    <p class="card-text text-center flex-grow-1">Просмотр, редактирование и скачивание созданных документов.</p>
+                                    <a href="{% url 'main:documents_list' %}" class="btn btn-info w-100 mt-3">
+                                        <i class="bi bi-list-ul me-2"></i>Список документов
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm border-0 rounded-3">
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <div class="mb-3 text-center">
+                                        <i class="bi bi-building text-success" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h4 class="card-title text-center mb-3">Организации</h4>
+                                    <p class="card-text text-center flex-grow-1">Управляйте списком организаций-контрагентов.</p>
+                                    <div class="mt-3 d-flex gap-2">
+                                        <a href="{% url 'main:organisations_list' %}" class="btn btn-outline-success flex-grow-1">
+                                            <i class="bi bi-list-ul me-2"></i>Список
+                                        </a>
+                                        <a href="{% url 'main:create_organisation' %}" class="btn btn-success flex-grow-1">
+                                            <i class="bi bi-plus-lg me-2"></i>Добавить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm border-0 rounded-3">
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <div class="mb-3 text-center">
+                                        <i class="bi bi-tag text-warning" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h4 class="card-title text-center mb-3">Услуги</h4>
+                                    <p class="card-text text-center flex-grow-1">Добавьте новую услугу с категориями зрителей.</p>
+                                    <a href="{% url 'main:create_service' %}" class="btn btn-warning w-100 mt-3">
+                                        <i class="bi bi-plus-circle me-2"></i>Добавить услугу
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="card mb-4 border-info">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0"><i class="bi bi-download me-2"></i>{% if user.is_authenticated %}Шаг 2{% else %}Шаг 3{% endif %}: Получение готового документа</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>После заполнения всех полей и отправки формы система автоматически сгенерирует необходимые документы. Вы можете:</p>
-                        <ul>
-                            <li><i class="bi bi-file-pdf me-2"></i>Скачать документы в формате PDF</li>
-                            <li><i class="bi bi-envelope me-2"></i>Отправить документы на электронную почту</li>
-                            <li><i class="bi bi-printer me-2"></i>Распечатать документы прямо из системы</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="alert alert-warning">
-                    <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Обратите внимание!</h5>
-                    <p>Все созданные документы проверяются на соответствие законодательству и внутренним правилам организации. При возникновении вопросов обращайтесь к ответственному сотруднику.</p>
-                </div>
-                
-                <div class="text-center mt-4">
-                    <p class="text-muted">Возникли вопросы или нужна помощь?</p>
-                    <p><strong><i class="bi bi-envelope-fill me-1"></i>Напишите нам: <a href="mailto:nurgaleev.dev.tat@gmail.com">nurgaleev.dev.tat@gmail.com</a></strong></p>
                 </div>
             </div>
         </div>

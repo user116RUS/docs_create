@@ -134,7 +134,7 @@ class ViewerCategory(models.Model):
 
 class Document(models.Model):
     address_and_time = models.CharField(
-        max_length=100,
+        max_length=150,
         verbose_name='адрес и время проведения',
         help_text='(<i>г. Набережные Челны, ул. Шамиля Усманова, д.19. Время проведения: с 09:30</i>)',
     )
@@ -160,8 +160,8 @@ class Document(models.Model):
     )
     act_and_account_number = models.CharField(
         max_length=100,
-        verbose_name='номер акта и счета с датой',
-        help_text='(<i>50/1 от 15 июня 2023 г.</i>)',
+        verbose_name='номер акта',
+        help_text='(<i>50/1</i>)',
     )
     number_basis_of_the_contract = models.CharField(
         max_length=100,

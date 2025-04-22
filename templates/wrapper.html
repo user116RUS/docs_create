@@ -5,26 +5,228 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Система создания документов">
+    <meta name="theme-color" content="#ffffff">
+    <title>{% block title %}Docs Create{% endblock %}</title>
+    <link rel="icon" href="{% static 'main/favicon.ico' %}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'main/css/themes.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
+    <script src="{% static 'main/js/themes.js' %}"></script>
+    
+    <script>
+    // Функция для преобразования числа в текстовое представление суммы
+    function numberToWords(number) {
+        const ones = ["", "один ", "два ", "три ", "четыре ", "пять ", "шесть ", "семь ", "восемь ", "девять "];
+        const tens = ["", "десять ", "двадцать ", "тридцать ", "сорок ", "пятьдесят ", "шестьдесят ", "семьдесят ", "восемьдесят ", "девяносто "];
+        const teens = ["десять ", "одиннадцать ", "двенадцать ", "тринадцать ", "четырнадцать ", "пятнадцать ", "шестнадцать ", "семнадцать ", "восемнадцать ", "девятнадцать "];
+        const hundreds = ["", "сто ", "двести ", "триста ", "четыреста ", "пятьсот ", "шестьсот ", "семьсот ", "восемьсот ", "девятьсот "];
+        
+        function processThousands(num) {
+            if (num === 0) return "";
+            
+            let result = "";
+            
+            // Сотни
+            const h = Math.floor(num / 100) % 10;
+            if (h > 0) {
+                result += hundreds[h];
+            }
+            
+            // Десятки и единицы
+            const t = Math.floor(num / 10) % 10;
+            const o = num % 10;
+            
+            if (t === 1) {
+                // Особый случай: числа от 10 до 19
+                result += teens[o];
+            } else {
+                if (t > 0) {
+                    result += tens[t];
+                }
+                
+                // Особый случай для тысяч: "одна", "две" вместо "один", "два"
+                if (o > 0) {
+                    if (num < 1000) {
+                        result += ones[o];
+                    } else {
+                        if (o === 1) {
+                            result += "одна ";
+                        } else if (o === 2) {
+                            result += "две ";
+                        } else {
+                            result += ones[o];
+                        }
+                    }
+                }
+            }
+            
+            return result;
+        }
+        
+        function getThousandsForm(num) {
+            const lastTwo = num % 100;
+            const lastDigit = num % 10;
+            
+            if (lastTwo >= 11 && lastTwo <= 19) {
+                return "тысяч ";
+            } else if (lastDigit === 1) {
+                return "тысяча ";
+            } else if (lastDigit >= 2 && lastDigit <= 4) {
+                return "тысячи ";
+            } else {
+                return "тысяч ";
+            }
+        }
+        
+        // Основная функция обработки
+        function toWords(num) {
+            if (num === 0) {
+                return "ноль";
+            }
+            
+            let result = "";
+            
+            // Выделяем тысячи
+            const thousands = Math.floor(num / 1000);
+            if (thousands > 0) {
+                result += processThousands(thousands) + getThousandsForm(thousands);
+            }
+            
+            // Выделяем единицы, десятки, сотни
+            const remainder = num % 1000;
+            if (remainder > 0 || num === 0) {
+                result += processThousands(remainder);
+            }
+            
+            return result.trim();
+        }
+        
+        // Обработка входящего значения
+        let cleanNumber = number.toString().replace(/[^\d.,]/g, '').replace(',', '.');
+        let parts = cleanNumber.split('.');
+        let rubles = parseInt(parts[0]) || 0;
+        let kopecks = 0;
+
+        // Обработка копеек
+        if (parts.length > 1) {
+            // Берем только первые две цифры после десятичной точки
+            let kopecksStr = parts[1].padEnd(2, '0').substring(0, 2);
+            kopecks = parseInt(kopecksStr);
+        } else {
+            kopecks = 0;
+        }
+
+        // Преобразование в слова
+        let result = toWords(rubles) + " рублей";
+
+        // Добавляем копейки
+        if (kopecks < 10) {
+            result += " 0" + kopecks + " копеек";
+        } else {
+            result += " " + kopecks + " копеек";
+        }
+        
+        return result;
+    }
+    
+    // Функция для автозаполнения поля "Цена словами" на основе поля "Цена цифрами"
+    function autoFillPriceInWords() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceInFiguresField = document.getElementById('id_price_in_figures');
+            const priceInWordsField = document.getElementById('id_price_in_words');
+            
+            if (priceInFiguresField && priceInWordsField) {
+                priceInFiguresField.addEventListener('input', function() {
+                    const numericValue = this.value.replace(/[^\d.,]/g, '').replace(',', '.');
+                    if (numericValue) {
+                        priceInWordsField.value = numberToWords(numericValue);
+                    } else {
+                        priceInWordsField.value = '';
+                    }
+                });
+                
+                // Также заполняем при загрузке страницы, если поле уже содержит значение
+                if (priceInFiguresField.value) {
+                    priceInWordsField.value = numberToWords(priceInFiguresField.value);
+                }
+            }
+        });
+    }
+    
+    // Запускаем функцию автозаполнения
+    autoFillPriceInWords();
+    </script>
+    
+    {% block extra_css %}{% endblock %}
+    {% block extra_js %}{% endblock %}
 </head>
 <body>
 <div class="container-xl">
-    <header>
+    <header class="py-3 mb-3">
         {% include 'main/includes/_header.html' %}
     </header>
-    <main>
+    <main class="py-3">
         {% block content %}
         {% endblock %}
     </main>
-    <footer>
+    <footer class="py-3 mt-4">
         {% include 'main/includes/_footer.html' %}
     </footer>
 </div>
+
+<script>
+// Простой скрипт для прямого переключения тем
+document.addEventListener('DOMContentLoaded', function() {
+    // Светлая тема
+    document.querySelector('.theme-switcher-light')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.body.className = '';
+        localStorage.setItem('theme', 'light-theme');
+        console.log('Switched to light theme directly');
+        return false;
+    });
+
+    // Темная тема
+    document.querySelector('.theme-switcher-dark')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.body.className = 'dark-theme';
+        localStorage.setItem('theme', 'dark-theme');
+        console.log('Switched to dark theme directly');
+        return false;
+    });
+
+    // Minecraft тема
+    document.querySelector('.theme-switcher-minecraft')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.body.className = 'minecraft-theme';
+        localStorage.setItem('theme', 'minecraft-theme');
+        console.log('Switched to minecraft theme directly');
+        return false;
+    });
+
+    // Загрузка и применение сохраненной темы при загрузке страницы
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme !== null) {
+        if (savedTheme === 'light-theme') {
+            document.body.className = ''; // Для светлой темы устанавливаем пустой класс
+        } else {
+            document.body.className = savedTheme;
+        }
+        console.log('Applied saved theme:', savedTheme);
+        
+        // Отправляем событие об изменении темы для компонентов, которые могут на это реагировать
+        const event = new CustomEvent('themeChanged', { 
+            detail: { theme: savedTheme } 
+        });
+        document.dispatchEvent(event);
+    }
+});
+</script>
 </body>
 </html>
