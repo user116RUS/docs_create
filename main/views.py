@@ -332,6 +332,7 @@ def download_act(request, document_id):
     services_table = []
     total_sum = 0
     total_viewers = 0
+    prev_service_name = ""  # Добавляем переменную для хранения предыдущего названия услуги
     
     for i, service in enumerate(services, 1):
         # Если у услуги есть категории зрителей, создаем строки для каждой категории
@@ -341,9 +342,22 @@ def download_act(request, document_id):
                 total_sum += category_total
                 total_viewers += category.viewers
                 
+                # Определяем название услуги
+                if j == 1:
+                    # Для первой категории запоминаем название услуги
+                    service_name = service.name
+                    prev_service_name = service_name
+                else:
+                    # Для последующих категорий оставляем пустое название (по умолчанию)
+                    service_name = ""
+                
+                # Если сумма равна 0, берем предыдущее название услуги и добавляем "(СВО)"
+                if category_total == 0:
+                    service_name = f"{prev_service_name} (СВО)"
+                
                 services_table.append({
                     'num': i if j == 1 else '',  # Номер услуги только для первой категории
-                    'service_name': service.name if j == 1 else '',  # Название услуги только для первой категории
+                    'service_name': service_name,  # Теперь используем переменную service_name
                     'service_date': service.date if j == 1 else '',  # Дата услуги только для первой категории
                     'category': True,  # Это категория зрителей
                     'viewers': category.viewers,
@@ -364,6 +378,7 @@ def download_act(request, document_id):
                 'price': 0,
                 'total': 0
             })
+            prev_service_name = service.name  # Сохраняем название услуги
     
     # Создаем список категорий зрителей для всех услуг (для обратной совместимости)
     viewer_categories = []
@@ -436,6 +451,7 @@ def download_invoice(request, document_id):
     services_table = []
     total_sum = 0
     total_viewers = 0
+    prev_service_name = ""  # Добавляем переменную для хранения предыдущего названия услуги
     
     for i, service in enumerate(services, 1):
         # Если у услуги есть категории зрителей, создаем строки для каждой категории
@@ -445,9 +461,22 @@ def download_invoice(request, document_id):
                 total_sum += category_total
                 total_viewers += category.viewers
                 
+                # Определяем название услуги
+                if j == 1:
+                    # Для первой категории запоминаем название услуги
+                    service_name = service.name
+                    prev_service_name = service_name
+                else:
+                    # Для последующих категорий оставляем пустое название (по умолчанию)
+                    service_name = ""
+                
+                # Если сумма равна 0, берем предыдущее название услуги и добавляем "(СВО)"
+                if category_total == 0:
+                    service_name = f"{prev_service_name} (СВО)"
+                
                 services_table.append({
                     'num': i if j == 1 else '',  # Номер услуги только для первой категории
-                    'service_name': service.name if j == 1 else '',  # Название услуги только для первой категории
+                    'service_name': service_name,  # Теперь используем переменную service_name
                     'service_date': service.date if j == 1 else '',  # Дата услуги только для первой категории
                     'category': True,  # Это категория зрителей
                     'viewers': category.viewers,
@@ -468,6 +497,7 @@ def download_invoice(request, document_id):
                 'price': 0,
                 'total': 0
             })
+            prev_service_name = service.name  # Сохраняем название услуги
     
     # Создаем список категорий зрителей для всех услуг (для обратной совместимости)
     viewer_categories = []
@@ -541,6 +571,7 @@ def download_contract(request, document_id):
     services_table = []
     total_sum = 0
     total_viewers = 0
+    prev_service_name = ""  # Добавляем переменную для хранения предыдущего названия услуги
     
     for i, service in enumerate(services, 1):
         # Если у услуги есть категории зрителей, создаем строки для каждой категории
@@ -550,9 +581,22 @@ def download_contract(request, document_id):
                 total_sum += category_total
                 total_viewers += category.viewers
                 
+                # Определяем название услуги
+                if j == 1:
+                    # Для первой категории запоминаем название услуги
+                    service_name = service.name
+                    prev_service_name = service_name
+                else:
+                    # Для последующих категорий оставляем пустое название (по умолчанию)
+                    service_name = ""
+                
+                # Если сумма равна 0, берем предыдущее название услуги и добавляем "(СВО)"
+                if category_total == 0:
+                    service_name = f"{prev_service_name} (СВО)"
+                
                 services_table.append({
                     'num': i if j == 1 else '',  # Номер услуги только для первой категории
-                    'service_name': service.name if j == 1 else '',  # Название услуги только для первой категории
+                    'service_name': service_name,  # Теперь используем переменную service_name
                     'service_date': service.date if j == 1 else '',  # Дата услуги только для первой категории
                     'category': True,  # Это категория зрителей
                     'viewers': category.viewers,
@@ -573,6 +617,7 @@ def download_contract(request, document_id):
                 'price': 0,
                 'total': 0
             })
+            prev_service_name = service.name  # Сохраняем название услуги
     
     # Создаем список категорий зрителей для всех услуг (для обратной совместимости)
     viewer_categories = []
@@ -663,6 +708,7 @@ def download_all_docs(request, document_id):
         services_table = []
         total_sum = 0
         total_viewers = 0
+        prev_service_name = ""  # Добавляем переменную для хранения предыдущего названия услуги
         
         for i, service in enumerate(services, 1):
             if service.viewer_categories.exists():
@@ -671,9 +717,22 @@ def download_all_docs(request, document_id):
                     total_sum += category_total
                     total_viewers += category.viewers
                     
+                    # Определяем название услуги
+                    if j == 1:
+                        # Для первой категории запоминаем название услуги
+                        service_name = service.name
+                        prev_service_name = service_name
+                    else:
+                        # Для последующих категорий оставляем пустое название (по умолчанию)
+                        service_name = ""
+                    
+                    # Если сумма равна 0, берем предыдущее название услуги и добавляем "(СВО)"
+                    if category_total == 0:
+                        service_name = f"{prev_service_name} (СВО)"
+                    
                     services_table.append({
                         'num': i if j == 1 else '',
-                        'service_name': service.name if j == 1 else '',
+                        'service_name': service_name,
                         'service_date': service.date if j == 1 else '',
                         'category': True,
                         'viewers': category.viewers,

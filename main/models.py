@@ -52,7 +52,7 @@ class Organisation(models.Model):
     short_name = models.TextField(
         max_length=100,
         verbose_name="Короткое имя",
-        help_text="ИП Мотыгуллин Айрат Маратович",
+        help_text="Муниципальное бюджетное общеобразовательное учреждение «Гимназия №54»",
 
     )
     correspondent_bank_account = models.CharField(
@@ -81,7 +81,7 @@ class Organisation(models.Model):
         verbose_name="Наша организация?",
     )
     def __str__(self):
-        return self.name
+        return self.short_name
 
 
 class Service(models.Model):
