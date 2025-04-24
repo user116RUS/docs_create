@@ -92,10 +92,12 @@ if LOCAL:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME', 'docs_create_db'),
+            'USER': os.environ.get('DB_USER', 'docs_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'docs_password'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '3306'),
         }
     }
 
