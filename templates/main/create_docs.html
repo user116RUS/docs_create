@@ -976,9 +976,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Получаем скрытое поле и все чекбоксы услуг
     const servicesField = document.getElementById('id_services');
-    const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+    let serviceCheckboxes = document.querySelectorAll('.service-checkbox');
     const serviceCards = document.querySelectorAll('.service-card');
     const selectedServicesSummary = document.getElementById('selectedServicesSummary');
+    
+    // Функция для обновления списка чекбоксов после добавления новой услуги
+    function updateCheckboxesList() {
+        // Обновляем коллекцию чекбоксов
+        serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+        console.log('Updated checkboxes list:', serviceCheckboxes.length);
+    }
     
     // Получаем элементы для обновления информации, проверяя их существование
     let selectedServicesCount = null;
@@ -1354,7 +1361,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const viewers = parseInt(row.querySelector('.category-viewers').value);
             const price = parseFloat(row.querySelector('.category-price').value);
             
-            if (viewers && price) {
+            if (viewers >= 1 && price >= 0) {
                 categories.push({
                     viewers,
                     price
@@ -1422,6 +1429,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // Добавляем обработчики событий к новой карточке
                         initServiceCard(newCard);
+                        
+                        // Обновляем список всех чекбоксов после добавления новой услуги
+                        updateCheckboxesList();
                     }
                 }
                 
