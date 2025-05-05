@@ -166,7 +166,7 @@ class Document(models.Model):
     number_basis_of_the_contract = models.CharField(
         max_length=100,
         verbose_name='номер основание договора',
-        help_text='(<i>Nº 50/23-11 от 18.05.2023 г.</i>)'
+        help_text='(<i>50/23-11</i>)'
     )
     doer = models.ForeignKey(
         Organisation,

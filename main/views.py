@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 import tempfile
 from openai import OpenAI
 import re
+import datetime
 
 from main.models import Document, Organisation, Service, ViewerCategory
 
@@ -310,6 +311,19 @@ def document_detail(request, document_id):
     return render(request, 'main/download_docs.html', {'document': document})
 
 
+def parse_russian_date(date_str):
+    """Парсит дату в формате 'дд.мм.гггг г.' и возвращает объект datetime"""
+    # Удаляем 'г.' в конце если есть
+    date_str = date_str.replace(' г.', '')
+    
+    try:
+        # Пытаемся распарсить дату в формате дд.мм.гггг
+        return datetime.datetime.strptime(date_str, '%d.%m.%Y')
+    except ValueError:
+        # Если не получилось, возвращаем дату как строку для сохранения порядка
+        return date_str
+
+
 @login_required
 def download_act(request, document_id):
     document = get_object_or_404(Document, id=document_id)
@@ -317,8 +331,8 @@ def download_act(request, document_id):
     # Получаем путь к шаблону акта приемки
     template_path = os.path.join(os.path.dirname(__file__), 'document_templates', 'act_priemki.docx')
     
-    # Получаем все услуги
-    services = document.services.all()
+    # Получаем все услуги и сортируем по дате
+    services = sorted(document.services.all(), key=lambda x: parse_russian_date(x.date))
     # Создаем строку с именами услуг через запятую
     services_text = ", ".join([service.name for service in services])
     
@@ -327,6 +341,9 @@ def download_act(request, document_id):
     
     # Создаем строку, содержащую название услуги и дату
     service_date = ", ".join([f'{service.name} - {service.date}' for service in services])
+    
+    # Получаем дату последнего выбранного сервиса
+    last_date = services[-1].date if services else ""
     
     # Создаем структуру данных для таблицы с услугами и категориями зрителей
     services_table = []
@@ -399,12 +416,13 @@ def download_act(request, document_id):
         'services': services,
         'services_text': services_text,
         'service_date': service_date,
-        'service': services.first() if services.exists() else None,
+        'service': services[0] if services else None,
         'address_and_time': document.address_and_time,
         'price_in_figures': document.price_in_figures,
         'price_in_words': document.price_in_words,
         'date': document.date,
         'dates': dates,
+        'last_date': last_date,
         'viewer_categories': viewer_categories,
         'number_basis_of_the_contract': document.number_basis_of_the_contract,
         'services_table': services_table,  # Новая структура для таблицы
@@ -436,8 +454,8 @@ def download_invoice(request, document_id):
     # Получаем путь к шаблону счета
     template_path = os.path.join(os.path.dirname(__file__), 'document_templates', 'schet.docx')
     
-    # Получаем все услуги
-    services = document.services.all()
+    # Получаем все услуги и сортируем по дате
+    services = sorted(document.services.all(), key=lambda x: parse_russian_date(x.date))
     # Создаем строку с именами услуг через запятую
     services_text = ", ".join([service.name for service in services])
     
@@ -446,6 +464,9 @@ def download_invoice(request, document_id):
     
     # Создаем строку, содержащую название услуги и дату
     service_date = ", ".join([f'{service.name} - {service.date}' for service in services])
+    
+    # Получаем дату последнего выбранного сервиса
+    last_date = services[-1].date if services else ""
     
     # Создаем структуру данных для таблицы с услугами и категориями зрителей
     services_table = []
@@ -518,13 +539,14 @@ def download_invoice(request, document_id):
         'services': services,
         'services_text': services_text,
         'service_date': service_date,
-        'service': services.first() if services.exists() else None,  # Для совместимости с шаблоном
+        'service': services[0] if services else None,
         'address_and_time': document.address_and_time,
         'price_in_figures': document.price_in_figures,
         'price_in_words': document.price_in_words,
         'date': document.date,
         'time': document.time,
         'dates': dates,
+        'last_date': last_date,
         'viewer_categories': viewer_categories,
         'services_table': services_table,  # Новая структура для таблицы
         'services_table_total': total_sum,  # Общая сумма для итоговой строки
@@ -556,8 +578,8 @@ def download_contract(request, document_id):
     # Получаем путь к шаблону договора
     template_path = os.path.join(os.path.dirname(__file__), 'document_templates', 'dogovor.docx')
     
-    # Получаем все услуги
-    services = document.services.all()
+    # Получаем все услуги и сортируем по дате
+    services = sorted(document.services.all(), key=lambda x: parse_russian_date(x.date))
     # Создаем строку с именами услуг через запятую
     services_text = ", ".join([service.name for service in services])
     
@@ -566,6 +588,9 @@ def download_contract(request, document_id):
     
     # Создаем строку, содержащую название услуги и дату
     service_date = ", ".join([f'{service.name} - {service.date}' for service in services])
+    
+    # Получаем дату последнего выбранного сервиса
+    last_date = services[-1].date if services else ""
     
     # Создаем структуру данных для таблицы с услугами и категориями зрителей
     services_table = []
@@ -638,7 +663,7 @@ def download_contract(request, document_id):
         'services': services,
         'services_text': services_text,
         'service_date': service_date,
-        'service': services.first() if services.exists() else None,  # Для совместимости с шаблоном
+        'service': services[0] if services else None,
         'address_and_time': document.address_and_time,
         'price_in_figures': document.price_in_figures,
         'price_in_words': document.price_in_words,
@@ -646,10 +671,11 @@ def download_contract(request, document_id):
         'time': document.time,
         'date': document.date,
         'dates': dates,
+        'last_date': last_date,
         'viewer_categories': viewer_categories,
-        'services_table': services_table,  # Новая структура для таблицы
-        'services_table_total': total_sum,  # Общая сумма для итоговой строки
-        'services_table_total_viewers': total_viewers  # Общее количество зрителей
+        'services_table': services_table,
+        'services_table_total': total_sum,
+        'services_table_total_viewers': total_viewers
     }
     
     # Используем DocxTemplate для рендеринга
@@ -698,11 +724,14 @@ def download_all_docs(request, document_id):
         act_buffer = BytesIO()
         act_template_path = os.path.join(os.path.dirname(__file__), 'document_templates', 'act_priemki.docx')
         
-        # Получаем все услуги и готовим данные (как в функции download_act)
-        services = document.services.all()
+        # Получаем все услуги и сортируем по дате
+        services = sorted(document.services.all(), key=lambda x: parse_russian_date(x.date))
         services_text = ", ".join([service.name for service in services])
         dates = ", ".join([service.date for service in services])
         service_date = ", ".join([f'{service.name} - {service.date}' for service in services])
+        
+        # Получаем дату последнего выбранного сервиса
+        last_date = services[-1].date if services else ""
         
         # Создаем структуру данных для таблицы с услугами и категориями зрителей
         services_table = []
@@ -772,12 +801,13 @@ def download_all_docs(request, document_id):
             'services': services,
             'services_text': services_text,
             'service_date': service_date,
-            'service': services.first() if services.exists() else None,
+            'service': services[0] if services else None,
             'address_and_time': document.address_and_time,
             'price_in_figures': document.price_in_figures,
             'price_in_words': document.price_in_words,
             'date': document.date,
             'dates': dates,
+            'last_date': last_date,
             'viewer_categories': viewer_categories,
             'number_basis_of_the_contract': document.number_basis_of_the_contract,
             'services_table': services_table,
@@ -804,13 +834,14 @@ def download_all_docs(request, document_id):
             'services': services,
             'services_text': services_text,
             'service_date': service_date,
-            'service': services.first() if services.exists() else None,
+            'service': services[0] if services else None,
             'address_and_time': document.address_and_time,
             'price_in_figures': document.price_in_figures,
             'price_in_words': document.price_in_words,
             'date': document.date,
             'time': document.time,
             'dates': dates,
+            'last_date': last_date,
             'viewer_categories': viewer_categories,
             'services_table': services_table,
             'services_table_total': total_sum,
@@ -837,7 +868,7 @@ def download_all_docs(request, document_id):
             'services': services,
             'services_text': services_text,
             'service_date': service_date,
-            'service': services.first() if services.exists() else None,
+            'service': services[0] if services else None,
             'address_and_time': document.address_and_time,
             'price_in_figures': document.price_in_figures,
             'price_in_words': document.price_in_words,
@@ -845,6 +876,7 @@ def download_all_docs(request, document_id):
             'time': document.time,
             'date': document.date,
             'dates': dates,
+            'last_date': last_date,
             'viewer_categories': viewer_categories,
             'services_table': services_table,
             'services_table_total': total_sum,
