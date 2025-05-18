@@ -40,6 +40,62 @@
         align-items: center;
         margin-bottom: 10px;
     }
+    /* Стили для выпадающего списка предложений */
+    .suggestions-container {
+        position: relative;
+        width: 100%;
+    }
+    .suggestions-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        display: none;
+    }
+    .suggestions-dropdown.show {
+        display: block;
+    }
+    .suggestion-item {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .suggestion-item:hover {
+        background-color: #f8f9fa;
+    }
+    /* Темная тема для выпадающего списка */
+    body.dark-theme .suggestions-dropdown {
+        background-color: #343a40;
+        border-color: #495057;
+    }
+    body.dark-theme .suggestion-item {
+        color: #fff;
+    }
+    body.dark-theme .suggestion-item:hover {
+        background-color: #495057;
+    }
+    /* Minecraft тема для выпадающего списка */
+    body.minecraft-theme .suggestions-dropdown {
+        background-color: #8b8b8b;
+        border: 2px solid #000;
+        box-shadow: 3px 3px 0 #000;
+        border-radius: 0;
+    }
+    body.minecraft-theme .suggestion-item {
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+        border-bottom: 1px solid #000;
+    }
+    body.minecraft-theme .suggestion-item:hover {
+        background-color: #5c8d44;
+    }
 </style>
 
 <!-- Подключаем flatpickr для календаря -->
@@ -66,7 +122,12 @@
                         <div class="col-md-8">
                             <div class="form-group mb-3">
                                 <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
-                                {{ form.name|addclass:"form-control input-sm" }}
+                                <div class="suggestions-container">
+                                    {{ form.name|addclass:"form-control input-sm" }}
+                                    <div class="suggestions-dropdown" id="serviceNameSuggestions">
+                                        <!-- Здесь будут отображаться предложения -->
+                                    </div>
+                                </div>
                                 <div class="form-text">{{ form.name.help_text }}</div>
                                 {% if form.name.errors %}
                                 <div class="invalid-feedback d-block">
@@ -165,6 +226,95 @@
             disableMobile: true,
             position: "below"
         });
+        
+        // Список предложений для названия услуги
+        const serviceSuggestions = [
+            'Квест по ПДД "Безопасные дороги"',
+            'Квест "Команда первых"',
+            'Квест "Джуманджи"',
+            'Квест "Школьный спасатель"',
+            'Мастер-класс по инженерии',
+            'Электронный квест "Звездные войны"',
+            'Мастер-класс по робототехнике'
+        ];
+        
+        // Получаем элементы для работы с предложениями
+        const serviceNameInput = document.getElementById('id_name');
+        const suggestionsContainer = document.getElementById('serviceNameSuggestions');
+        
+        // Заполняем выпадающий список предложениями
+        serviceSuggestions.forEach(suggestion => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.className = 'suggestion-item';
+            suggestionItem.textContent = suggestion;
+            suggestionItem.addEventListener('click', () => {
+                serviceNameInput.value = suggestion;
+                suggestionsContainer.classList.remove('show');
+                
+                // Воспроизводим звук при выборе в теме Minecraft
+                if (document.body.classList.contains('minecraft-theme') && typeof playMinecraftSound === 'function') {
+                    playMinecraftSound('click');
+                }
+            });
+            suggestionsContainer.appendChild(suggestionItem);
+        });
+        
+        // Показываем выпадающий список при фокусе на поле ввода
+        serviceNameInput.addEventListener('focus', () => {
+            suggestionsContainer.classList.add('show');
+            
+            // Воспроизводим звук при фокусе в теме Minecraft
+            if (document.body.classList.contains('minecraft-theme') && typeof playMinecraftSound === 'function') {
+                playMinecraftSound('click');
+            }
+        });
+        
+        // Фильтруем предложения при вводе текста
+        serviceNameInput.addEventListener('input', () => {
+            const inputValue = serviceNameInput.value.toLowerCase();
+            const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
+            
+            let hasVisibleItems = false;
+            
+            suggestionItems.forEach(item => {
+                const suggestionText = item.textContent.toLowerCase();
+                if (suggestionText.includes(inputValue)) {
+                    item.style.display = 'block';
+                    hasVisibleItems = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Показываем или скрываем выпадающий список в зависимости от наличия совпадений
+            if (hasVisibleItems) {
+                suggestionsContainer.classList.add('show');
+            } else {
+                suggestionsContainer.classList.remove('show');
+            }
+        });
+        
+        // Скрываем выпадающий список при клике вне поля ввода и списка
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.suggestions-container')) {
+                suggestionsContainer.classList.remove('show');
+            }
+        });
+        
+        // Функция для воспроизведения звуков Minecraft
+        function playMinecraftSound(type) {
+            // Звуки Minecraft (можно заменить на реальные звуки из игры)
+            const sounds = {
+                click: 'https://www.myinstants.com/media/sounds/minecraft-click.mp3',
+                success: 'https://www.myinstants.com/media/sounds/minecraft_xp.mp3'
+            };
+            
+            if (sounds[type]) {
+                const audio = new Audio(sounds[type]);
+                audio.volume = 0.5;
+                audio.play();
+            }
+        }
         
         const addCategoryBtn = document.getElementById('add-category');
         const categoryContainer = document.getElementById('viewer-categories');
