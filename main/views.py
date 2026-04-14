@@ -262,6 +262,8 @@ class OrganisationView(CreateView):
 def create_service(request):
     if request.method == 'POST':
         form = ServiceForm(request.POST)
+        formset = ViewerCategoryFormset(request.POST)
+        
         if form.is_valid():
             service = form.save()
             
@@ -286,11 +288,12 @@ def edit_service(request, service_id):
     
     if request.method == 'POST':
         form = ServiceForm(request.POST, instance=service)
+        formset = ViewerCategoryFormset(request.POST, instance=service)
+        
         if form.is_valid():
             service = form.save()
             
             # Обработка формсета с категориями зрителей
-            formset = ViewerCategoryFormset(request.POST, instance=service)
             if formset.is_valid():
                 formset.save()
                 return redirect('main:create_docs')

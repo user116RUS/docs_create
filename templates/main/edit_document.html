@@ -149,7 +149,9 @@
                                         {% for service in services %}
                                         <div class="service-card" data-service-id="{{ service.id }}" 
                                              data-viewers="{{ service.total_viewers|default:'0' }}" 
-                                             data-price="{{ service.total_price|default:'0' }}">
+                                             data-price="{{ service.total_price|default:'0' }}"
+                                             data-name="{{ service.name }}"
+                                             data-date="{{ service.date }}">
                                             <div class="service-header">
                                                 <div class="d-flex align-items-center">
                                                     <div class="form-check form-check-inline me-3">
@@ -275,7 +277,7 @@
                             <div class="form-group mb-3">
                                 <label for="serviceName" class="form-label">Название услуги</label>
                                 <div class="suggestions-container">
-                                    <input type="text" class="form-control" id="serviceName" required>
+                                    <input type="text" class="form-control" id="serviceName" required autocomplete="off">
                                     <div class="suggestions-dropdown" id="serviceNameSuggestions">
                                         <!-- Здесь будут отображаться предложения -->
                                     </div>
@@ -341,9 +343,19 @@
         background-color: #fff;
     }
     
+    body.dark-theme .service-card {
+        background-color: #2a2a2a;
+        border-color: #444;
+    }
+    
     .service-card.selected {
         border-color: #007bff;
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    body.dark-theme .service-card.selected {
+        border-color: #4fc3f7;
+        box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
     }
     
     .service-header {
@@ -355,8 +367,18 @@
         align-items: center;
     }
     
+    body.dark-theme .service-header {
+        background-color: #333;
+        border-bottom-color: #444;
+        color: #fff;
+    }
+    
     .service-card.selected .service-header {
         background-color: #e6f2ff;
+    }
+    
+    body.dark-theme .service-card.selected .service-header {
+        background-color: #1e3a5f;
     }
     
     .service-body {
@@ -376,12 +398,23 @@
         width: 100%;
     }
     
+    body.dark-theme .category-item {
+        background-color: #2a2a2a;
+        border-color: #444;
+        color: #e0e0e0;
+    }
+    
     .category-form-row {
         background-color: #f8f9fa;
         padding: 10px;
         border-radius: 5px;
         margin-bottom: 10px;
         position: relative;
+    }
+    
+    body.dark-theme .category-form-row {
+        background-color: #333;
+        border: 1px solid #444;
     }
     
     .remove-category {
@@ -398,6 +431,12 @@
         border-radius: 5px;
         margin-top: 15px;
         border: 1px solid #cfe2ff;
+    }
+    
+    body.dark-theme .selected-services-summary {
+        background-color: #1a2635;
+        border-color: #2b4c7e;
+        color: #fff;
     }
     
     /* Стили для выпадающего списка предложений */
@@ -607,6 +646,23 @@
         // Вызываем функцию при загрузке страницы для инициализации полей
         updatePriceFields();
         
+        // Проверяем, нужно ли автоматически выбрать услугу после редактирования (из localStorage)
+        const lastServiceToSelect = localStorage.getItem('lastServiceToSelect');
+        if (lastServiceToSelect) {
+            const cardToSelect = document.querySelector(`.service-card[data-service-id="${lastServiceToSelect}"]`);
+            if (cardToSelect) {
+                const checkbox = cardToSelect.querySelector('.service-checkbox');
+                if (checkbox && !checkbox.checked) {
+                    checkbox.checked = true;
+                    // Имитируем событие change
+                    const event = new Event('change');
+                    checkbox.dispatchEvent(event);
+                    console.log('Automatically selected service after reload:', lastServiceToSelect);
+                }
+            }
+            localStorage.removeItem('lastServiceToSelect');
+        }
+        
         // Получаем элементы для автозаполнения address_and_time
         const customerSelect = document.getElementById('id_customer');
         const timeInput = document.getElementById('id_time');
@@ -814,10 +870,8 @@
                 if (serviceCard) {
                     // Заполняем поля формы
                     serviceIdField.value = serviceId;
-                    const nameLabel = serviceCard.querySelector('.form-check-label').textContent.trim();
-                    const nameParts = nameLabel.split('(');
-                    serviceNameField.value = nameParts[0].trim();
-                    serviceDateField.value = nameParts[1].replace(')', '').trim();
+                    serviceNameField.value = serviceCard.dataset.name || '';
+                    serviceDateField.value = serviceCard.dataset.date || '';
                     
                     // Добавляем категории
                     const categoryItems = serviceCard.querySelectorAll('.category-item');
@@ -954,6 +1008,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        // Сохраняем ID, чтобы выбрать после перезагрузки
+                        const idToSelect = data.service_id || (typeof serviceId !== 'undefined' ? serviceId : null);
+                        if (idToSelect) {
+                            localStorage.setItem('lastServiceToSelect', idToSelect);
+                        }
                         // Перезагружаем страницу для обновления данных
                         window.location.reload();
                     } else {
@@ -1012,6 +1071,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        // Сохраняем ID, чтобы выбрать после перезагрузки
+                        const idToSelect = data.service_id || (typeof serviceId !== 'undefined' ? serviceId : null);
+                        if (idToSelect) {
+                            localStorage.setItem('lastServiceToSelect', idToSelect);
+                        }
                         // Перезагружаем страницу для обновления данных
                         window.location.reload();
                     } else {

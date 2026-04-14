@@ -17,10 +17,19 @@
         margin-bottom: 15px;
         overflow: hidden;
         transition: all 0.3s ease;
+        background-color: #fff;
+    }
+    body.dark-theme .service-card {
+        background-color: #2a2a2a;
+        border-color: #444;
     }
     .service-card.selected {
         border-color: #0d6efd;
         box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    body.dark-theme .service-card.selected {
+        border-color: #4fc3f7;
+        box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
     }
     .service-header {
         background-color: #f8f9fa;
@@ -31,8 +40,16 @@
         justify-content: space-between;
         align-items: center;
     }
+    body.dark-theme .service-header {
+        background-color: #333;
+        border-bottom-color: #444;
+        color: #fff;
+    }
     .service-card.selected .service-header {
         background-color: #e9f0fd;
+    }
+    body.dark-theme .service-card.selected .service-header {
+        background-color: #1e3a5f;
     }
     .service-body {
         padding: 15px;
@@ -40,6 +57,10 @@
     .category-item {
         padding: 8px 12px;
         border-bottom: 1px solid #eee;
+    }
+    body.dark-theme .category-item {
+        border-bottom-color: #444;
+        color: #e0e0e0;
     }
     .category-item:last-child {
         border-bottom: none;
@@ -51,6 +72,11 @@
         margin-top: 15px;
         border: 1px solid #cfe2ff;
     }
+    body.dark-theme .selected-services-summary {
+        background-color: #1a2635;
+        border-color: #2b4c7e;
+        color: #fff;
+    }
     .service-checkbox {
         width: 20px;
         height: 20px;
@@ -60,10 +86,15 @@
     }
     .category-form-row {
         background-color: #f8f9fa;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
         position: relative;
+        border: 1px solid #dee2e6;
+    }
+    body.dark-theme .category-form-row {
+        background-color: #333;
+        border-color: #444;
     }
     .remove-category {
         position: absolute;
@@ -82,9 +113,18 @@
         transition: all 0.3s ease;
         cursor: pointer;
     }
+    body.dark-theme .drag-drop-zone {
+        background-color: #2a2a2a;
+        border-color: #555;
+        color: #e0e0e0;
+    }
     .drag-drop-zone.dragover {
         background-color: #e9f0fd;
         border-color: #0d6efd;
+    }
+    body.dark-theme .drag-drop-zone.dragover {
+        background-color: #1e3a5f;
+        border-color: #4fc3f7;
     }
     .drag-drop-icon {
         font-size: 2rem;
@@ -508,7 +548,9 @@
                                     <!-- Debug: {{ service.name }} - viewers: {{ service.total_viewers }}, price: {{ service.total_price }} -->
                                     <div class="service-card" data-service-id="{{ service.id }}" 
                                          data-viewers="{{ service.total_viewers|default:'0' }}" 
-                                         data-price="{{ service.total_price|default:'0' }}">
+                                         data-price="{{ service.total_price|default:'0' }}"
+                                         data-name="{{ service.name }}"
+                                         data-date="{{ service.date }}">
                                         <div class="service-header">
                                             <div class="d-flex align-items-center">
                                                 <div class="form-check form-check-inline me-3">
@@ -643,7 +685,7 @@
                             <div class="form-group mb-3">
                                 <label for="serviceName" class="form-label">Название услуги</label>
                                 <div class="suggestions-container">
-                                    <input type="text" class="form-control" id="serviceName" required>
+                                    <input type="text" class="form-control" id="serviceName" required autocomplete="off">
                                     <div class="suggestions-dropdown" id="serviceNameSuggestions">
                                         <!-- Здесь будут отображаться предложения -->
                                     </div>
@@ -1411,10 +1453,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (serviceCard) {
                 // Заполняем поля формы
                 serviceIdField.value = serviceId;
-                const nameLabel = serviceCard.querySelector('.form-check-label').textContent.trim();
-                const nameParts = nameLabel.split('(');
-                serviceNameField.value = nameParts[0].trim();
-                serviceDateField.value = nameParts[1].replace(')', '').trim();
+                serviceNameField.value = serviceCard.dataset.name || '';
+                serviceDateField.value = serviceCard.dataset.date || '';
                 
                 // Добавляем категории
                 const categoryItems = serviceCard.querySelectorAll('.category-item');
@@ -1577,12 +1617,39 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Добавляем обработчики событий к новой карточке
                         initServiceCard(newCard);
                         
+                        // Автоматически выбираем новую услугу
+                        const newCheckbox = newCard.querySelector('.service-checkbox');
+                        if (newCheckbox) {
+                            newCheckbox.checked = true;
+                            // Имитируем событие change
+                            const event = new Event('change');
+                            newCheckbox.dispatchEvent(event);
+                        }
+                        
                         // Обновляем список всех чекбоксов после добавления новой услуги
                         updateCheckboxesList();
                     }
                 }
                 
-                // Обновляем поля формы только если нужно
+                // Автоматически выбираем услугу после создания или редактирования
+                const idToCheck = data.service_id || serviceId;
+                if (idToCheck) {
+                    const cardElement = document.querySelector(`.service-card[data-service-id="${idToCheck}"]`);
+                    if (cardElement) {
+                        const checkbox = cardElement.querySelector('.service-checkbox');
+                        if (checkbox && !checkbox.checked) {
+                            checkbox.checked = true;
+                            // Имитируем событие change для обновления сводки и скрытых полей
+                            const event = new Event('change');
+                            checkbox.dispatchEvent(event);
+                            
+                            // Визуальное обновление
+                            updateServiceCardSelection(checkbox);
+                        }
+                    }
+                }
+                
+                // Обновляем поля формы и сводку в любом случае
                 updateServicesField();
                 updateServicesSummary();
             } else {
@@ -1614,6 +1681,8 @@ document.addEventListener('DOMContentLoaded', function() {
         card.dataset.serviceId = serviceData.id;
         card.dataset.viewers = serviceData.total_viewers || 0;
         card.dataset.price = serviceData.total_price || 0;
+        card.dataset.name = serviceData.name;
+        card.dataset.date = serviceData.date;
         
         // Создаем HTML содержимое карточки
         let categoriesHTML = '';
@@ -1671,9 +1740,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Функция для обновления существующей карточки услуги
     function updateServiceCard(card, serviceData) {
-        // Обновляем атрибуты
         card.dataset.viewers = serviceData.total_viewers || 0;
         card.dataset.price = serviceData.total_price || 0;
+        card.dataset.name = serviceData.name;
+        card.dataset.date = serviceData.date;
         
         // Обновляем заголовок
         const label = card.querySelector('.form-check-label');
