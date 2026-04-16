@@ -3,32 +3,18 @@
 {% block title %}Добавление организации{% endblock %}
 
 {% block content %}
-{% load user_filters %}
 <style>
-    .input-sm {
-        height: 38px !important;
+    .ai-highlight-missing {
+        border-color: #dc3545 !important;
+        background-color: rgba(220, 53, 69, 0.05) !important;
     }
-    .text-area-md {
-        height: 100px !important;
-        resize: vertical; /* Добавляем возможность изменения размера по вертикали */
-        min-height: 100px; /* Минимальная высота */
-    }
-    .text-area-lg {
-        height: 114px !important; /* В 3 раза больше чем стандартная высота поля */
-        resize: vertical; /* Добавляем возможность изменения размера по вертикали */
-        min-height: 114px; /* Минимальная высота */
-    }
-    .text-area-xl {
-        height: 200px !important; /* Ещё больше для реквизитов */
-        resize: vertical; /* Добавляем возможность изменения размера по вертикали */
-        min-height: 200px; /* Минимальная высота */
-    }
-    .text-area-md-2x {
-        height: 76px !important; /* В 2 раза больше стандартной высоты */
-        resize: vertical;
-        min-height: 76px;
+    .ai-highlight-missing:focus {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
     }
 </style>
+{% load user_filters %}
+
+
 <div class="row my-4">
     <div class="col-lg-10 mx-auto">
         <div class="card shadow-sm">
@@ -36,14 +22,49 @@
                 <h4 class="mb-0"><i class="bi bi-building me-2"></i>Добавление новой организации</h4>
             </div>
             <div class="card-body p-4">
+                <!-- AI Photo Assistant Section -->
+                <div class="card mb-4 border-0 bg-light-subtle shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                            <div>
+                                <h5 class="mb-1 text-primary"><i class="bi bi-robot me-2"></i>ИИ-ассистент</h5>
+                                <p class="text-muted small mb-0">Загрузите фото "карты партнера", и ИИ автоматически заполнит поля формы.</p>
+                            </div>
+                            <div>
+                                <input type="file" id="aiPhotoInput" accept="image/*" class="d-none">
+                                <button type="button" id="aiScanButton" class="btn btn-outline-primary px-4">
+                                    <i class="bi bi-camera me-2"></i>Сканировать карту
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Loading State -->
+                        <div id="aiLoading" class="mt-3 d-none">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                <span class="text-primary small">ИИ анализирует изображение, это может занять до 10-15 секунд...</span>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Status Messages -->
+                        <div id="aiStatus" class="mt-3 d-none">
+                            <div class="alert alert-warning py-2 small mb-0" id="aiStatusAlert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <span id="aiStatusText"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Область для отображения данных из документа -->
                 <div class="alert alert-success mb-4 d-none" id="extractedDataAlert">
-                    <h5 class="mb-2"><i class="bi bi-check-circle-fill me-2"></i>Данные загружены из документа</h5>
-                    <p class="mb-0">Форма была заполнена данными, извлеченными из загруженного документа. Пожалуйста, проверьте и отредактируйте информацию при необходимости.</p>
+                    <h5 class="mb-2"><i class="bi bi-check-circle-fill me-2"></i>Данные успешно извлечены</h5>
+                    <p class="mb-0">Форма заполнена автоматически. Поля, которые ИИ не смог распознать, выделены <span class="text-danger fw-bold">красным цветом</span>. Пожалуйста, проверьте их.</p>
                 </div>
                 
-                <form method="post" class="needs-validation" novalidate>
+                <form method="post" class="needs-validation" id="orgForm" novalidate>
                     {% csrf_token %}
+                    ...
                     
                     <div class="alert alert-info mb-4">
                         <i class="bi bi-info-circle-fill me-2"></i>Заполните всю необходимую информацию об организации. Поля, отмеченные звездочкой (*), обязательны для заполнения.
@@ -199,9 +220,9 @@
                     </div>
                     
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'main:index' %}" class="btn btn-outline-secondary">
+                        <button type="button" onclick="window.location.href='{% url 'main:index' %}'" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Вернуться
-                        </a>
+                        </button>
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-check-circle me-1"></i>Сохранить организацию
                         </button>
@@ -233,6 +254,72 @@
             }
         }
         
+        // AI Scan Logic
+        const scanBtn = document.getElementById('aiScanButton');
+        const photoInput = document.getElementById('aiPhotoInput');
+        
+        if (scanBtn && photoInput) {
+            scanBtn.addEventListener('click', () => photoInput.click());
+            
+            photoInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    handleAiScan(this.files[0]);
+                }
+            });
+        }
+        
+        function handleAiScan(file) {
+            const formData = new FormData();
+            formData.append('photo', file);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            
+            // Show loading
+            document.getElementById('aiLoading').classList.remove('d-none');
+            document.getElementById('aiStatus').classList.add('d-none');
+            document.getElementById('extractedDataAlert').classList.add('d-none');
+            
+            // Clear previous highlights
+            document.querySelectorAll('.ai-highlight-missing').forEach(el => el.classList.remove('ai-highlight-missing'));
+            
+            fetch('{% url "main:extract_organisation_from_photo" %}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('aiLoading').classList.add('d-none');
+                
+                if (data.success) {
+                    fillFormWithExtractedData(data.data);
+                    highlightMissingFields(data.data);
+                    document.getElementById('extractedDataAlert').classList.remove('d-none');
+                } else {
+                    document.getElementById('aiStatus').classList.remove('d-none');
+                    document.getElementById('aiStatusText').textContent = data.error || 'Ошибка при обработке изображения';
+                }
+            })
+            .catch(error => {
+                console.error('AI Scan Error:', error);
+                document.getElementById('aiLoading').classList.add('d-none');
+                document.getElementById('aiStatus').classList.remove('d-none');
+                document.getElementById('aiStatusText').textContent = 'Ошибка сети или сервера';
+            });
+        }
+        
+        function highlightMissingFields(data) {
+            // Список полей, которые обязательно должны быть заполнены ИИ
+            const criticalFields = ['name', 'short_name', 'inn', 'address', 'fio'];
+            
+            criticalFields.forEach(key => {
+                const fieldId = `id_${key}`;
+                const field = document.getElementById(fieldId);
+                
+                if (field && (!data[key] || data[key].toString().trim() === '')) {
+                    field.classList.add('ai-highlight-missing');
+                }
+            });
+        }
+
         // Функция для заполнения формы данными
         function fillFormWithExtractedData(data) {
             // Получаем все поля формы

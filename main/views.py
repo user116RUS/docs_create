@@ -22,7 +22,9 @@ from .forms import DocsForm, OrganisationForm, ServiceForm, ViewerCategoryForm, 
 
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
+from main.utils.ai import OpenAIAPI, ORGANISATION_EXTRACTION_PROMPT
 import json
+import base64
 
 
 def index(request):
@@ -823,7 +825,12 @@ def download_all_docs(request, document_id):
         act_doc.render(act_context)
         act_doc.save(act_buffer)
         act_buffer.seek(0)
-        zip_file.writestr(f'{folder_name}/Акт_приемки_{document.act_and_account_number}.docx', act_buffer.getvalue())
+        # Sanitize filenames for zip (replace slashes with underscores)
+        def sanitize_fn(name):
+            return str(name).replace('/', '_').replace('\\', '_')
+
+        act_fn = f"Акт_приемки_{sanitize_fn(document.act_and_account_number)}.docx"
+        zip_file.writestr(act_fn, act_buffer.getvalue())
         
         # Подготавливаем и добавляем счет
         invoice_buffer = BytesIO()
@@ -857,7 +864,8 @@ def download_all_docs(request, document_id):
         invoice_doc.render(invoice_context)
         invoice_doc.save(invoice_buffer)
         invoice_buffer.seek(0)
-        zip_file.writestr(f'{folder_name}/Счет_{document.act_and_account_number}.docx', invoice_buffer.getvalue())
+        invoice_fn = f"Счет_{sanitize_fn(document.act_and_account_number)}.docx"
+        zip_file.writestr(invoice_fn, invoice_buffer.getvalue())
         
         # Подготавливаем и добавляем договор
         contract_buffer = BytesIO()
@@ -891,7 +899,8 @@ def download_all_docs(request, document_id):
         contract_doc.render(contract_context)
         contract_doc.save(contract_buffer)
         contract_buffer.seek(0)
-        zip_file.writestr(f'{folder_name}/Договор_{document.number_basis_of_the_contract}.docx', contract_buffer.getvalue())
+        contract_fn = f"Договор_{sanitize_fn(document.number_basis_of_the_contract)}.docx"
+        zip_file.writestr(contract_fn, contract_buffer.getvalue())
     
     # Готовим ZIP-архив для отправки
     zip_buffer.seek(0)
@@ -1010,6 +1019,55 @@ def service_ajax(request):
             return JsonResponse({'success': False, 'error': str(e)})
     
     return JsonResponse({'success': False, 'error': 'Метод не поддерживается'})
+
+
+@login_required
+def extract_organisation_from_photo(request):
+    """View to handle organization data extraction from an image using AI vision."""
+    if request.method == 'POST' and request.FILES.get('photo'):
+        try:
+            photo = request.FILES['photo']
+            
+            # Read and encode image to base64
+            image_data = photo.read()
+            base64_image = base64.b64encode(image_data).decode('utf-8')
+            
+            ai = OpenAIAPI()
+            
+            # Use the centralized adapted prompt
+            prompt = ORGANISATION_EXTRACTION_PROMPT
+            
+            # Use the vision model
+            model = "vis-anthropic/claude-3-haiku"
+            result = ai.get_vision_response(prompt, base64_image, model=model)
+            
+            if result and result.get("message"):
+                ai_response = result["message"]
+                # Clean markdown
+                ai_response = re.sub(r'```json', '', ai_response)
+                ai_response = re.sub(r'```', '', ai_response)
+                
+                try:
+                    data = json.loads(ai_response.strip())
+                    
+                    # Ensure all fields exist
+                    fields = ['name', 'short_name', 'fio', 'function', 'inn', 'kpp', 
+                             'bik', 'bank_name', 'correspondent_bank_account', 
+                             'bank_account', 'address', 'requisites']
+                    for field in fields:
+                        if field not in data:
+                            data[field] = ""
+                            
+                    return JsonResponse({'success': True, 'data': data})
+                except json.JSONDecodeError:
+                    return JsonResponse({'success': False, 'error': 'AI returned invalid JSON format'})
+            else:
+                return JsonResponse({'success': False, 'error': 'AI failed to process the image'})
+                
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+            
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
 @login_required

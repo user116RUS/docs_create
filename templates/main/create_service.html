@@ -4,108 +4,8 @@
 
 {% block content %}
 {% load user_filters %}
-<style>
-    .input-sm {
-        height: 38px !important;
-    }
-    .select-sm {
-        height: 38px !important;
-    }
-    .form-row {
-        display: flex;
-        margin-right: -5px;
-        margin-left: -5px;
-        flex-wrap: wrap;
-    }
-    .form-row>.col {
-        padding-right: 5px;
-        padding-left: 5px;
-        flex-basis: 0;
-        flex-grow: 1;
-        max-width: 100%;
-    }
-    .viewer-category {
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        border: 1px solid #dee2e6;
-        transition: background-color 0.2s;
-    }
-    body.dark-theme .viewer-category {
-        background-color: #2a2a2a;
-        border-color: #444;
-        color: #fff;
-    }
-    .viewer-category:hover {
-        background-color: #e9ecef;
-    }
-    body.dark-theme .viewer-category:hover {
-        background-color: #333;
-    }
-    .category-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-    /* Стили для выпадающего списка предложений */
-    .suggestions-container {
-        position: relative;
-        width: 100%;
-    }
-    .suggestions-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-        width: 100%;
-        max-height: 200px;
-        overflow-y: auto;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        display: none;
-    }
-    .suggestions-dropdown.show {
-        display: block;
-    }
-    .suggestion-item {
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .suggestion-item:hover {
-        background-color: #f8f9fa;
-    }
-    /* Темная тема для выпадающего списка */
-    body.dark-theme .suggestions-dropdown {
-        background-color: #343a40;
-        border-color: #495057;
-    }
-    body.dark-theme .suggestion-item {
-        color: #fff;
-    }
-    body.dark-theme .suggestion-item:hover {
-        background-color: #495057;
-    }
-    /* Minecraft тема для выпадающего списка */
-    body.minecraft-theme .suggestions-dropdown {
-        background-color: #8b8b8b;
-        border: 2px solid #000;
-        box-shadow: 3px 3px 0 #000;
-        border-radius: 0;
-    }
-    body.minecraft-theme .suggestion-item {
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-        border-bottom: 1px solid #000;
-    }
-    body.minecraft-theme .suggestion-item:hover {
-        background-color: #5c8d44;
-    }
-</style>
+
+
 
 <!-- Подключаем flatpickr для календаря -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -212,9 +112,9 @@
                     </button>
                     
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'main:create_docs' %}" class="btn btn-outline-secondary">
+                        <button type="button" onclick="window.location.href='{% url 'main:create_docs' %}'" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Вернуться
-                        </a>
+                        </button>
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-save me-1"></i>Сохранить услугу
                         </button>

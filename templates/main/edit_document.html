@@ -164,9 +164,9 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <a href="#" class="btn btn-sm btn-outline-primary edit-service-btn">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary edit-service-btn">
                                                         <i class="bi bi-pencil-square"></i>
-                                                    </a>
+                                                    </button>
                                                     <button class="btn btn-sm btn-outline-danger ms-2 delete-service-btn">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
@@ -184,7 +184,7 @@
                                         {% endfor %}
                                     {% else %}
                                         <div class="alert alert-warning">
-                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Нет доступных услуг. Пожалуйста, <a href="{% url 'main:create_service' %}">добавьте услугу</a> перед созданием документа.
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Нет доступных услуг. Пожалуйста, <button type="button" onclick="window.location.href='{% url 'main:create_service' %}'" class="btn btn-sm btn-link p-0 align-baseline">добавьте услугу</button> перед созданием документа.
                                         </div>
                                     {% endif %}
                                 </div>
@@ -246,9 +246,9 @@
                         {{ form.price_in_figures.as_hidden }}
                         
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="{% url 'main:documents_list' %}" class="btn btn-outline-secondary">
+                            <button type="button" onclick="window.location.href='{% url 'main:documents_list' %}'" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left me-1"></i>Вернуться к списку
-                            </a>
+                            </button>
                             <button type="submit" class="btn btn-primary" id="submitButton">
                                 <i class="bi bi-check-circle me-1"></i>Сохранить изменения
                             </button>
@@ -335,167 +335,8 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 
-<style>
-    .service-card {
-        border: 1px solid #dee2e6;
-        border-radius: 0.25rem;
-        margin-bottom: 1rem;
-        background-color: #fff;
-    }
-    
-    body.dark-theme .service-card {
-        background-color: #2a2a2a;
-        border-color: #444;
-    }
-    
-    .service-card.selected {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-    
-    body.dark-theme .service-card.selected {
-        border-color: #4fc3f7;
-        box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
-    }
-    
-    .service-header {
-        padding: 0.75rem;
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #dee2e6;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    body.dark-theme .service-header {
-        background-color: #333;
-        border-bottom-color: #444;
-        color: #fff;
-    }
-    
-    .service-card.selected .service-header {
-        background-color: #e6f2ff;
-    }
-    
-    body.dark-theme .service-card.selected .service-header {
-        background-color: #1e3a5f;
-    }
-    
-    .service-body {
-        padding: 0.75rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-    
-    .category-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.5rem;
-        border: 1px solid #dee2e6;
-        border-radius: 0.25rem;
-        background-color: #f8f9fa;
-        width: 100%;
-    }
-    
-    body.dark-theme .category-item {
-        background-color: #2a2a2a;
-        border-color: #444;
-        color: #e0e0e0;
-    }
-    
-    .category-form-row {
-        background-color: #f8f9fa;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        position: relative;
-    }
-    
-    body.dark-theme .category-form-row {
-        background-color: #333;
-        border: 1px solid #444;
-    }
-    
-    .remove-category {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        cursor: pointer;
-        color: #dc3545;
-    }
-    
-    .selected-services-summary {
-        background-color: #f0f9ff;
-        padding: 15px;
-        border-radius: 5px;
-        margin-top: 15px;
-        border: 1px solid #cfe2ff;
-    }
-    
-    body.dark-theme .selected-services-summary {
-        background-color: #1a2635;
-        border-color: #2b4c7e;
-        color: #fff;
-    }
-    
-    /* Стили для выпадающего списка предложений */
-    .suggestions-container {
-        position: relative;
-        width: 100%;
-    }
-    .suggestions-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-        width: 100%;
-        max-height: 200px;
-        overflow-y: auto;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        display: none;
-    }
-    .suggestions-dropdown.show {
-        display: block;
-    }
-    .suggestion-item {
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .suggestion-item:hover {
-        background-color: #f8f9fa;
-    }
-    /* Темная тема для выпадающего списка */
-    body.dark-theme .suggestions-dropdown {
-        background-color: #343a40;
-        border-color: #495057;
-    }
-    body.dark-theme .suggestion-item {
-        color: #fff;
-    }
-    body.dark-theme .suggestion-item:hover {
-        background-color: #495057;
-    }
-    /* Minecraft тема для выпадающего списка */
-    body.minecraft-theme .suggestions-dropdown {
-        background-color: #8b8b8b;
-        border: 2px solid #000;
-        box-shadow: 3px 3px 0 #000;
-        border-radius: 0;
-    }
-    body.minecraft-theme .suggestion-item {
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-        border-bottom: 1px solid #000;
-    }
-    body.minecraft-theme .suggestion-item:hover {
-        background-color: #5c8d44;
-    }
-</style>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
