@@ -1038,7 +1038,7 @@ def extract_organisation_from_photo(request):
             prompt = ORGANISATION_EXTRACTION_PROMPT
             
             # Use the vision model
-            model = "vis-anthropic/claude-3-haiku"
+            model = "vis-google/gemini-2.5-flash-pre-05-20"
             result = ai.get_vision_response(prompt, base64_image, model=model)
             
             if result and result.get("message"):
@@ -1240,7 +1240,7 @@ def extract_organisation_data_with_ai(document_text):
         
         # Отправляем запрос к API
         response = client.chat.completions.create(
-            model="anthropic/claude-3-haiku",
+            model="vis-google/gemini-2.5-flash-pre-05-20",
             messages=messages,
             temperature=0.2,
             max_tokens=3000,

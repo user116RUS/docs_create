@@ -16,8 +16,8 @@ EXTRACT THESE FIELDS (use exact JSON keys):
 - "fio": Full name of the head/manager (e.g. "Иванов Иван Иванович")
 - "function": Official title of the head. MUST BE strictly either "Директор" or "Индивидуальный предприниматель".
 - "inn": Taxpayer Identification Number (ИНН) - digits only.
-- "kpp": Tax Registration Reason Code (КПП) - digits only.
-- "address": Complete legal or physical address.
+- "kpp": Tax Registration Reason Code (КПП) - digits only. Dont confuse with "ОГРН" or "ОГРНИП" or any other digits.
+- "address": Complete physical address or office address. If there's no any - legal address.
 - "bank_name": Full name of the bank.
 - "bik": Bank Identification Code (БИК) - digits only.
 - "bank_account": Settlement account number (Р/С) - digits only.
@@ -28,7 +28,11 @@ STRICT RULES:
 1. Extract ONLY text clearly visible in the image.
 2. Output MUST be in Russian as it appears on the document.
 3. If a field is missing or unreadable, leave as "".
-4. NO markdown formatting, NO ```json blocks, NO explanations. Return ONLY the raw JSON object.
+4. NO markdown formatting, NO ```json blocks, NO explanations. Return ONLY the raw JSON object. Even if it's not the partner map, return the JSON object.
+5. Don't confuse the data (e.g. "ОГРНИП" and "КПП"). If you dont have any data, leave as ""!.
+6. If you dont have any data, leave as ""!.
+7. DO NOT RETURN NON-JSON FORMAT ANSWER.
+8. DO NOT THINK UP ANY DATA
 
 JSON OUTPUT TEMPLATE:
 {
