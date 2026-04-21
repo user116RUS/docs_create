@@ -24,8 +24,9 @@ const THEME_COLORS = {
 /**
  * Applies the specified theme to the document body.
  * @param {string} themeName - The class name of the theme.
+ * @param {boolean} isInitialLoad - Whether this is the first theme setup on page load.
  */
-function setTheme(themeName) {
+function setTheme(themeName, isInitialLoad = false) {
     const prevTheme = document.body.className.split(' ').filter(c => Object.values(THEMES).includes(c))[0] || THEMES.LIGHT;
     
     // Standardize theme name
@@ -49,8 +50,11 @@ function setTheme(themeName) {
     // Update browser theme color
     updateMetaThemeColor(THEME_COLORS[themeName] || THEME_COLORS[THEMES.LIGHT]);
     
-    // Show notification if theme actually changed
-    if (prevTheme !== themeName) {
+    // Check if session has been initialized to avoid notifications on every load
+    const sessionInitialized = sessionStorage.getItem('themeInitialized');
+    
+    // Show notification if theme actually changed AND it's not the initial load AND session was already ready
+    if (!isInitialLoad && prevTheme !== themeName && sessionInitialized) {
         showThemeNotification(THEME_NAMES[themeName] || 'Стандартная');
         
         // Dispatch event for other listeners
@@ -59,6 +63,9 @@ function setTheme(themeName) {
         });
         document.dispatchEvent(event);
     }
+    
+    // Mark session as initialized after the first setTheme call
+    sessionStorage.setItem('themeInitialized', 'true');
 }
 
 /**
@@ -132,7 +139,7 @@ function showThemeNotification(themeNameRU) {
  */
 function switchThemeWithTransition(themeName) {
     document.body.classList.add('theme-transition');
-    setTheme(themeName);
+    setTheme(themeName); // isInitialLoad defaults to false
     setTimeout(() => {
         document.body.classList.remove('theme-transition');
     }, 600);
@@ -145,11 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     if (savedTheme !== null) {
-        setTheme(savedTheme);
+        setTheme(savedTheme, true); // true = Initial load
     } else if (systemPrefersDark) {
-        setTheme(THEMES.DARK);
+        setTheme(THEMES.DARK, true);
     } else {
-        setTheme(THEMES.LIGHT);
+        setTheme(THEMES.LIGHT, true);
     }
     
     // Bind click events to all switchers
@@ -175,4 +182,4 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.altKey && e.key === '2') switchThemeWithTransition(THEMES.DARK);
         if (e.altKey && e.key === '3') switchThemeWithTransition(THEMES.MINECRAFT);
     });
-});
+});
