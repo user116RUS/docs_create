@@ -91,5 +91,6 @@ urlpatterns = [
     ),
     path('service-ajax/', views.service_ajax, name='service_ajax'),
     path('extract-organisation-data/', views.extract_organisation_data, name='extract_organisation_data'),
+    path('extract-organisation-from-photo/', views.extract_organisation_from_photo, name='extract_organisation_from_photo'),
     path('get-organisations-data/', views.get_organisations_data, name='get_organisations_data'),
 ]

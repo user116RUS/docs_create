@@ -4,330 +4,6 @@
 
 {% block content %}
 {% load user_filters %}
-<style>
-    .input-sm {
-        height: 38px !important;
-    }
-    .select-sm {
-        height: 38px !important;
-    }
-    .service-card {
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-    .service-card.selected {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-    }
-    .service-header {
-        background-color: #f8f9fa;
-        padding: 10px 15px;
-        border-bottom: 1px solid #dee2e6;
-        font-weight: 500;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .service-card.selected .service-header {
-        background-color: #e9f0fd;
-    }
-    .service-body {
-        padding: 15px;
-    }
-    .category-item {
-        padding: 8px 12px;
-        border-bottom: 1px solid #eee;
-    }
-    .category-item:last-child {
-        border-bottom: none;
-    }
-    .selected-services-summary {
-        background-color: #f0f9ff;
-        padding: 15px;
-        border-radius: 5px;
-        margin-top: 15px;
-        border: 1px solid #cfe2ff;
-    }
-    .service-checkbox {
-        width: 20px;
-        height: 20px;
-    }
-    .modal-backdrop {
-        opacity: 0.5 !important;
-    }
-    .category-form-row {
-        background-color: #f8f9fa;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        position: relative;
-    }
-    .remove-category {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        cursor: pointer;
-        color: #dc3545;
-    }
-    .drag-drop-zone {
-        border: 2px dashed #ccc;
-        border-radius: 5px;
-        padding: 25px;
-        text-align: center;
-        margin-bottom: 20px;
-        background-color: #f8f9fa;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-    .drag-drop-zone.dragover {
-        background-color: #e9f0fd;
-        border-color: #0d6efd;
-    }
-    .drag-drop-icon {
-        font-size: 2rem;
-        color: #6c757d;
-        margin-bottom: 15px;
-    }
-    .processing-spinner {
-        display: none;
-    }
-    
-    /* Стили для выпадающего списка предложений */
-    .suggestions-container {
-        position: relative;
-        width: 100%;
-    }
-    .suggestions-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-        width: 100%;
-        max-height: 200px;
-        overflow-y: auto;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        display: none;
-    }
-    .suggestions-dropdown.show {
-        display: block;
-    }
-    .suggestion-item {
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .suggestion-item:hover {
-        background-color: #f8f9fa;
-    }
-    /* Темная тема для выпадающего списка */
-    body.dark-theme .suggestions-dropdown {
-        background-color: #343a40;
-        border-color: #495057;
-    }
-    body.dark-theme .suggestion-item {
-        color: #fff;
-    }
-    body.dark-theme .suggestion-item:hover {
-        background-color: #495057;
-    }
-    /* Minecraft тема для выпадающего списка */
-    body.minecraft-theme .suggestions-dropdown {
-        background-color: #8b8b8b;
-        border: 2px solid #000;
-        box-shadow: 3px 3px 0 #000;
-        border-radius: 0;
-    }
-    body.minecraft-theme .suggestion-item {
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-        border-bottom: 1px solid #000;
-    }
-    body.minecraft-theme .suggestion-item:hover {
-        background-color: #5c8d44;
-    }
-    
-    /* Стили для календаря в стиле Minecraft */
-    .minecraft-datepicker {
-        /* Общие стили для поля даты */
-        padding: 8px 12px !important;
-        cursor: pointer !important;
-        letter-spacing: 1px !important;
-        border-radius: 4px !important;
-    }
-    
-    /* Основная светлая тема */
-    body:not(.dark-theme):not(.minecraft-theme) .minecraft-datepicker {
-        background-color: #ffffff !important;
-        color: #333333 !important;
-        border: 1px solid #ced4da !important;
-    }
-    
-    /* Темная тема для поля даты */
-    body.dark-theme .minecraft-datepicker {
-        background-color: #333333 !important;
-        color: #ffffff !important;
-        border: 1px solid #555555 !important;
-        box-shadow: none !important;
-    }
-    
-    /* Minecraft тема для поля даты */
-    body.minecraft-theme .minecraft-datepicker {
-        font-family: 'Minecraft', sans-serif !important;
-        background-color: #727272 !important;
-        color: #FFFFFF !important;
-        border: 2px solid #000000 !important;
-        box-shadow: inset 0 0 0 2px #555555, 2px 2px 0px #000000 !important;
-        text-shadow: 2px 2px 0px #000000 !important;
-        border-radius: 0 !important;
-    }
-    
-    body.minecraft-theme .minecraft-datepicker:hover {
-        background-color: #5E5E5E !important;
-    }
-    
-    body.minecraft-theme .minecraft-datepicker:focus {
-        outline: none !important;
-        background-color: #5E5E5E !important;
-        box-shadow: inset 0 0 0 2px #444444, 2px 2px 0px #000000, 0 0 0 2px #ffd700 !important;
-    }
-    
-    /* Стили для нативного календаря */
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        cursor: pointer;
-    }
-    
-    body.dark-theme input[type="date"]::-webkit-calendar-picker-indicator {
-        filter: invert(1);
-    }
-    
-    body.minecraft-theme input[type="date"]::-webkit-calendar-picker-indicator {
-        filter: invert(1);
-        background-color: #555555;
-        border-radius: 0;
-        box-shadow: 2px 2px 0px #000000;
-    }
-    
-    /* Стили для темной темы карточек услуг */
-    body.dark-theme .service-card {
-        border-color: #444;
-        background-color: #2a2a2a;
-    }
-    
-    body.dark-theme .service-header {
-        background-color: #333;
-        border-color: #444;
-    }
-    
-    body.dark-theme .service-card.selected {
-        border-color: #4fc3f7;
-        box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
-    }
-    
-    body.dark-theme .service-card.selected .service-header {
-        background-color: #1e3a4a;
-    }
-    
-    body.dark-theme .category-item {
-        border-color: #444;
-    }
-    
-    body.dark-theme .selected-services-summary {
-        background-color: #1e3a4a;
-        border-color: #4fc3f7;
-    }
-    
-    body.dark-theme .category-form-row {
-        background-color: #333;
-    }
-    
-    body.dark-theme .drag-drop-zone {
-        border-color: #444;
-        background-color: #333;
-    }
-    
-    body.dark-theme .drag-drop-zone.dragover {
-        background-color: #1e3a4a;
-        border-color: #4fc3f7;
-    }
-    
-    /* Стили для Minecraft темы карточек услуг */
-    body.minecraft-theme .service-card {
-        border: 2px solid #000;
-        background-color: #8b8b8b;
-        border-radius: 0;
-        margin-bottom: 15px;
-        box-shadow: 3px 3px 0 #000;
-    }
-    
-    body.minecraft-theme .service-header {
-        background-color: #65482c;
-        border-bottom: 2px solid #000;
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-    }
-    
-    body.minecraft-theme .service-card.selected {
-        border-color: #ffd700;
-        box-shadow: 0 0 0 2px #ffd700, 3px 3px 0 #000;
-    }
-    
-    body.minecraft-theme .service-card.selected .service-header {
-        background-color: #5c8d44;
-    }
-    
-    body.minecraft-theme .category-item {
-        border-bottom: 2px solid #000;
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-    }
-    
-    body.minecraft-theme .selected-services-summary {
-        background-color: #5c8d44;
-        border: 2px solid #000;
-        border-radius: 0;
-        box-shadow: 3px 3px 0 #000;
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-    }
-    
-    body.minecraft-theme .category-form-row {
-        background-color: #727272;
-        border: 2px solid #000;
-        border-radius: 0;
-        box-shadow: 2px 2px 0 #000;
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-    }
-    
-    body.minecraft-theme .drag-drop-zone {
-        border: 2px dashed #000;
-        background-color: #5c8d44;
-        border-radius: 0;
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-    }
-    
-    body.minecraft-theme .drag-drop-zone.dragover {
-        background-color: #65482c;
-        border: 2px dashed #ffd700;
-    }
-    
-    body.minecraft-theme .drag-drop-icon {
-        color: #fff;
-        text-shadow: 2px 2px 0 #000;
-        font-size: 2.5rem;
-    }
-    
-    body.minecraft-theme .form-check-input {
-        border-radius: 0 !important;
-    }
-</style>
 <div class="row my-4">
     <div class="col-lg-10 mx-auto">
         <div class="card shadow-sm">
@@ -356,9 +32,9 @@
                     <h5><i class="bi bi-check-circle-fill me-2"></i>Данные успешно извлечены!</h5>
                     <p>Информация об организации была извлечена из документа. Вы можете использовать эти данные для создания новой организации.</p>
                     <div class="mt-2">
-                        <a href="#" id="createOrganisationBtn" class="btn btn-sm btn-success">
+                        <button type="button" id="createOrganisationBtn" class="btn btn-sm btn-success shadow-sm">
                             <i class="bi bi-plus-circle me-1"></i>Создать организацию из документа
-                        </a>
+                        </button>
                     </div>
                 </div>
                 
@@ -480,9 +156,9 @@
                     <div class="card mb-4">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Услуги</h5>
-                            <a href="#" id="createServiceBtn" class="btn btn-sm btn-success">
+                            <button type="button" id="createServiceBtn" class="btn btn-sm btn-success shadow-sm">
                                 <i class="bi bi-plus-circle me-1"></i>Добавить новую услугу
-                            </a>
+                            </button>
                         </div>
                         <div class="card-body">
                             <!-- Скрытое поле для правильной обработки формы -->
@@ -508,7 +184,9 @@
                                     <!-- Debug: {{ service.name }} - viewers: {{ service.total_viewers }}, price: {{ service.total_price }} -->
                                     <div class="service-card" data-service-id="{{ service.id }}" 
                                          data-viewers="{{ service.total_viewers|default:'0' }}" 
-                                         data-price="{{ service.total_price|default:'0' }}">
+                                         data-price="{{ service.total_price|default:'0' }}"
+                                         data-name="{{ service.name }}"
+                                         data-date="{{ service.date }}">
                                         <div class="service-header">
                                             <div class="d-flex align-items-center">
                                                 <div class="form-check form-check-inline me-3">
@@ -521,9 +199,9 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <a href="#" class="btn btn-sm btn-outline-primary edit-service-btn">
+                                                <button type="button" class="btn btn-sm btn-outline-primary edit-service-btn">
                                                     <i class="bi bi-pencil-square"></i>
-                                                </a>
+                                                </button>
                                                 <button class="btn btn-sm btn-outline-danger ms-2 delete-service-btn">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
@@ -613,9 +291,9 @@
                     </div>
                     
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'main:index' %}" class="btn btn-outline-secondary">
+                        <button type="button" onclick="window.location.href='{% url 'main:index' %}'" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Вернуться
-                        </a>
+                        </button>
                         <button type="submit" id="submitButton" class="btn btn-primary">
                             <i class="bi bi-file-earmark-check me-1"></i>Создать документы
                         </button>
@@ -643,7 +321,7 @@
                             <div class="form-group mb-3">
                                 <label for="serviceName" class="form-label">Название услуги</label>
                                 <div class="suggestions-container">
-                                    <input type="text" class="form-control" id="serviceName" required>
+                                    <input type="text" class="form-control" id="serviceName" required autocomplete="off">
                                     <div class="suggestions-dropdown" id="serviceNameSuggestions">
                                         <!-- Здесь будут отображаться предложения -->
                                     </div>
@@ -1411,10 +1089,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (serviceCard) {
                 // Заполняем поля формы
                 serviceIdField.value = serviceId;
-                const nameLabel = serviceCard.querySelector('.form-check-label').textContent.trim();
-                const nameParts = nameLabel.split('(');
-                serviceNameField.value = nameParts[0].trim();
-                serviceDateField.value = nameParts[1].replace(')', '').trim();
+                serviceNameField.value = serviceCard.dataset.name || '';
+                serviceDateField.value = serviceCard.dataset.date || '';
                 
                 // Добавляем категории
                 const categoryItems = serviceCard.querySelectorAll('.category-item');
@@ -1577,12 +1253,39 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Добавляем обработчики событий к новой карточке
                         initServiceCard(newCard);
                         
+                        // Автоматически выбираем новую услугу
+                        const newCheckbox = newCard.querySelector('.service-checkbox');
+                        if (newCheckbox) {
+                            newCheckbox.checked = true;
+                            // Имитируем событие change
+                            const event = new Event('change');
+                            newCheckbox.dispatchEvent(event);
+                        }
+                        
                         // Обновляем список всех чекбоксов после добавления новой услуги
                         updateCheckboxesList();
                     }
                 }
                 
-                // Обновляем поля формы только если нужно
+                // Автоматически выбираем услугу после создания или редактирования
+                const idToCheck = data.service_id || serviceId;
+                if (idToCheck) {
+                    const cardElement = document.querySelector(`.service-card[data-service-id="${idToCheck}"]`);
+                    if (cardElement) {
+                        const checkbox = cardElement.querySelector('.service-checkbox');
+                        if (checkbox && !checkbox.checked) {
+                            checkbox.checked = true;
+                            // Имитируем событие change для обновления сводки и скрытых полей
+                            const event = new Event('change');
+                            checkbox.dispatchEvent(event);
+                            
+                            // Визуальное обновление
+                            updateServiceCardSelection(checkbox);
+                        }
+                    }
+                }
+                
+                // Обновляем поля формы и сводку в любом случае
                 updateServicesField();
                 updateServicesSummary();
             } else {
@@ -1614,6 +1317,8 @@ document.addEventListener('DOMContentLoaded', function() {
         card.dataset.serviceId = serviceData.id;
         card.dataset.viewers = serviceData.total_viewers || 0;
         card.dataset.price = serviceData.total_price || 0;
+        card.dataset.name = serviceData.name;
+        card.dataset.date = serviceData.date;
         
         // Создаем HTML содержимое карточки
         let categoriesHTML = '';
@@ -1671,9 +1376,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Функция для обновления существующей карточки услуги
     function updateServiceCard(card, serviceData) {
-        // Обновляем атрибуты
         card.dataset.viewers = serviceData.total_viewers || 0;
         card.dataset.price = serviceData.total_price || 0;
+        card.dataset.name = serviceData.name;
+        card.dataset.date = serviceData.date;
         
         // Обновляем заголовок
         const label = card.querySelector('.form-check-label');
