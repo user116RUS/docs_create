@@ -1121,7 +1121,9 @@ def get_organisations_data(request):
     for org in organisations:
         organisations_data[str(org.id)] = {
             'address': org.address,
-            'short_name': org.short_name
+            'short_name': org.short_name,
+            'inn': org.inn,
+            'name': org.name
         }
     
     # Возвращаем данные в формате JSON
