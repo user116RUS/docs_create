@@ -110,7 +110,17 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="{{ form.customer.id_for_label }}" class="form-label">{{ form.customer.label }}</label>
-                                    {{ form.customer|addclass:"form-select" }}
+                                    <div class="searchable-select" data-searchable-select data-placeholder="Поиск контрагента">
+                                        {{ form.customer|addclass:"form-select searchable-select__native" }}
+                                        <div class="input-group searchable-select__control">
+                                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                            <input type="text" class="form-control searchable-select__input" placeholder="Поиск по названию или ИНН" autocomplete="off" aria-label="Поиск контрагента">
+                                            <button type="button" class="btn btn-outline-secondary searchable-select__clear" aria-label="Очистить поиск">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                        <div class="searchable-select__menu" role="listbox"></div>
+                                    </div>
                                     <div class="form-text">{{ form.customer.help_text }}</div>
                                     {% if form.customer.errors %}
                                     <div class="invalid-feedback d-block">
@@ -508,6 +518,175 @@
         const customerSelect = document.getElementById('id_customer');
         const timeInput = document.getElementById('id_time');
         const addressAndTimeInput = document.getElementById('id_address_and_time');
+        const customerSearch = initSearchableSelect(customerSelect);
+
+        function initSearchableSelect(select) {
+            if (!select) {
+                return null;
+            }
+
+            const root = select.closest('[data-searchable-select]');
+            if (!root) {
+                return null;
+            }
+
+            const input = root.querySelector('.searchable-select__input');
+            const menu = root.querySelector('.searchable-select__menu');
+            const clearButton = root.querySelector('.searchable-select__clear');
+            const placeholder = root.dataset.placeholder || '';
+            let activeIndex = -1;
+            let visibleOptions = [];
+
+            function normalize(value) {
+                return (value || '').toString().trim().toLowerCase().replace(/\s+/g, ' ');
+            }
+
+            function getOptions() {
+                return Array.from(select.options).filter(option => option.value);
+            }
+
+            function syncInput() {
+                const selectedOption = select.options[select.selectedIndex];
+                input.value = selectedOption && selectedOption.value ? selectedOption.textContent.trim() : '';
+                input.placeholder = placeholder;
+            }
+
+            function closeMenu() {
+                root.classList.remove('open');
+                activeIndex = -1;
+            }
+
+            function chooseOption(option) {
+                select.value = option.value;
+                syncInput();
+                closeMenu();
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            function renderOptions(showAll = false) {
+                const query = showAll ? '' : normalize(input.value);
+                menu.innerHTML = '';
+
+                visibleOptions = getOptions().filter(option => {
+                    const searchValue = normalize(`${option.textContent} ${option.dataset.search || ''}`);
+                    return !query || searchValue.includes(query);
+                }).slice(0, 60);
+
+                if (!visibleOptions.length) {
+                    const empty = document.createElement('div');
+                    empty.className = 'searchable-select__empty';
+                    empty.textContent = 'Ничего не найдено';
+                    menu.appendChild(empty);
+                    root.classList.add('open');
+                    return;
+                }
+
+                visibleOptions.forEach((option, index) => {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'searchable-select__option';
+                    item.textContent = option.textContent.trim();
+                    item.setAttribute('role', 'option');
+                    if (option.value === select.value) {
+                        item.classList.add('selected');
+                    }
+                    if (index === activeIndex) {
+                        item.classList.add('active');
+                    }
+                    item.addEventListener('mousedown', event => {
+                        event.preventDefault();
+                        chooseOption(option);
+                    });
+                    menu.appendChild(item);
+                });
+
+                root.classList.add('open');
+            }
+
+            input.addEventListener('focus', () => {
+                input.select();
+                renderOptions(true);
+            });
+
+            input.addEventListener('input', () => {
+                activeIndex = -1;
+                renderOptions();
+            });
+
+            input.addEventListener('keydown', event => {
+                if (event.key === 'Escape') {
+                    closeMenu();
+                    syncInput();
+                    return;
+                }
+
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    if (!root.classList.contains('open')) {
+                        renderOptions(true);
+                    }
+                    if (!visibleOptions.length) {
+                        return;
+                    }
+                    const direction = event.key === 'ArrowDown' ? 1 : -1;
+                    activeIndex = (activeIndex + direction + visibleOptions.length) % visibleOptions.length;
+                    renderOptions();
+                    return;
+                }
+
+                if (event.key === 'Enter' && root.classList.contains('open')) {
+                    event.preventDefault();
+                    const option = visibleOptions[activeIndex] || visibleOptions[0];
+                    if (option) {
+                        chooseOption(option);
+                    }
+                }
+            });
+
+            clearButton.addEventListener('click', () => {
+                select.value = '';
+                input.value = '';
+                renderOptions();
+                input.focus();
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+
+            select.addEventListener('change', syncInput);
+
+            document.addEventListener('click', event => {
+                if (!root.contains(event.target)) {
+                    closeMenu();
+                    syncInput();
+                }
+            });
+
+            syncInput();
+
+            return {
+                sync: syncInput
+            };
+        }
+
+        const documentDateInput = document.getElementById('id_date');
+        if (documentDateInput && typeof flatpickr === 'function') {
+            const documentDateMonths = [
+                'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+            ];
+
+            flatpickr(documentDateInput, {
+                dateFormat: 'd.m.Y',
+                locale: 'ru',
+                allowInput: true,
+                disableMobile: true,
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        const date = selectedDates[0];
+                        documentDateInput.value = `${date.getDate()} ${documentDateMonths[date.getMonth()]} ${date.getFullYear()}`;
+                    }
+                }
+            });
+        }
         
         // Функция для автоматического заполнения поля address_and_time
         function updateAddressAndTime() {
@@ -540,8 +719,17 @@
                     for (const option of customerSelect.options) {
                         if (option.value && data[option.value]) {
                             option.setAttribute('data-address', data[option.value].address);
+                            option.dataset.search = [
+                                data[option.value].short_name,
+                                data[option.value].name,
+                                data[option.value].inn
+                            ].filter(Boolean).join(' ');
                         }
                     }
+                    if (customerSearch) {
+                        customerSearch.sync();
+                    }
+                    updateAddressAndTime();
                 })
                 .catch(error => console.error('Error loading organisations data:', error));
         }
@@ -943,4 +1131,4 @@
     });
 </script>
 
-{% endblock %} 
+{% endblock %}
