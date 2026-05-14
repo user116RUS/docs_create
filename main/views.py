@@ -15,6 +15,7 @@ import tempfile
 from openai import OpenAI
 import re
 import datetime
+from urllib.parse import quote
 
 from main.models import Document, Organisation, Service, ViewerCategory
 
@@ -711,19 +712,6 @@ def download_all_docs(request, document_id):
     # Создаем ZIP-архив в памяти
     zip_buffer = BytesIO()
     
-    # Создаем безопасное имя папки из short_name клиента для использования внутри архива
-    try:
-        # Получаем короткое имя организации
-        short_name = document.customer.short_name
-        # Берём первые 10 символов и убираем небезопасные символы
-        folder_name = short_name[:20].strip().replace(' ', '_').replace('"', '').replace("'", "").replace('/', '_')
-        # Проверяем, что имя не пустое
-        if not folder_name:
-            folder_name = f"Документы_{document.act_and_account_number}"
-    except (AttributeError, TypeError):
-        # Если произошла ошибка (например, short_name не существует)
-        folder_name = f"Документы_{document.act_and_account_number}"
-    
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
         # Подготавливаем и добавляем акт приемки
         act_buffer = BytesIO()
@@ -905,13 +893,26 @@ def download_all_docs(request, document_id):
     # Готовим ZIP-архив для отправки
     zip_buffer.seek(0)
     
-    # Создаем безопасное имя файла для zip-архива (аналогично имени папки внутри)
-    safe_name = folder_name
+    def sanitize_download_name(value, default):
+        name = re.sub(r'[<>:"/\\|?*\x00-\x1f]+', '_', str(value or ''))
+        name = re.sub(r'\s+', '_', name).strip(' ._')
+        return name[:120] or default
+
+    # Создаем русское имя архива и RFC-совместимый заголовок для браузеров.
+    archive_name = sanitize_download_name(
+        f"Документы_{document.customer.short_name}_{document.act_and_account_number}",
+        f"Документы_{document.id}",
+    )
+    ascii_archive_name = f"documents_{document.id}.zip"
+    encoded_archive_name = quote(f"{archive_name}.zip")
     
     # Отправляем архив пользователю
     response = HttpResponse(zip_buffer.getvalue())
     response['Content-Type'] = 'application/zip'
-    response['Content-Disposition'] = f'attachment; filename="{safe_name}.zip"'
+    response['Content-Disposition'] = (
+        f'attachment; filename="{ascii_archive_name}"; '
+        f"filename*=UTF-8''{encoded_archive_name}"
+    )
     
     return response
 
