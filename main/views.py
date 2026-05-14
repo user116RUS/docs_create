@@ -895,12 +895,29 @@ def download_all_docs(request, document_id):
     
     def sanitize_download_name(value, default):
         name = re.sub(r'[<>:"/\\|?*\x00-\x1f]+', '_', str(value or ''))
-        name = re.sub(r'\s+', '_', name).strip(' ._')
+        name = re.sub(r'\s+', ' ', name).strip(' ._')
         return name[:120] or default
 
+    def get_school_number(*values):
+        school_text = ' '.join(str(value or '') for value in values)
+        school_text_lower = school_text.lower()
+        if not any(word in school_text_lower for word in ('школ', 'гимнази', 'лице')):
+            return None
+
+        number_patterns = (
+            '(?:\u2116|#|N|N\\.|No\\.?|номер)\\s*(\\d+[\u0410-\u042fA-Z\u0430-\u044fa-z]?)',
+            '(?:школ[а-я]*|гимнази[а-я]*|лице[а-я]*)\\D{0,30}(\\d+[\u0410-\u042fA-Z\u0430-\u044fa-z]?)',
+        )
+        for pattern in number_patterns:
+            match = re.search(pattern, school_text, re.IGNORECASE)
+            if match:
+                return match.group(1)
+        return None
+
     # Создаем русское имя архива и RFC-совместимый заголовок для браузеров.
+    school_number = get_school_number(document.customer.short_name, document.customer.name)
     archive_name = sanitize_download_name(
-        f"Документы_{document.customer.short_name}_{document.act_and_account_number}",
+        f"{school_number} Документы" if school_number else f"Документы_{document.customer.short_name}_{document.act_and_account_number}",
         f"Документы_{document.id}",
     )
     ascii_archive_name = f"documents_{document.id}.zip"
