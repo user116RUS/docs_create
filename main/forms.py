@@ -5,7 +5,7 @@ from .models import Document, Organisation, Service, ViewerCategory
 
 class DateInput(forms.DateInput):
     """Кастомный виджет для выбора даты с календарем"""
-    input_type = 'date'
+    input_type = 'text'
     
     def __init__(self, attrs=None, format=None):
         default_attrs = {'class': 'form-control minecraft-datepicker'}
