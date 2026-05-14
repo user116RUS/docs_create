@@ -15,6 +15,15 @@ class DateInput(forms.DateInput):
 
 
 class DocsForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['doer'].queryset = Organisation.objects.filter(
+            is_our=True
+        ).order_by('short_name', 'name')
+        self.fields['customer'].queryset = Organisation.objects.filter(
+            is_our=False
+        ).order_by('short_name', 'name')
+
     class Meta:
         model = Document
         fields = (
