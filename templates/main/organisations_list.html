@@ -12,23 +12,23 @@
             <p class="text-muted">Всего: {{ count }}</p>
         </div>
         <div class="col-auto align-self-center">
-            <a href="{% url 'main:create_organisation' %}" class="btn btn-success">
+            <button type="button" onclick="window.location.href='{% url 'main:create_organisation' %}'" class="btn btn-success shadow-sm">
                 <i class="bi bi-plus-circle me-1"></i>Добавить организацию
-            </a>
+            </button>
         </div>
     </div>
     
-    <div class="card shadow-sm">
+    <div class="card shadow-sm border-0 shadow-premium">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="table-light">
+                    <thead>
                         <tr>
                             <th>Название</th>
                             <th>ИНН</th>
                             <th>КПП</th>
                             <th width="150">Статус</th>
-                            <th width="120">Действия</th>
+                            <th width="140">Действия</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,17 +42,17 @@
                             <td>{{ organisation.kpp }}</td>
                             <td>
                                 {% if organisation.is_our %}
-                                <span class="badge bg-success">Наша организация</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Наша организация</span>
                                 {% else %}
-                                <span class="badge bg-secondary">Контрагент</span>
+                                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1">Контрагент</span>
                                 {% endif %}
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="{% url 'main:edit_organisation' organisation.id %}" class="btn btn-outline-primary" title="Редактировать">
+                                <div class="btn-group">
+                                    <button type="button" onclick="window.location.href='{% url 'main:edit_organisation' organisation.id %}'" class="btn btn-sm btn-outline-primary" title="Редактировать">
                                         <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-outline-danger delete-organisation-btn" 
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-organisation-btn" 
                                            data-id="{{ organisation.id }}" 
                                            data-name="{{ organisation.short_name }}" 
                                            title="Удалить">
@@ -63,11 +63,14 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center py-4">
-                                <p class="text-muted mb-0">Организации не найдены</p>
-                                <a href="{% url 'main:create_organisation' %}" class="btn btn-primary mt-2">
+                            <td colspan="5" class="text-center py-5">
+                                <div class="mb-3 text-muted">
+                                    <i class="bi bi-inbox display-4"></i>
+                                </div>
+                                <p class="text-muted mb-4">Организации не найдены</p>
+                                <button type="button" onclick="window.location.href='{% url 'main:create_organisation' %}'" class="btn btn-primary">
                                     <i class="bi bi-plus-circle me-1"></i>Добавить организацию
-                                </a>
+                                </button>
                             </td>
                         </tr>
                         {% endfor %}

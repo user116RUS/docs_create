@@ -4,122 +4,8 @@
 
 {% block content %}
 {% load user_filters %}
-<style>
-    .input-sm {
-        height: 38px !important;
-    }
-    .select-sm {
-        height: 38px !important;
-    }
-    .form-row {
-        display: flex;
-        margin-right: -5px;
-        margin-left: -5px;
-        flex-wrap: wrap;
-    }
-    .form-row>.col {
-        padding-right: 5px;
-        padding-left: 5px;
-        flex-basis: 0;
-        flex-grow: 1;
-        max-width: 100%;
-    }
-    .viewer-category {
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        border: 1px solid #dee2e6;
-    }
-    .viewer-category:hover {
-        background-color: #e9ecef;
-    }
-    .category-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
 
-    body.dark-theme .viewer-category {
-        background-color: #303030;
-        border-color: #4a4a4a;
-        color: #f1f5f9;
-    }
 
-    body.dark-theme .viewer-category:hover {
-        background-color: #363636;
-    }
-
-    body.minecraft-theme .viewer-category {
-        background-color: #727272;
-        border: 2px solid #000;
-        border-radius: 0;
-        box-shadow: 2px 2px 0 #000;
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-    }
-
-    body.minecraft-theme .viewer-category:hover {
-        background-color: #5e5e5e;
-    }
-    /* Стили для выпадающего списка предложений */
-    .suggestions-container {
-        position: relative;
-        width: 100%;
-    }
-    .suggestions-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-        width: 100%;
-        max-height: 200px;
-        overflow-y: auto;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        display: none;
-    }
-    .suggestions-dropdown.show {
-        display: block;
-    }
-    .suggestion-item {
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .suggestion-item:hover {
-        background-color: #f8f9fa;
-    }
-    /* Темная тема для выпадающего списка */
-    body.dark-theme .suggestions-dropdown {
-        background-color: #343a40;
-        border-color: #495057;
-    }
-    body.dark-theme .suggestion-item {
-        color: #fff;
-    }
-    body.dark-theme .suggestion-item:hover {
-        background-color: #495057;
-    }
-    /* Minecraft тема для выпадающего списка */
-    body.minecraft-theme .suggestions-dropdown {
-        background-color: #8b8b8b;
-        border: 2px solid #000;
-        box-shadow: 3px 3px 0 #000;
-        border-radius: 0;
-    }
-    body.minecraft-theme .suggestion-item {
-        color: #fff;
-        text-shadow: 1px 1px 0 #000;
-        border-bottom: 1px solid #000;
-    }
-    body.minecraft-theme .suggestion-item:hover {
-        background-color: #5c8d44;
-    }
-</style>
 
 <!-- Подключаем flatpickr для календаря -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -130,16 +16,18 @@
     <div class="col-lg-10 mx-auto">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-tag me-2"></i>{% if service %}Редактирование{% else %}Добавление новой{% endif %} услуги</h4>
+                <h4 class="mb-0"><i class="bi bi-tag me-2"></i>{% if service %}Редактирование{% else %}Добавление
+                    новой{% endif %} услуги</h4>
             </div>
             <div class="card-body p-4">
                 <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
-                    
+
                     <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle-fill me-2"></i>Укажите информацию об услуге, а затем добавьте категории зрителей с их ценами.
+                        <i class="bi bi-info-circle-fill me-2"></i>Укажите информацию об услуге, а затем добавьте
+                        категории зрителей с их ценами.
                     </div>
-                    
+
                     <h5 class="mb-3">Информация об услуге</h5>
                     <div class="row mb-4">
                         <div class="col-md-8">
@@ -172,25 +60,25 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <h5 class="mb-3">Категории зрителей</h5>
                     {{ formset.management_form }}
-                    
+
                     <div id="viewer-categories">
                         {% for form in formset.forms %}
                         <div class="viewer-category">
                             {% if form.instance.pk %}
                             {{ form.id }}
                             {% endif %}
-                            
+
                             <div class="category-header">
                                 <strong>Категория #{{ forloop.counter }}</strong>
                                 <div class="delete-container">
-                                    {{ form.DELETE|addclass:"form-check-input" }} 
+                                    {{ form.DELETE|addclass:"form-check-input" }}
                                     <label class="form-check-label">Удалить</label>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
@@ -220,15 +108,16 @@
                         </div>
                         {% endfor %}
                     </div>
-                    
+
                     <button type="button" id="add-category" class="btn btn-outline-success mb-4">
                         <i class="bi bi-plus-circle me-1"></i>Добавить еще категорию
                     </button>
-                    
+
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'main:create_docs' %}" class="btn btn-outline-secondary">
+                        <button type="button" onclick="window.location.href='{% url 'main:create_docs' %}'"
+                            class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Вернуться
-                        </a>
+                        </button>
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-save me-1"></i>Сохранить услугу
                         </button>
@@ -241,7 +130,7 @@
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Инициализируем календарь для поля даты
         function parseServiceDate(value) {
             const match = String(value || '').match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
@@ -269,12 +158,12 @@
             disableMobile: true,
             allowInput: true,
             position: "below",
-            onOpen: function(selectedDates, dateStr, instance) {
+            onOpen: function (selectedDates, dateStr, instance) {
                 syncDatePickerToInput(instance);
             }
         });
         (Array.isArray(datePickers) ? datePickers : [datePickers]).forEach(syncDatePickerToInput);
-        
+
         // Список предложений для названия услуги
         const serviceSuggestions = [
             'Квест по ПДД "Безопасные дороги"',
@@ -285,11 +174,11 @@
             'Электронный квест "Звездные войны"',
             'Мастер-класс по робототехнике'
         ];
-        
+
         // Получаем элементы для работы с предложениями
         const serviceNameInput = document.getElementById('id_name');
         const suggestionsContainer = document.getElementById('serviceNameSuggestions');
-        
+
         // Заполняем выпадающий список предложениями
         serviceSuggestions.forEach(suggestion => {
             const suggestionItem = document.createElement('div');
@@ -298,7 +187,7 @@
             suggestionItem.addEventListener('click', () => {
                 serviceNameInput.value = suggestion;
                 suggestionsContainer.classList.remove('show');
-                
+
                 // Воспроизводим звук при выборе в теме Minecraft
                 if (document.body.classList.contains('minecraft-theme') && typeof playMinecraftSound === 'function') {
                     playMinecraftSound('click');
@@ -306,24 +195,24 @@
             });
             suggestionsContainer.appendChild(suggestionItem);
         });
-        
+
         // Показываем выпадающий список при фокусе на поле ввода
         serviceNameInput.addEventListener('focus', () => {
             suggestionsContainer.classList.add('show');
-            
+
             // Воспроизводим звук при фокусе в теме Minecraft
             if (document.body.classList.contains('minecraft-theme') && typeof playMinecraftSound === 'function') {
                 playMinecraftSound('click');
             }
         });
-        
+
         // Фильтруем предложения при вводе текста
         serviceNameInput.addEventListener('input', () => {
             const inputValue = serviceNameInput.value.toLowerCase();
             const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
-            
+
             let hasVisibleItems = false;
-            
+
             suggestionItems.forEach(item => {
                 const suggestionText = item.textContent.toLowerCase();
                 if (suggestionText.includes(inputValue)) {
@@ -333,7 +222,7 @@
                     item.style.display = 'none';
                 }
             });
-            
+
             // Показываем или скрываем выпадающий список в зависимости от наличия совпадений
             if (hasVisibleItems) {
                 suggestionsContainer.classList.add('show');
@@ -341,14 +230,14 @@
                 suggestionsContainer.classList.remove('show');
             }
         });
-        
+
         // Скрываем выпадающий список при клике вне поля ввода и списка
         document.addEventListener('click', (event) => {
             if (!event.target.closest('.suggestions-container')) {
                 suggestionsContainer.classList.remove('show');
             }
         });
-        
+
         // Функция для воспроизведения звуков Minecraft
         function playMinecraftSound(type) {
             // Звуки Minecraft (можно заменить на реальные звуки из игры)
@@ -356,33 +245,33 @@
                 click: 'https://www.myinstants.com/media/sounds/minecraft-click.mp3',
                 success: 'https://www.myinstants.com/media/sounds/minecraft_xp.mp3'
             };
-            
+
             if (sounds[type]) {
                 const audio = new Audio(sounds[type]);
                 audio.volume = 0.5;
                 audio.play();
             }
         }
-        
+
         const addCategoryBtn = document.getElementById('add-category');
         const categoryContainer = document.getElementById('viewer-categories');
         const totalForms = document.getElementById('id_viewer_categories-TOTAL_FORMS');
-        
+
         // Функция для добавления новой категории
-        addCategoryBtn.addEventListener('click', function() {
+        addCategoryBtn.addEventListener('click', function () {
             const formCount = parseInt(totalForms.value);
-            
+
             // Клонируем первую форму
             const firstForm = categoryContainer.querySelector('.viewer-category');
             const newForm = firstForm.cloneNode(true);
-            
+
             // Обновляем ID и имена полей
             const inputs = newForm.querySelectorAll('input, select');
-            inputs.forEach(function(input) {
+            inputs.forEach(function (input) {
                 const name = input.getAttribute('name').replace('-0-', `-${formCount}-`);
                 input.setAttribute('name', name);
                 input.setAttribute('id', `id_${name}`);
-                
+
                 // Очищаем значения
                 if (input.type !== 'checkbox') {
                     input.value = '';
@@ -390,14 +279,14 @@
                     input.checked = false;
                 }
             });
-            
+
             // Обновляем номер категории
             const categoryHeader = newForm.querySelector('.category-header strong');
             categoryHeader.textContent = `Категория #${formCount + 1}`;
-            
+
             // Добавляем новую форму в DOM
             categoryContainer.appendChild(newForm);
-            
+
             // Увеличиваем счетчик форм
             totalForms.value = formCount + 1;
         });
