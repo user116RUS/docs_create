@@ -40,6 +40,29 @@
         align-items: center;
         margin-bottom: 10px;
     }
+
+    body.dark-theme .viewer-category {
+        background-color: #303030;
+        border-color: #4a4a4a;
+        color: #f1f5f9;
+    }
+
+    body.dark-theme .viewer-category:hover {
+        background-color: #363636;
+    }
+
+    body.minecraft-theme .viewer-category {
+        background-color: #727272;
+        border: 2px solid #000;
+        border-radius: 0;
+        box-shadow: 2px 2px 0 #000;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
+
+    body.minecraft-theme .viewer-category:hover {
+        background-color: #5e5e5e;
+    }
     /* Стили для выпадающего списка предложений */
     .suggestions-container {
         position: relative;
@@ -220,12 +243,37 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Инициализируем календарь для поля даты
-        flatpickr('.date-picker', {
+        function parseServiceDate(value) {
+            const match = String(value || '').match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+            if (!match) {
+                return null;
+            }
+            return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+        }
+
+        function syncDatePickerToInput(picker) {
+            if (!picker || !picker.input) {
+                return;
+            }
+            const parsedDate = parseServiceDate(picker.input.value);
+            if (parsedDate) {
+                picker.setDate(parsedDate, false);
+            } else if (!String(picker.input.value || '').trim()) {
+                picker.clear();
+            }
+        }
+
+        const datePickers = flatpickr('.date-picker', {
             dateFormat: "d.m.Y г.",
             locale: "ru",
             disableMobile: true,
-            position: "below"
+            allowInput: true,
+            position: "below",
+            onOpen: function(selectedDates, dateStr, instance) {
+                syncDatePickerToInput(instance);
+            }
         });
+        (Array.isArray(datePickers) ? datePickers : [datePickers]).forEach(syncDatePickerToInput);
         
         // Список предложений для названия услуги
         const serviceSuggestions = [
@@ -356,4 +404,4 @@
     });
 </script>
 {% endblock %}
-{% endblock %} 
+{% endblock %}

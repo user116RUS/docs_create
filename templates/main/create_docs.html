@@ -235,15 +235,37 @@
     
     body.dark-theme .category-item {
         border-color: #444;
+        background-color: #303030;
+        color: #f1f5f9;
     }
     
     body.dark-theme .selected-services-summary {
-        background-color: #1e3a4a;
+        background-color: #182b36;
         border-color: #4fc3f7;
+        color: #f1f5f9;
+    }
+
+    body.dark-theme .selected-services-summary .card.bg-light {
+        background-color: #252525 !important;
+        border-color: #555;
+        color: #f1f5f9;
+    }
+
+    body.dark-theme .selected-services-summary .alert-success {
+        background-color: rgba(25, 135, 84, 0.18);
+        border-color: rgba(25, 135, 84, 0.45);
+        color: #b7f7d0;
+    }
+
+    body.dark-theme .selected-services-summary .alert-warning {
+        background-color: rgba(255, 193, 7, 0.18);
+        border-color: rgba(255, 193, 7, 0.45);
+        color: #ffe8a3;
     }
     
     body.dark-theme .category-form-row {
         background-color: #333;
+        color: #f1f5f9;
     }
     
     body.dark-theme .drag-drop-zone {
@@ -534,7 +556,7 @@
                                                 {% if categories %}
                                                     <div class="mb-2"><strong>Категории зрителей:</strong></div>
                                                     {% for category in categories %}
-                                                    <div class="category-item">
+                                                    <div class="category-item" data-viewers="{{ category.viewers }}" data-price="{{ category.price }}">
                                                         <div class="d-flex justify-content-between">
                                                             <div>{{ category.viewers }} чел.</div>
                                                             <div>{{ category.price }} руб.</div>
@@ -896,6 +918,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dateFormat: "d.m.Y",
             locale: "ru",
             disableMobile: true,
+            allowInput: true,
             position: "below",
             onChange: function(selectedDates, dateStr) {
                 // Преобразуем дату в формат "день месяц год" (например, "15 июня 2023")
@@ -914,6 +937,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
             onOpen: function(selectedDates, dateStr, instance) {
+                syncDatePickerToInput(instance);
                 // Добавляем класс темы к календарю при открытии
                 if (document.body.classList.contains('dark-theme')) {
                     instance.calendarContainer.classList.add('dark-theme');
@@ -1337,6 +1361,53 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveServiceBtn = document.getElementById('saveServiceBtn');
     const deleteServiceName = document.getElementById('deleteServiceName');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    function parseServiceDate(value) {
+        const dateText = String(value || '').toLowerCase();
+        const match = dateText.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+        if (match) {
+            return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+        }
+
+        const textMatch = dateText.match(/(\d{1,2})\s+([а-яё]+)\s+(\d{4})/i);
+        if (!textMatch) {
+            return null;
+        }
+
+        const monthIndex = [
+            'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+            'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+        ].indexOf(textMatch[2]);
+        if (monthIndex === -1) {
+            return null;
+        }
+        return new Date(Number(textMatch[3]), monthIndex, Number(textMatch[1]));
+    }
+
+    function syncDatePickerToInput(picker) {
+        if (!picker || !picker.input) {
+            return;
+        }
+        const parsedDate = parseServiceDate(picker.input.value);
+        if (parsedDate) {
+            picker.setDate(parsedDate, false);
+        } else if (!String(picker.input.value || '').trim()) {
+            picker.clear();
+        }
+    }
+
+    function parseCategoryNumber(value) {
+        return parseFloat(String(value || '').replace(',', '.').replace(/[^\d.-]/g, ''));
+    }
+
+    function readCategoryValues(item) {
+        const valueNodes = item.querySelectorAll('.d-flex > div');
+        const fallbackNodes = valueNodes.length >= 2 ? valueNodes : item.children;
+        return {
+            viewers: parseCategoryNumber(item.dataset.viewers || (fallbackNodes[0] ? fallbackNodes[0].textContent : '')),
+            price: parseCategoryNumber(item.dataset.price || (fallbackNodes[1] ? fallbackNodes[1].textContent : ''))
+        };
+    }
     
     // Добавляем обработчик на кнопку "Добавить новую услугу"
     const createServiceBtn = document.getElementById('createServiceBtn');
@@ -1415,15 +1486,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const nameParts = nameLabel.split('(');
                 serviceNameField.value = nameParts[0].trim();
                 serviceDateField.value = nameParts[1].replace(')', '').trim();
+                syncDatePickerToInput(serviceDateField._flatpickr);
                 
                 // Добавляем категории
                 const categoryItems = serviceCard.querySelectorAll('.category-item');
                 categoryItems.forEach(function(item) {
-                    const viewersText = item.querySelector('div:first-child').textContent.trim();
-                    const priceText = item.querySelector('div:last-child').textContent.trim();
-                    
-                    const viewers = parseInt(viewersText.replace(' чел.', ''));
-                    const price = parseFloat(priceText.replace(' руб.', ''));
+                    const category = readCategoryValues(item);
+                    const viewers = parseInt(category.viewers, 10);
+                    const price = category.price;
                     
                     addCategoryRow(viewers, price);
                 });
@@ -1622,7 +1692,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             serviceData.categories.forEach(category => {
                 categoriesHTML += `
-                    <div class="category-item">
+                    <div class="category-item" data-viewers="${category.viewers}" data-price="${category.price}">
                         <div class="d-flex justify-content-between">
                             <div>${category.viewers} чел.</div>
                             <div>${category.price} руб.</div>
@@ -1691,7 +1761,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 serviceData.categories.forEach(category => {
                     categoriesHTML += `
-                        <div class="category-item">
+                        <div class="category-item" data-viewers="${category.viewers}" data-price="${category.price}">
                             <div class="d-flex justify-content-between">
                                 <div>${category.viewers} чел.</div>
                                 <div>${category.price} руб.</div>
@@ -1841,8 +1911,12 @@ document.addEventListener('DOMContentLoaded', function() {
         dateFormat: "d.m.Y г.",
         locale: "ru",
         disableMobile: true,
+        allowInput: true,
         position: "below",
-        static: true
+        static: true,
+        onOpen: function(selectedDates, dateStr, instance) {
+            syncDatePickerToInput(instance);
+        }
     });
 });
 </script>

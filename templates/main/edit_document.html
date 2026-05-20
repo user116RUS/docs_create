@@ -60,7 +60,7 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
-                                    {{ form.date|addclass:"form-control" }}
+                                    {{ form.date|addclass:"form-control minecraft-datepicker" }}
                                     <div class="form-text">{{ form.date.help_text }}</div>
                                     {% if form.date.errors %}
                                     <div class="invalid-feedback d-block">
@@ -172,7 +172,7 @@
                                             </div>
                                             <div class="service-body">
                                                 {% for category in service.viewer_categories.all %}
-                                                <div class="category-item">
+                                                <div class="category-item" data-viewers="{{ category.viewers }}" data-price="{{ category.price }}">
                                                     <div>{{ category.viewers }} чел.</div>
                                                     <div>{{ category.price }} руб.</div>
                                                 </div>
@@ -399,6 +399,98 @@
         margin-top: 15px;
         border: 1px solid #cfe2ff;
     }
+
+    body.dark-theme .service-card {
+        background-color: #242424;
+        border-color: #444;
+        color: #f1f5f9;
+    }
+
+    body.dark-theme .service-card.selected {
+        border-color: #4fc3f7;
+        box-shadow: 0 0 0 0.2rem rgba(79, 195, 247, 0.25);
+    }
+
+    body.dark-theme .service-header {
+        background-color: #303030;
+        border-bottom-color: #444;
+    }
+
+    body.dark-theme .service-card.selected .service-header {
+        background-color: #18384a;
+    }
+
+    body.dark-theme .category-item,
+    body.dark-theme .category-form-row {
+        background-color: #303030;
+        border-color: #4a4a4a;
+        color: #f1f5f9;
+    }
+
+    body.dark-theme .selected-services-summary {
+        background-color: #182b36;
+        border-color: #4fc3f7;
+        color: #f1f5f9;
+    }
+
+    body.dark-theme .selected-services-summary .card.bg-light {
+        background-color: #252525 !important;
+        border-color: #555;
+        color: #f1f5f9;
+    }
+
+    body.dark-theme .selected-services-summary .alert-success {
+        background-color: rgba(25, 135, 84, 0.18);
+        border-color: rgba(25, 135, 84, 0.45);
+        color: #b7f7d0;
+    }
+
+    body.dark-theme .selected-services-summary .alert-warning {
+        background-color: rgba(255, 193, 7, 0.18);
+        border-color: rgba(255, 193, 7, 0.45);
+        color: #ffe8a3;
+    }
+
+    body.minecraft-theme .service-card {
+        background-color: #8b8b8b;
+        border: 2px solid #000;
+        border-radius: 0;
+        box-shadow: 3px 3px 0 #000;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
+
+    body.minecraft-theme .service-card.selected {
+        border-color: #ffd700;
+        box-shadow: 0 0 0 2px #ffd700, 3px 3px 0 #000;
+    }
+
+    body.minecraft-theme .service-header {
+        background-color: #65482c;
+        border-bottom: 2px solid #000;
+    }
+
+    body.minecraft-theme .service-card.selected .service-header {
+        background-color: #5c8d44;
+    }
+
+    body.minecraft-theme .category-item,
+    body.minecraft-theme .category-form-row {
+        background-color: #727272;
+        border: 2px solid #000;
+        border-radius: 0;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
+
+    body.minecraft-theme .selected-services-summary {
+        background-color: #5c8d44;
+        border: 2px solid #000;
+        border-radius: 0;
+        box-shadow: 3px 3px 0 #000;
+        color: #fff;
+        text-shadow: 1px 1px 0 #000;
+    }
     
     /* Стили для выпадающего списка предложений */
     .suggestions-container {
@@ -488,6 +580,33 @@
         const selectedServicesCount = document.getElementById('selectedServicesCount');
         const selectedServicesTotal = document.getElementById('selectedServicesTotal');
         const selectedServicesPrice = document.getElementById('selectedServicesPrice');
+        const documentDateField = document.getElementById('id_date');
+
+        if (documentDateField && typeof flatpickr === 'function') {
+            flatpickr(documentDateField, {
+                dateFormat: "d.m.Y",
+                locale: "ru",
+                disableMobile: true,
+                allowInput: true,
+                position: "below",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        const months = [
+                            'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                            'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+                        ];
+                        const date = selectedDates[0];
+                        documentDateField.value = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+                    }
+                },
+                onReady: function(selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                },
+                onOpen: function(selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                }
+            });
+        }
         
         // Функция для обновления полей суммы на основе выбранных услуг
         function updatePriceFields() {
@@ -696,6 +815,55 @@
         const saveServiceBtn = document.getElementById('saveServiceBtn');
         const deleteServiceName = document.getElementById('deleteServiceName');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        function parseServiceDate(value) {
+            const dateText = String(value || '').toLowerCase();
+            const match = dateText.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+            if (match) {
+                return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+            }
+
+            const textMatch = dateText.match(/(\d{1,2})\s+([а-яё]+)\s+(\d{4})/i);
+            if (!textMatch) {
+                return null;
+            }
+
+            const monthIndex = [
+                'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+            ].indexOf(textMatch[2]);
+            if (monthIndex === -1) {
+                return null;
+            }
+            return new Date(Number(textMatch[3]), monthIndex, Number(textMatch[1]));
+        }
+
+        function syncDatePickerToInput(picker) {
+            if (!picker || !picker.input) {
+                return;
+            }
+            const currentValue = picker.input.value;
+            const parsedDate = parseServiceDate(picker.input.value);
+            if (parsedDate) {
+                picker.setDate(parsedDate, false);
+                picker.input.value = currentValue;
+            } else if (!String(picker.input.value || '').trim()) {
+                picker.clear();
+            }
+        }
+
+        function parseCategoryNumber(value) {
+            return parseFloat(String(value || '').replace(',', '.').replace(/[^\d.-]/g, ''));
+        }
+
+        function readCategoryValues(item) {
+            const valueNodes = item.querySelectorAll('.d-flex > div');
+            const fallbackNodes = valueNodes.length >= 2 ? valueNodes : item.children;
+            return {
+                viewers: parseCategoryNumber(item.dataset.viewers || (fallbackNodes[0] ? fallbackNodes[0].textContent : '')),
+                price: parseCategoryNumber(item.dataset.price || (fallbackNodes[1] ? fallbackNodes[1].textContent : ''))
+            };
+        }
         
         // Обработчик на кнопки редактирования услуг
         document.addEventListener('click', function(e) {
@@ -818,15 +986,14 @@
                     const nameParts = nameLabel.split('(');
                     serviceNameField.value = nameParts[0].trim();
                     serviceDateField.value = nameParts[1].replace(')', '').trim();
+                    syncDatePickerToInput(serviceDateField._flatpickr);
                     
                     // Добавляем категории
                     const categoryItems = serviceCard.querySelectorAll('.category-item');
                     categoryItems.forEach(function(item) {
-                        const viewersText = item.querySelector('div:first-child').textContent.trim();
-                        const priceText = item.querySelector('div:last-child').textContent.trim();
-                        
-                        const viewers = parseInt(viewersText.replace(' чел.', ''));
-                        const price = parseFloat(priceText.replace(' руб.', ''));
+                        const category = readCategoryValues(item);
+                        const viewers = parseInt(category.viewers, 10);
+                        const price = category.price;
                         
                         addCategoryRow(viewers, price);
                     });
@@ -1031,11 +1198,15 @@
                 dateFormat: "d.m.Y г.",
                 locale: "ru",
                 disableMobile: true,
+                allowInput: true,
                 position: "below",
-                static: true
+                static: true,
+                onOpen: function(selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                }
             });
         }
     });
 </script>
 
-{% endblock %} 
+{% endblock %}

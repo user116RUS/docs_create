@@ -697,6 +697,19 @@ body.dark-theme .card-header {
     background-color: #333333; /* Темно-серый фон для заголовка карточки */
 }
 
+body.dark-theme .bg-light,
+body.dark-theme .bg-light-subtle,
+body.dark-theme .card.bg-light,
+body.dark-theme .card-header.bg-light {
+    background-color: #252525 !important;
+    color: #f1f5f9 !important;
+    border-color: #444 !important;
+}
+
+body.dark-theme .bg-primary {
+    color: #ffffff !important;
+}
+
 body.dark-theme .modal-content {
     color: #ffffff; /* Белый текст для модальных окон */
 }
@@ -713,6 +726,30 @@ body.dark-theme .list-group-item {
     background-color: #2a2a2a; /* Темный фон для элементов списка */
     color: #ffffff; /* Белый текст для элементов списка */
     border-color: #444; /* Темная граница для элементов списка */
+}
+
+body.dark-theme .alert-info {
+    background-color: rgba(13, 202, 240, 0.16);
+    border-color: rgba(13, 202, 240, 0.42);
+    color: #b9f3ff;
+}
+
+body.dark-theme .alert-success {
+    background-color: rgba(25, 135, 84, 0.18);
+    border-color: rgba(25, 135, 84, 0.45);
+    color: #b7f7d0;
+}
+
+body.dark-theme .alert-warning {
+    background-color: rgba(255, 193, 7, 0.18);
+    border-color: rgba(255, 193, 7, 0.45);
+    color: #ffe8a3;
+}
+
+body.dark-theme .alert-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    color: #ffc2c8;
 }
 
 /* Дополнительные стили для Minecraft темы */
@@ -1000,6 +1037,21 @@ body.minecraft-theme .flatpickr-day {
     font-family: 'Minecraft', 'Courier New', monospace !important;
 }
 
+body.minecraft-theme .flatpickr-day.prevMonthDay,
+body.minecraft-theme .flatpickr-day.nextMonthDay {
+    background-color: #3f3f3f !important;
+    border-color: #1f1f1f !important;
+    color: #9a9a9a !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+body.minecraft-theme .flatpickr-day.prevMonthDay:hover,
+body.minecraft-theme .flatpickr-day.nextMonthDay:hover {
+    background-color: #4a4a4a !important;
+    color: #bdbdbd !important;
+}
+
 body.minecraft-theme .flatpickr-day:hover,
 body.minecraft-theme .flatpickr-day.selected {
     background-color: #5C8D44 !important;
@@ -1066,6 +1118,14 @@ body.dark-theme input[type="date"] {
 }
 
 /* Стили для календаря в темной теме */
+body:not(.dark-theme):not(.minecraft-theme) .flatpickr-day.prevMonthDay,
+body:not(.dark-theme):not(.minecraft-theme) .flatpickr-day.nextMonthDay {
+    background-color: #f1f3f5 !important;
+    border-color: #e5e7eb !important;
+    color: #a0a7b0 !important;
+    opacity: 1 !important;
+}
+
 body.dark-theme .flatpickr-calendar {
     background-color: #2a2a2a !important;
     border-color: #444 !important;
@@ -1092,6 +1152,21 @@ body.dark-theme .flatpickr-day {
     background-color: #2a2a2a !important;
     color: #e0e0e0 !important;
     border-color: #444 !important;
+}
+
+body.dark-theme .flatpickr-day.prevMonthDay,
+body.dark-theme .flatpickr-day.nextMonthDay {
+    background-color: #171717 !important;
+    border-color: #282828 !important;
+    color: #626262 !important;
+    opacity: 1 !important;
+}
+
+body.dark-theme .flatpickr-day.prevMonthDay:hover,
+body.dark-theme .flatpickr-day.nextMonthDay:hover {
+    background-color: #222222 !important;
+    border-color: #3a3a3a !important;
+    color: #8a8a8a !important;
 }
 
 body.dark-theme .flatpickr-day:hover {
@@ -1124,4 +1199,4 @@ body.dark-theme .flatpickr-next-month {
 body.dark-theme .flatpickr-prev-month:hover svg,
 body.dark-theme .flatpickr-next-month:hover svg {
     fill: #4fc3f7 !important;
-} 
+}
