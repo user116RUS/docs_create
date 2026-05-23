@@ -133,6 +133,13 @@
                                 {{ form.viewers.errors }}
                             </div>
                             {% endif %}
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="sumServiceViewers">
+                                <label class="form-check-label" for="sumServiceViewers">
+                                    Суммировать кол-во зрителей у всех услуг.
+                                </label>
+                            </div>
+                            <div class="form-text">По умолчанию берется максимальное количество зрителей среди выбранных услуг.</div>
                         </div>
 
                         <div class="card mb-4">
@@ -386,6 +393,96 @@
         const selectedServicesTotal = document.getElementById('selectedServicesTotal');
         const selectedServicesPrice = document.getElementById('selectedServicesPrice');
         const documentDateField = document.getElementById('id_date');
+        const doerSelect = document.getElementById('id_doer');
+        const customerSelect = document.getElementById('id_customer');
+        const sumViewersCheckbox = document.getElementById('sumServiceViewers');
+
+        function normalizeSearchText(value) {
+            return String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+
+        function enhanceOrganisationSelect(selectElement, placeholderText) {
+            if (!selectElement || selectElement.dataset.searchEnhanced === 'true') {
+                return;
+            }
+
+            selectElement.dataset.searchEnhanced = 'true';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'organisation-search';
+            const input = document.createElement('input');
+            input.type = 'search';
+            input.className = 'form-control organisation-search-input';
+            input.placeholder = placeholderText;
+            input.autocomplete = 'off';
+            const list = document.createElement('div');
+            list.className = 'suggestions-dropdown organisation-search-results';
+
+            selectElement.parentNode.insertBefore(wrapper, selectElement);
+            wrapper.appendChild(input);
+            wrapper.appendChild(list);
+            selectElement.classList.add('organisation-search-select');
+
+            const options = Array.from(selectElement.options).filter(option => option.value);
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                input.value = selectedOption.textContent;
+            }
+
+            function renderResults() {
+                const query = normalizeSearchText(input.value);
+                list.innerHTML = '';
+
+                if (!query) {
+                    list.classList.remove('show');
+                    return;
+                }
+
+                const matches = options
+                    .filter(option => normalizeSearchText(option.textContent).includes(query))
+                    .sort((a, b) => {
+                        const aText = normalizeSearchText(a.textContent);
+                        const bText = normalizeSearchText(b.textContent);
+                        const aStarts = aText.startsWith(query) ? 0 : 1;
+                        const bStarts = bText.startsWith(query) ? 0 : 1;
+                        return aStarts - bStarts || aText.localeCompare(bText, 'ru');
+                    })
+                    .slice(0, 20);
+
+                matches.forEach(option => {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'suggestion-item organisation-search-item';
+                    item.textContent = option.textContent;
+                    item.addEventListener('click', () => {
+                        selectElement.value = option.value;
+                        input.value = option.textContent;
+                        list.classList.remove('show');
+                        selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                    list.appendChild(item);
+                });
+
+                list.classList.toggle('show', matches.length > 0);
+            }
+
+            input.addEventListener('input', renderResults);
+            input.addEventListener('focus', () => {
+                input.select();
+                renderResults();
+            });
+            selectElement.addEventListener('change', () => {
+                const option = selectElement.options[selectElement.selectedIndex];
+                input.value = option && option.value ? option.textContent : '';
+            });
+            document.addEventListener('click', event => {
+                if (!wrapper.contains(event.target)) {
+                    list.classList.remove('show');
+                }
+            });
+        }
+
+        enhanceOrganisationSelect(doerSelect, 'Поиск исполнителя');
+        enhanceOrganisationSelect(customerSelect, 'Поиск заказчика');
 
         if (documentDateField && typeof flatpickr === 'function') {
             flatpickr(documentDateField, {
@@ -415,7 +512,8 @@
 
         // Функция для обновления полей суммы на основе выбранных услуг
         function updatePriceFields() {
-            let totalViewers = 0;
+            let totalViewersSum = 0;
+            let maxViewers = 0;
             let totalPrice = 0;
             let count = 0;
 
@@ -428,11 +526,13 @@
                         const viewers = parseInt(card.dataset.viewers) || 0;
                         const price = parseFloat(card.dataset.price) || 0;
 
-                        totalViewers += viewers;
+                        totalViewersSum += viewers;
+                        maxViewers = Math.max(maxViewers, viewers);
                         totalPrice += price;
                     }
                 }
             });
+            const totalViewers = sumViewersCheckbox && sumViewersCheckbox.checked ? totalViewersSum : maxViewers;
 
             // Обновляем поле с ценой цифрами
             if (priceInFiguresField) {
@@ -446,7 +546,7 @@
             // Обновляем поле с количеством зрителей
             const viewersField = document.getElementById('id_viewers');
             if (viewersField) {
-                viewersField.value = totalViewers;
+                viewersField.value = count > 0 ? totalViewers : '';
             }
 
             // Обновляем сводную информацию
@@ -510,6 +610,9 @@
                 checkbox.closest('.service-card').classList.add('selected');
             }
         });
+        if (sumViewersCheckbox) {
+            sumViewersCheckbox.addEventListener('change', updatePriceFields);
+        }
 
         // Добавляем обработчик клика на карточку услуги
         serviceCards.forEach(function (card) {
@@ -549,7 +652,6 @@
         }
 
         // Получаем элементы для автозаполнения address_and_time
-        const customerSelect = document.getElementById('id_customer');
         const timeInput = document.getElementById('id_time');
         const addressAndTimeInput = document.getElementById('id_address_and_time');
 
@@ -960,13 +1062,13 @@
                                     document.getElementById('serviceDateError').textContent = data.errors.date.join(', ');
                                 }
                             } else {
-                                alert('Произошла ошибка при сохранении услуги');
+                                alert('Произошла ошибка при сохранении услуги: ' + (data.error || 'Неизвестная ошибка'));
                             }
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Произошла ошибка при сохранении услуги');
+                        alert('Произошла ошибка при сохранении услуги: ' + error.message);
                     });
             });
         }
@@ -1032,6 +1134,9 @@
                 position: "below",
                 static: true,
                 onOpen: function (selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                },
+                onReady: function (selectedDates, dateStr, instance) {
                     syncDatePickerToInput(instance);
                 }
             });

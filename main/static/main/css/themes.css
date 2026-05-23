@@ -185,6 +185,20 @@ header,
     z-index: 1020;
 }
 
+.app-header {
+    gap: 0.75rem 1rem;
+}
+
+.app-main-nav {
+    flex: 1 1 auto;
+    justify-content: center;
+}
+
+.app-user-actions {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
 .nav-link {
     color: var(--text-color) !important;
     font-weight: 500;
@@ -319,6 +333,22 @@ body.dark-theme .card-header.bg-primary h5 {
 .suggestion-item {
     padding: 0.5rem 1rem;
     cursor: pointer;
+}
+
+.organisation-search {
+    position: relative;
+}
+
+.organisation-search-select {
+    display: none !important;
+}
+
+.organisation-search-item {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--text-color);
+    text-align: left;
 }
 
 .suggestion-item:hover {
