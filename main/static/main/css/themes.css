@@ -4,7 +4,7 @@
 @font-face {
     font-family: 'Minecraft';
     src: url('../fonts/minecraft.woff2') format('woff2'),
-         url('https://fonts.cdnfonts.com/s/17079/MinecraftRegular-Bmg3.woff') format('woff');
+        url('https://fonts.cdnfonts.com/s/17079/MinecraftRegular-Bmg3.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -15,21 +15,21 @@
     --bg-color: #fcfcfd;
     --text-color: #1a1c1e;
     --text-muted: #626466;
-    
+
     --surface-1: #ffffff;
     --surface-2: #f3f4f6;
     --surface-3: #e5e7eb;
-    
+
     --primary-color: #0d6efd;
     --primary-rgb: 13, 110, 253;
     --primary-hover: #0b5ed7;
     --primary-contrast: #ffffff;
-    
+
     --secondary-color: #6c757d;
     --secondary-rgb: 108, 117, 125;
     --secondary-hover: #5c636a;
     --secondary-contrast: #ffffff;
-    
+
     --accent-color: #0dcaf0;
     --success-color: #198754;
     --success-rgb: 25, 135, 84;
@@ -39,17 +39,17 @@
     --warning-rgb: 255, 193, 7;
     --info-color: #0dcaf0;
     --info-rgb: 13, 202, 240;
-    
+
     --border-color: #dee2e6;
     --border-focus: #86b7fe;
-    
+
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    
+
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(255, 255, 255, 0.3);
-    
+
     --navbar-bg: var(--glass-bg);
 
     /* Component Variables */
@@ -62,23 +62,25 @@
 
 /* Dark Theme Variables */
 body.dark-theme {
-    --bg-color: #0f172a; /* Deep Slate */
+    --bg-color: #0f172a;
+    /* Deep Slate */
     --text-color: #f1f5f9;
     --text-muted: #94a3b8;
-    
+
     --surface-1: #1e293b;
     --surface-2: #334155;
     --surface-3: #475569;
-    
-    --primary-color: #38bdf8; /* Vibrant Cyan */
+
+    --primary-color: #38bdf8;
+    /* Vibrant Cyan */
     --primary-rgb: 56, 189, 248;
     --primary-hover: #0ea5e9;
     --primary-contrast: #082f49;
-    
+
     --secondary-color: #64748b;
     --secondary-rgb: 100, 116, 139;
     --secondary-hover: #475569;
-    
+
     --accent-color: #818cf8;
     --success-color: #22c55e;
     --success-rgb: 34, 197, 94;
@@ -88,17 +90,17 @@ body.dark-theme {
     --warning-rgb: 245, 158, 11;
     --info-color: #38bdf8;
     --info-rgb: 56, 189, 248;
-    
+
     --border-color: #334155;
     --border-focus: #38bdf8;
-    
+
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-    
+
     --glass-bg: rgba(30, 41, 59, 0.8);
     --glass-border: rgba(255, 255, 255, 0.1);
-    
+
     --navbar-bg: var(--glass-bg);
 
     /* Component Overrides */
@@ -123,20 +125,20 @@ body.minecraft-theme {
     --bg-color: #5c8d44;
     --text-color: #ffffff;
     --text-muted: #d1d5db;
-    
+
     --surface-1: #8b8b8b;
     --surface-2: #727272;
     --surface-3: #5c5c5c;
-    
+
     --primary-color: #8b6d3f;
     --primary-rgb: 139, 109, 63;
     --primary-hover: #65482c;
     --primary-contrast: #ffffff;
-    
+
     --secondary-color: #6b6b6b;
     --secondary-rgb: 107, 107, 107;
     --secondary-hover: #4e4e4e;
-    
+
     --accent-color: #f9c55e;
     --success-color: #5c8d44;
     --danger-color: #b33939;
@@ -149,7 +151,7 @@ body.minecraft-theme {
     --item-border: #000000;
     --summary-bg: #5c8d44;
     --summary-border: #000000;
-    
+
     font-family: 'Minecraft', 'Courier New', monospace;
 
     /* Bootstrap Overrides */
@@ -172,7 +174,8 @@ body {
 }
 
 /* Header & Navbar */
-header, .navbar {
+header,
+.navbar {
     background-color: var(--navbar-bg) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -182,13 +185,28 @@ header, .navbar {
     z-index: 1020;
 }
 
+.app-header {
+    gap: 0.75rem 1rem;
+}
+
+.app-main-nav {
+    flex: 1 1 auto;
+    justify-content: center;
+}
+
+.app-user-actions {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
 .nav-link {
     color: var(--text-color) !important;
     font-weight: 500;
     opacity: 0.8;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
     color: var(--primary-color) !important;
     opacity: 1;
 }
@@ -317,12 +335,33 @@ body.dark-theme .card-header.bg-primary h5 {
     cursor: pointer;
 }
 
+.organisation-search {
+    position: relative;
+}
+
+.organisation-search-select {
+    display: none !important;
+}
+
+.organisation-search-item {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--text-color);
+    text-align: left;
+}
+
 .suggestion-item:hover {
     background-color: var(--surface-2);
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: var(--text-color);
     font-weight: 700;
 }
@@ -414,7 +453,8 @@ a:hover {
 }
 
 /* Forms */
-.form-control, .form-select {
+.form-control,
+.form-select {
     background-color: var(--surface-1);
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -422,7 +462,8 @@ a:hover {
     padding: 0.6rem 1rem;
 }
 
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
     background-color: var(--surface-1);
     border-color: var(--border-focus);
     color: var(--text-color);
@@ -581,20 +622,57 @@ body.dark-theme .bg-white {
 
 /* Table Refinements */
 body.dark-theme .table {
-    --bs-table-color: var(--text-color);
-    --bs-table-bg: transparent;
-    --bs-table-border-color: var(--border-color);
-    --bs-table-hover-color: var(--text-color);
-    --bs-table-hover-bg: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    /* Белый текст для таблиц */
 }
 
-body.dark-theme .table thead th {
-    background-color: var(--surface-2) !important;
-    color: #ffffff !important;
-    border-bottom: 2px solid var(--primary-color) !important;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
+body.dark-theme .card {
+    color: #ffffff;
+    /* Белый текст для карточек */
+}
+
+body.dark-theme .card-header {
+    background-color: #333333;
+    /* Темно-серый фон для заголовка карточки */
+}
+
+body.dark-theme .modal-content {
+    color: #ffffff;
+    /* Белый текст для модальных окон */
+}
+
+body.dark-theme .modal-header {
+    border-bottom-color: #444;
+    /* Темная граница для заголовка модального окна */
+}
+
+body.dark-theme .modal-footer {
+    border-top-color: #444;
+    /* Темная граница для подвала модального окна */
+}
+
+body.dark-theme .list-group-item {
+    background-color: #2a2a2a;
+    /* Темный фон для элементов списка */
+    color: #ffffff;
+    /* Белый текст для элементов списка */
+    border-color: #444;
+    /* Темная граница для элементов списка */
+}
+
+/* Дополнительные стили для Minecraft темы */
+body.minecraft-theme .card {
+    color: #ffffff;
+    /* Белый текст для карточек */
+    text-shadow: 1px 1px 0 #000;
+    /* Тень для текста */
+}
+
+body.minecraft-theme .modal-content {
+    color: #ffffff;
+    /* Белый текст для модальных окон */
+    text-shadow: 1px 1px 0 #000;
+    /* Тень для текста */
 }
 
 body.dark-theme .table tbody td {
@@ -640,34 +718,60 @@ body.dark-theme a:hover {
     color: var(--primary-hover);
 }
 
-body.dark-theme strong, 
+body.dark-theme strong,
 body.dark-theme b,
 body.dark-theme .fw-bold,
 body.dark-theme .fw-medium {
     color: var(--text-color) !important;
 }
 
-body.dark-theme .text-success { color: #4ade80 !important; }
-body.dark-theme .text-info { color: #7dd3fc !important; }
-body.dark-theme .text-warning { color: #fbbf24 !important; }
-body.dark-theme .text-danger { color: #f87171 !important; }
+body.dark-theme .text-success {
+    color: #4ade80 !important;
+}
+
+body.dark-theme .text-info {
+    color: #7dd3fc !important;
+}
+
+body.dark-theme .text-warning {
+    color: #fbbf24 !important;
+}
+
+body.dark-theme .text-danger {
+    color: #f87171 !important;
+}
 
 /* Minecraft Utility Overrides */
 body.minecraft-theme .text-muted {
     color: var(--text-muted) !important;
 }
 
-body.minecraft-theme strong, 
+body.minecraft-theme strong,
 body.minecraft-theme b,
 body.minecraft-theme .fw-bold,
 body.minecraft-theme .fw-medium {
     color: var(--text-color) !important;
 }
 
-body.minecraft-theme .text-success { color: #5c8d44 !important; text-shadow: 1px 1px 0 #000; }
-body.minecraft-theme .text-info { color: #7dd3fc !important; text-shadow: 1px 1px 0 #000; }
-body.minecraft-theme .text-warning { color: #f9c55e !important; text-shadow: 1px 1px 0 #000; }
-body.minecraft-theme .text-danger { color: #b33939 !important; text-shadow: 1px 1px 0 #000; }
+body.minecraft-theme .text-success {
+    color: #5c8d44 !important;
+    text-shadow: 1px 1px 0 #000;
+}
+
+body.minecraft-theme .text-info {
+    color: #7dd3fc !important;
+    text-shadow: 1px 1px 0 #000;
+}
+
+body.minecraft-theme .text-warning {
+    color: #f9c55e !important;
+    text-shadow: 1px 1px 0 #000;
+}
+
+body.minecraft-theme .text-danger {
+    color: #b33939 !important;
+    text-shadow: 1px 1px 0 #000;
+}
 
 /* Badges */
 .badge {
@@ -716,8 +820,8 @@ body.dark-theme .bg-light-subtle {
 }
 
 /* Minecraft Specifics */
-body.minecraft-theme .btn, 
-body.minecraft-theme .card, 
+body.minecraft-theme .btn,
+body.minecraft-theme .card,
 body.minecraft-theme .form-control,
 body.minecraft-theme .modal-content,
 body.minecraft-theme .service-card,
@@ -779,7 +883,8 @@ body.dark-theme .flatpickr-current-month .flatpickr-monthDropdown-months {
 
 body.dark-theme .flatpickr-weekday {
     background: #334155;
-    color: #7dd3fc !important; /* Brighter Blue for visibility */
+    color: #7dd3fc !important;
+    /* Brighter Blue for visibility */
 }
 
 body.dark-theme .flatpickr-calendar .flatpickr-day {
@@ -788,7 +893,8 @@ body.dark-theme .flatpickr-calendar .flatpickr-day {
 
 body.dark-theme .flatpickr-calendar .flatpickr-day.prevMonthDay,
 body.dark-theme .flatpickr-calendar .flatpickr-day.nextMonthDay {
-    color: #475569 !important; /* Dimmed color for non-month dates */
+    color: #475569 !important;
+    /* Dimmed color for non-month dates */
     opacity: 0.5;
 }
 
@@ -827,6 +933,21 @@ body.minecraft-theme .flatpickr-day {
 
 body.minecraft-theme .flatpickr-day.prevMonthDay,
 body.minecraft-theme .flatpickr-day.nextMonthDay {
+    background-color: #3f3f3f !important;
+    border-color: #1f1f1f !important;
+    color: #9a9a9a !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+body.minecraft-theme .flatpickr-day.prevMonthDay:hover,
+body.minecraft-theme .flatpickr-day.nextMonthDay:hover {
+    background-color: #4a4a4a !important;
+    color: #bdbdbd !important;
+}
+
+body.minecraft-theme .flatpickr-day.prevMonthDay,
+body.minecraft-theme .flatpickr-day.nextMonthDay {
     color: #5c5c5c !important;
     opacity: 0.6;
 }
@@ -841,47 +962,109 @@ body.minecraft-theme .flatpickr-day.selected {
     border: 1px solid #000;
 }
 
-/* Additional template-specific migrations to themes.css */
-.category-form-row {
-    background-color: var(--surface-2);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    position: relative;
-    border: 1px solid var(--border-color);
+/* Исправление для полей ввода даты */
+body.minecraft-theme input[type="date"] {
+    color: #ffffff !important;
+    background-color: #727272 !important;
+    padding: 8px 10px !important;
+    letter-spacing: 1px !important;
 }
 
-.viewer-category {
-    background-color: var(--surface-2);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    border: 1px solid var(--border-color);
-    transition: background-color 0.2s;
+body.dark-theme input[type="date"] {
+    color: #ffffff !important;
+    background-color: #333333 !important;
+    border-color: #555555 !important;
 }
 
-.viewer-category:hover {
-    background-color: var(--surface-3);
+/* Стили для календаря в темной теме */
+body.dark-theme .flatpickr-calendar {
+    background-color: #2a2a2a !important;
+    border-color: #444 !important;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3) !important;
+    color: #ffffff !important;
 }
 
-.input-sm, .select-sm {
-    height: 38px !important;
+body.dark-theme .flatpickr-months,
+body.dark-theme .flatpickr-month,
+body.dark-theme .flatpickr-current-month,
+body.dark-theme .flatpickr-monthDropdown-months {
+    background-color: #212121 !important;
+    color: #ffffff !important;
+    fill: #ffffff !important;
 }
 
-.text-area-md { height: 100px !important; resize: vertical; min-height: 100px; }
-.text-area-lg { height: 114px !important; resize: vertical; min-height: 114px; }
-.text-area-xl { height: 200px !important; resize: vertical; min-height: 200px; }
-.text-area-md-2x { height: 76px !important; resize: vertical; min-height: 76px; }
+body.dark-theme .flatpickr-weekdays,
+body.dark-theme .flatpickr-weekday {
+    background-color: #333 !important;
+    color: #4fc3f7 !important;
+}
 
-/* Dark Mode Utility Overrides */
-body.dark-theme .text-primary { color: var(--primary-color) !important; }
-body.dark-theme .text-info { color: var(--info-color) !important; }
-body.dark-theme .text-warning { color: var(--warning-color) !important; }
-body.dark-theme .text-danger { color: var(--danger-color) !important; }
+body.dark-theme .flatpickr-day {
+    background-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
 
-/* Modal & UI Elements */
-body.dark-theme .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
-body.dark-theme .dropdown-menu { background-color: var(--surface-1); border: 1px solid var(--border-color); }
-body.dark-theme .dropdown-item { color: var(--text-color); }
-body.dark-theme .dropdown-item:hover { background-color: var(--surface-2); color: var(--primary-color); }
-body.dark-theme .dropdown-divider { border-top: 1px solid var(--border-color); }
+body.dark-theme .flatpickr-day:hover {
+    background-color: #3a3a3a !important;
+    color: #4fc3f7 !important;
+}
+
+body.dark-theme .flatpickr-day.selected {
+    background-color: #4fc3f7 !important;
+    color: #121212 !important;
+    border-color: #4fc3f7 !important;
+}
+
+body.dark-theme .flatpickr-day.today {
+    background-color: #333 !important;
+    border-color: #4fc3f7 !important;
+    color: #4fc3f7 !important;
+}
+
+body.dark-theme .flatpickr-day.disabled {
+    color: #777 !important;
+    background-color: #1a1a1a !important;
+}
+
+body.dark-theme .flatpickr-prev-month,
+body.dark-theme .flatpickr-next-month {
+    fill: #e0e0e0 !important;
+}
+
+body.dark-theme .flatpickr-prev-month:hover svg,
+body.dark-theme .flatpickr-next-month:hover svg {
+    fill: #4fc3f7 !important;
+}
+
+body:not(.dark-theme):not(.minecraft-theme) .flatpickr-day.prevMonthDay,
+body:not(.dark-theme):not(.minecraft-theme) .flatpickr-day.nextMonthDay {
+    background-color: #f1f3f5 !important;
+    border-color: #e5e7eb !important;
+    color: #9ca3af !important;
+    opacity: 1 !important;
+}
+
+body.dark-theme .flatpickr-calendar .flatpickr-day.prevMonthDay,
+body.dark-theme .flatpickr-calendar .flatpickr-day.nextMonthDay {
+    background-color: #171717 !important;
+    border-color: #282828 !important;
+    color: #626262 !important;
+    opacity: 1 !important;
+}
+
+body.dark-theme .flatpickr-calendar .flatpickr-day.prevMonthDay:hover,
+body.dark-theme .flatpickr-calendar .flatpickr-day.nextMonthDay:hover {
+    background-color: #222222 !important;
+    border-color: #3a3a3a !important;
+    color: #8a8a8a !important;
+}
+
+body.minecraft-theme .flatpickr-day.prevMonthDay,
+body.minecraft-theme .flatpickr-day.nextMonthDay {
+    background-color: #3f3f3f !important;
+    border-color: #1f1f1f !important;
+    color: #9a9a9a !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}

@@ -14,21 +14,23 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="alert alert-info mb-4">
-                        <h5 class="alert-heading"><i class="bi bi-info-circle-fill me-2"></i>Редактирование документа</h5>
-                        <p class="mb-0">Здесь вы можете изменить данные документа. Изменения будут применены ко всем документам (акту, счету и договору).</p>
+                        <h5 class="alert-heading"><i class="bi bi-info-circle-fill me-2"></i>Редактирование документа
+                        </h5>
+                        <p class="mb-0">Здесь вы можете изменить данные документа. Изменения будут применены ко всем
+                            документам (акту, счету и договору).</p>
                     </div>
-                    
+
                     <form method="post" id="documentForm">
                         {% csrf_token %}
-                        
+
                         {% if form.non_field_errors %}
                         <div class="alert alert-danger mb-4">
                             {% for error in form.non_field_errors %}
-                                <p class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</p>
+                            <p class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</p>
                             {% endfor %}
                         </div>
                         {% endif %}
-                        
+
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
@@ -44,7 +46,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="{{ form.number_basis_of_the_contract.id_for_label }}" class="form-label">{{ form.number_basis_of_the_contract.label }}</label>
+                                    <label for="{{ form.number_basis_of_the_contract.id_for_label }}"
+                                        class="form-label">{{ form.number_basis_of_the_contract.label }}</label>
                                     {{ form.number_basis_of_the_contract|addclass:"form-control" }}
                                     <div class="form-text">{{ form.number_basis_of_the_contract.help_text }}</div>
                                     {% if form.number_basis_of_the_contract.errors %}
@@ -55,12 +58,12 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
-                                    {{ form.date|addclass:"form-control" }}
+                                    {{ form.date|addclass:"form-control minecraft-datepicker" }}
                                     <div class="form-text">{{ form.date.help_text }}</div>
                                     {% if form.date.errors %}
                                     <div class="invalid-feedback d-block">
@@ -82,7 +85,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="form-group mb-4">
                             <label for="{{ form.address_and_time.id_for_label }}" class="form-label">{{ form.address_and_time.label }}</label>
                             {{ form.address_and_time|addclass:"form-control" }}
@@ -93,7 +96,7 @@
                             </div>
                             {% endif %}
                         </div>
-                        
+
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
@@ -120,7 +123,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="form-group mb-4">
                             <label for="{{ form.viewers.id_for_label }}" class="form-label">{{ form.viewers.label }}</label>
                             {{ form.viewers|addclass:"form-control" }}
@@ -130,8 +133,15 @@
                                 {{ form.viewers.errors }}
                             </div>
                             {% endif %}
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="sumServiceViewers">
+                                <label class="form-check-label" for="sumServiceViewers">
+                                    Суммировать кол-во зрителей у всех услуг.
+                                </label>
+                            </div>
+                            <div class="form-text">По умолчанию берется максимальное количество зрителей среди выбранных услуг.</div>
                         </div>
-                        
+
                         <div class="card mb-4">
                             <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Услуги</h5>
@@ -139,58 +149,64 @@
                             <div class="card-body">
                                 <!-- Скрытое поле для правильной обработки формы -->
                                 {{ form.services.as_hidden }}
-                                
+
                                 <div class="alert alert-info mb-3">
-                                    <i class="bi bi-info-circle-fill me-2"></i>Выберите услуги, которые требуется включить в документы. Вы можете выбрать несколько услуг.
+                                    <i class="bi bi-info-circle-fill me-2"></i>Выберите услуги, которые требуется
+                                    включить в документы. Вы можете выбрать несколько услуг.
                                 </div>
-                                
+
                                 <div class="mt-3">
                                     {% if services %}
-                                        {% for service in services %}
-                                        <div class="service-card" data-service-id="{{ service.id }}" 
-                                             data-viewers="{{ service.total_viewers|default:'0' }}" 
-                                             data-price="{{ service.total_price|default:'0' }}"
-                                             data-name="{{ service.name }}"
-                                             data-date="{{ service.date }}">
-                                            <div class="service-header">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="form-check form-check-inline me-3">
-                                                        <input class="form-check-input service-checkbox" type="checkbox" name="services" 
-                                                            id="service_{{ service.id }}" value="{{ service.id }}"
-                                                            {% if service in form.instance.services.all %}checked{% endif %}>
-                                                        <label class="form-check-label" for="service_{{ service.id }}">
-                                                            {{ service.name }} ({{ service.date }})
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary edit-service-btn">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-danger ms-2 delete-service-btn">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
+                                    {% for service in services %}
+                                    <div class="service-card" data-service-id="{{ service.id }}"
+                                        data-viewers="{{ service.total_viewers|default:'0' }}"
+                                        data-price="{{ service.total_price|default:'0' }}"
+                                        data-name="{{ service.name }}" data-date="{{ service.date }}">
+                                        <div class="service-header">
+                                            <div class="d-flex align-items-center">
+                                                <div class="form-check form-check-inline me-3">
+                                                    <input class="form-check-input service-checkbox" type="checkbox"
+                                                        name="services" id="service_{{ service.id }}"
+                                                        value="{{ service.id }}" {% if service in form.instance.services.all %}checked{% endif %}>
+                                                    <label class="form-check-label" for="service_{{ service.id }}">
+                                                        {{ service.name }} ({{ service.date }})
+                                                    </label>
                                                 </div>
                                             </div>
-                                            <div class="service-body">
-                                                {% for category in service.viewer_categories.all %}
-                                                <div class="category-item">
-                                                    <div>{{ category.viewers }} чел.</div>
-                                                    <div>{{ category.price }} руб.</div>
-                                                </div>
-                                                {% endfor %}
+                                            <div>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-primary edit-service-btn">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger ms-2 delete-service-btn">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
-                                        {% endfor %}
+                                        <div class="service-body">
+                                            {% for category in service.viewer_categories.all %}
+                                            <div class="category-item" data-viewers="{{ category.viewers }}"
+                                                data-price="{{ category.price }}">
+                                                <div>{{ category.viewers }} чел.</div>
+                                                <div>{{ category.price }} руб.</div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
                                     {% else %}
-                                        <div class="alert alert-warning">
-                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Нет доступных услуг. Пожалуйста, <button type="button" onclick="window.location.href='{% url 'main:create_service' %}'" class="btn btn-sm btn-link p-0 align-baseline">добавьте услугу</button> перед созданием документа.
-                                        </div>
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Нет доступных услуг.
+                                        Пожалуйста, <button type="button"
+                                            onclick="window.location.href='{% url 'main:create_service' %}'"
+                                            class="btn btn-sm btn-link p-0 align-baseline">добавьте услугу</button>
+                                        перед созданием документа.
+                                    </div>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Блок сводной информации о выбранных услугах -->
                         <div class="selected-services-summary d-none" id="selectedServicesSummary">
                             <h6 class="mb-3"><i class="bi bi-check-circle-fill me-2"></i>Сводная информация:</h6>
@@ -199,7 +215,8 @@
                                     <div class="card bg-light h-100">
                                         <div class="card-body py-2 px-3">
                                             <h6 class="mb-2">Выбранные услуги</h6>
-                                            <div class="h4"><span id="selectedServicesCount" class="fw-bold">0</span></div>
+                                            <div class="h4"><span id="selectedServicesCount" class="fw-bold">0</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -207,7 +224,8 @@
                                     <div class="card bg-light h-100">
                                         <div class="card-body py-2 px-3">
                                             <h6 class="mb-2">Количество зрителей</h6>
-                                            <div class="h4"><span id="selectedServicesTotal" class="fw-bold">0</span></div>
+                                            <div class="h4"><span id="selectedServicesTotal" class="fw-bold">0</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -215,19 +233,22 @@
                                     <div class="card bg-primary text-white h-100">
                                         <div class="card-body py-2 px-3">
                                             <h6 class="mb-2">Общая стоимость</h6>
-                                            <div class="h4"><span id="selectedServicesPrice" class="fw-bold">0 руб.</span></div>
+                                            <div class="h4"><span id="selectedServicesPrice" class="fw-bold">0
+                                                    руб.</span></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="alert alert-success mb-0">
-                                <i class="bi bi-info-circle-fill me-2"></i>Цена будет автоматически вставлена в документы в числовом и текстовом формате.
+                                <i class="bi bi-info-circle-fill me-2"></i>Цена будет автоматически вставлена в
+                                документы в числовом и текстовом формате.
                             </div>
-                            
+
                             <!-- Добавляем поле для суммы прописью -->
                             <div class="form-group mt-3">
                                 <div class="alert alert-warning">
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Внимание!</strong> Укажите сумму прописью для документов:
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Внимание!</strong>
+                                    Укажите сумму прописью для документов:
                                 </div>
                                 <label for="{{ form.price_in_words.id_for_label }}" class="form-label">
                                     {{ form.price_in_words.label }} <span class="text-danger">*</span>
@@ -241,12 +262,13 @@
                                 {% endif %}
                             </div>
                         </div>
-                        
+
                         <!-- Добавляем скрытое поле для цены цифрами -->
                         {{ form.price_in_figures.as_hidden }}
-                        
+
                         <div class="d-flex justify-content-between mt-4">
-                            <button type="button" onclick="window.location.href='{% url 'main:documents_list' %}'" class="btn btn-outline-secondary">
+                            <button type="button" onclick="window.location.href='{% url 'main:documents_list' %}'"
+                                class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left me-1"></i>Вернуться к списку
                             </button>
                             <button type="submit" class="btn btn-primary" id="submitButton">
@@ -271,13 +293,14 @@
             <div class="modal-body">
                 <form id="serviceForm">
                     <input type="hidden" id="serviceId" value="">
-                    
+
                     <div class="row mb-4">
                         <div class="col-md-8">
                             <div class="form-group mb-3">
                                 <label for="serviceName" class="form-label">Название услуги</label>
                                 <div class="suggestions-container">
-                                    <input type="text" class="form-control" id="serviceName" required autocomplete="off">
+                                    <input type="text" class="form-control" id="serviceName" required
+                                        autocomplete="off">
                                     <div class="suggestions-dropdown" id="serviceNameSuggestions">
                                         <!-- Здесь будут отображаться предложения -->
                                     </div>
@@ -293,10 +316,10 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <h5 class="mb-3">Категории зрителей</h5>
                     <div id="categoriesContainer"></div>
-                    
+
                     <button type="button" id="addCategoryBtn" class="btn btn-outline-success mb-4">
                         <i class="bi bi-plus-circle me-1"></i>Добавить категорию
                     </button>
@@ -311,7 +334,8 @@
 </div>
 
 <!-- Модальное окно подтверждения удаления -->
-<div class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -339,11 +363,11 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Получаем элементы для автозаполнения цены прописью
         const priceInFiguresField = document.getElementById('id_price_in_figures');
         const priceInWordsField = document.getElementById('id_price_in_words');
-        
+
         // Функция для воспроизведения звуков Minecraft
         function playMinecraftSound(type) {
             // Звуки Minecraft (можно заменить на реальные звуки из игры)
@@ -351,73 +375,193 @@
                 click: 'https://www.myinstants.com/media/sounds/minecraft-click.mp3',
                 success: 'https://www.myinstants.com/media/sounds/minecraft_xp.mp3'
             };
-            
+
             if (sounds[type]) {
                 const audio = new Audio(sounds[type]);
                 audio.volume = 0.5;
                 audio.play();
             }
         }
-        
+
         // Получаем все чекбоксы услуг
         const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
         const serviceCards = document.querySelectorAll('.service-card');
-        
+
         // Получаем элементы сводной информации
         const selectedServicesSummary = document.getElementById('selectedServicesSummary');
         const selectedServicesCount = document.getElementById('selectedServicesCount');
         const selectedServicesTotal = document.getElementById('selectedServicesTotal');
         const selectedServicesPrice = document.getElementById('selectedServicesPrice');
-        
+        const documentDateField = document.getElementById('id_date');
+        const doerSelect = document.getElementById('id_doer');
+        const customerSelect = document.getElementById('id_customer');
+        const sumViewersCheckbox = document.getElementById('sumServiceViewers');
+
+        function normalizeSearchText(value) {
+            return String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+
+        function enhanceOrganisationSelect(selectElement, placeholderText) {
+            if (!selectElement || selectElement.dataset.searchEnhanced === 'true') {
+                return;
+            }
+
+            selectElement.dataset.searchEnhanced = 'true';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'organisation-search';
+            const input = document.createElement('input');
+            input.type = 'search';
+            input.className = 'form-control organisation-search-input';
+            input.placeholder = placeholderText;
+            input.autocomplete = 'off';
+            const list = document.createElement('div');
+            list.className = 'suggestions-dropdown organisation-search-results';
+
+            selectElement.parentNode.insertBefore(wrapper, selectElement);
+            wrapper.appendChild(input);
+            wrapper.appendChild(list);
+            selectElement.classList.add('organisation-search-select');
+
+            const options = Array.from(selectElement.options).filter(option => option.value);
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                input.value = selectedOption.textContent;
+            }
+
+            function renderResults() {
+                const query = normalizeSearchText(input.value);
+                list.innerHTML = '';
+
+                if (!query) {
+                    list.classList.remove('show');
+                    return;
+                }
+
+                const matches = options
+                    .filter(option => normalizeSearchText(option.textContent).includes(query))
+                    .sort((a, b) => {
+                        const aText = normalizeSearchText(a.textContent);
+                        const bText = normalizeSearchText(b.textContent);
+                        const aStarts = aText.startsWith(query) ? 0 : 1;
+                        const bStarts = bText.startsWith(query) ? 0 : 1;
+                        return aStarts - bStarts || aText.localeCompare(bText, 'ru');
+                    })
+                    .slice(0, 20);
+
+                matches.forEach(option => {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'suggestion-item organisation-search-item';
+                    item.textContent = option.textContent;
+                    item.addEventListener('click', () => {
+                        selectElement.value = option.value;
+                        input.value = option.textContent;
+                        list.classList.remove('show');
+                        selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                    list.appendChild(item);
+                });
+
+                list.classList.toggle('show', matches.length > 0);
+            }
+
+            input.addEventListener('input', renderResults);
+            input.addEventListener('focus', () => {
+                input.select();
+                renderResults();
+            });
+            selectElement.addEventListener('change', () => {
+                const option = selectElement.options[selectElement.selectedIndex];
+                input.value = option && option.value ? option.textContent : '';
+            });
+            document.addEventListener('click', event => {
+                if (!wrapper.contains(event.target)) {
+                    list.classList.remove('show');
+                }
+            });
+        }
+
+        enhanceOrganisationSelect(doerSelect, 'Поиск исполнителя');
+        enhanceOrganisationSelect(customerSelect, 'Поиск заказчика');
+
+        if (documentDateField && typeof flatpickr === 'function') {
+            flatpickr(documentDateField, {
+                dateFormat: "d.m.Y",
+                locale: "ru",
+                disableMobile: true,
+                allowInput: true,
+                position: "below",
+                onChange: function (selectedDates) {
+                    if (selectedDates.length > 0) {
+                        const months = [
+                            'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                            'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+                        ];
+                        const date = selectedDates[0];
+                        documentDateField.value = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+                    }
+                },
+                onReady: function (selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                },
+                onOpen: function (selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                }
+            });
+        }
+
         // Функция для обновления полей суммы на основе выбранных услуг
         function updatePriceFields() {
-            let totalViewers = 0;
+            let totalViewersSum = 0;
+            let maxViewers = 0;
             let totalPrice = 0;
             let count = 0;
-            
+
             // Проходим по всем выбранным услугам и суммируем их цены и количество зрителей
-            serviceCheckboxes.forEach(function(checkbox) {
+            serviceCheckboxes.forEach(function (checkbox) {
                 if (checkbox.checked) {
                     count++;
                     const card = checkbox.closest('.service-card');
                     if (card) {
                         const viewers = parseInt(card.dataset.viewers) || 0;
                         const price = parseFloat(card.dataset.price) || 0;
-                        
-                        totalViewers += viewers;
+
+                        totalViewersSum += viewers;
+                        maxViewers = Math.max(maxViewers, viewers);
                         totalPrice += price;
                     }
                 }
             });
-            
+            const totalViewers = sumViewersCheckbox && sumViewersCheckbox.checked ? totalViewersSum : maxViewers;
+
             // Обновляем поле с ценой цифрами
             if (priceInFiguresField) {
                 priceInFiguresField.value = totalPrice.toFixed(2);
-                
+
                 // Генерируем событие input для запуска автозаполнения цены прописью
                 const event = new Event('input', { bubbles: true });
                 priceInFiguresField.dispatchEvent(event);
             }
-            
+
             // Обновляем поле с количеством зрителей
             const viewersField = document.getElementById('id_viewers');
             if (viewersField) {
-                viewersField.value = totalViewers;
+                viewersField.value = count > 0 ? totalViewers : '';
             }
-            
+
             // Обновляем сводную информацию
             if (selectedServicesSummary) {
                 if (count > 0) {
                     selectedServicesSummary.classList.remove('d-none');
-                    
+
                     if (selectedServicesCount) {
                         selectedServicesCount.textContent = count;
                     }
-                    
+
                     if (selectedServicesTotal) {
                         selectedServicesTotal.textContent = totalViewers;
                     }
-                    
+
                     if (selectedServicesPrice) {
                         selectedServicesPrice.textContent = totalPrice.toFixed(2) + ' руб.';
                     }
@@ -426,11 +570,11 @@
                 }
             }
         }
-        
+
         // Автозаполнение цены прописью на основе цены цифрами
         if (priceInFiguresField && priceInWordsField) {
             // Используем глобальную функцию numberToWords из wrapper.html
-            priceInFiguresField.addEventListener('input', function() {
+            priceInFiguresField.addEventListener('input', function () {
                 if (typeof numberToWords === 'function') {
                     const numericValue = this.value.replace(/[^\d.,]/g, '').replace(',', '.');
                     if (numericValue) {
@@ -440,42 +584,45 @@
                     }
                 }
             });
-            
+
             // Также вызываем функцию при загрузке страницы, если поле уже содержит значение
             if (priceInFiguresField.value && typeof numberToWords === 'function') {
                 priceInWordsField.value = numberToWords(priceInFiguresField.value);
             }
         }
-        
+
         // Обработчик изменения чекбокса
-        serviceCheckboxes.forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
+        serviceCheckboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
                 const serviceCard = this.closest('.service-card');
                 if (this.checked) {
                     serviceCard.classList.add('selected');
                 } else {
                     serviceCard.classList.remove('selected');
                 }
-                
+
                 // Обновляем поля с ценами при изменении выбора услуг
                 updatePriceFields();
             });
-            
+
             // Устанавливаем начальное состояние
             if (checkbox.checked) {
                 checkbox.closest('.service-card').classList.add('selected');
             }
         });
-        
+        if (sumViewersCheckbox) {
+            sumViewersCheckbox.addEventListener('change', updatePriceFields);
+        }
+
         // Добавляем обработчик клика на карточку услуги
-        serviceCards.forEach(function(card) {
-            card.addEventListener('click', function(e) {
+        serviceCards.forEach(function (card) {
+            card.addEventListener('click', function (e) {
                 // Проверяем, что клик не был на кнопке редактирования или удаления или чекбоксе
                 if (!e.target.closest('a') && !e.target.closest('button') && !e.target.closest('.form-check-input')) {
                     const checkbox = this.querySelector('.service-checkbox');
                     if (checkbox) {
                         checkbox.checked = !checkbox.checked;
-                        
+
                         // Имитируем событие change на чекбоксе
                         const event = new Event('change');
                         checkbox.dispatchEvent(event);
@@ -483,10 +630,10 @@
                 }
             });
         });
-        
+
         // Вызываем функцию при загрузке страницы для инициализации полей
         updatePriceFields();
-        
+
         // Проверяем, нужно ли автоматически выбрать услугу после редактирования (из localStorage)
         const lastServiceToSelect = localStorage.getItem('lastServiceToSelect');
         if (lastServiceToSelect) {
@@ -503,12 +650,11 @@
             }
             localStorage.removeItem('lastServiceToSelect');
         }
-        
+
         // Получаем элементы для автозаполнения address_and_time
-        const customerSelect = document.getElementById('id_customer');
         const timeInput = document.getElementById('id_time');
         const addressAndTimeInput = document.getElementById('id_address_and_time');
-        
+
         // Функция для автоматического заполнения поля address_and_time
         function updateAddressAndTime() {
             if (customerSelect && timeInput && addressAndTimeInput) {
@@ -516,7 +662,7 @@
                 const selectedOption = customerSelect.options[customerSelect.selectedIndex];
                 // Получаем значение времени
                 const timeValue = timeInput.value;
-                
+
                 // Если выбран заказчик и указано время
                 if (selectedOption && selectedOption.value && timeValue) {
                     // Получаем адрес из атрибута data-address, если он есть
@@ -530,7 +676,7 @@
                 }
             }
         }
-        
+
         // Добавляем атрибуты data-address к опциям списка заказчиков
         if (customerSelect) {
             fetch('/get-organisations-data/')
@@ -545,32 +691,32 @@
                 })
                 .catch(error => console.error('Error loading organisations data:', error));
         }
-        
+
         // Добавляем обработчики событий для автозаполнения
         if (customerSelect) {
             customerSelect.addEventListener('change', updateAddressAndTime);
         }
-        
+
         if (timeInput) {
             timeInput.addEventListener('input', updateAddressAndTime);
             timeInput.addEventListener('change', updateAddressAndTime);
         }
-        
+
         // Предотвращение двойного клика по кнопке отправки
         const form = document.getElementById('documentForm');
         const submitButton = document.getElementById('submitButton');
-        
+
         if (form && submitButton) {
-            form.addEventListener('submit', function() {
+            form.addEventListener('submit', function () {
                 submitButton.disabled = true;
                 submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Сохранение...';
             });
         }
-        
+
         // Функции для модального окна услуг
         const serviceModalElement = document.getElementById('serviceModal');
         const deleteServiceModalElement = document.getElementById('deleteServiceModal');
-        
+
         // Проверяем, что элементы существуют и bootstrap доступен
         let serviceModal, deleteServiceModal;
         if (typeof bootstrap !== 'undefined') {
@@ -583,7 +729,7 @@
         } else {
             console.error('Bootstrap не найден! Убедитесь, что библиотека правильно подключена.');
         }
-        
+
         const serviceForm = document.getElementById('serviceForm');
         const serviceIdField = document.getElementById('serviceId');
         const serviceNameField = document.getElementById('serviceName');
@@ -593,9 +739,58 @@
         const saveServiceBtn = document.getElementById('saveServiceBtn');
         const deleteServiceName = document.getElementById('deleteServiceName');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-        
+
+        function parseServiceDate(value) {
+            const dateText = String(value || '').toLowerCase();
+            const match = dateText.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+            if (match) {
+                return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+            }
+
+            const textMatch = dateText.match(/(\d{1,2})\s+([а-яё]+)\s+(\d{4})/i);
+            if (!textMatch) {
+                return null;
+            }
+
+            const monthIndex = [
+                'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+            ].indexOf(textMatch[2]);
+            if (monthIndex === -1) {
+                return null;
+            }
+            return new Date(Number(textMatch[3]), monthIndex, Number(textMatch[1]));
+        }
+
+        function syncDatePickerToInput(picker) {
+            if (!picker || !picker.input) {
+                return;
+            }
+            const currentValue = picker.input.value;
+            const parsedDate = parseServiceDate(picker.input.value);
+            if (parsedDate) {
+                picker.setDate(parsedDate, false);
+                picker.input.value = currentValue;
+            } else if (!String(picker.input.value || '').trim()) {
+                picker.clear();
+            }
+        }
+
+        function parseCategoryNumber(value) {
+            return parseFloat(String(value || '').replace(',', '.').replace(/[^\d.-]/g, ''));
+        }
+
+        function readCategoryValues(item) {
+            const valueNodes = item.querySelectorAll('.d-flex > div');
+            const fallbackNodes = valueNodes.length >= 2 ? valueNodes : item.children;
+            return {
+                viewers: parseCategoryNumber(item.dataset.viewers || (fallbackNodes[0] ? fallbackNodes[0].textContent : '')),
+                price: parseCategoryNumber(item.dataset.price || (fallbackNodes[1] ? fallbackNodes[1].textContent : ''))
+            };
+        }
+
         // Обработчик на кнопки редактирования услуг
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.closest('.edit-service-btn')) {
                 e.preventDefault();
                 const serviceCard = e.target.closest('.service-card');
@@ -603,9 +798,9 @@
                 openServiceModal(serviceId);
             }
         });
-        
+
         // Обработчик на кнопки удаления услуг
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.closest('.delete-service-btn')) {
                 e.preventDefault();
                 const serviceCard = e.target.closest('.service-card');
@@ -614,7 +809,7 @@
                 openDeleteModal(serviceId, serviceName);
             }
         });
-        
+
         // Функция открытия модального окна услуги
         function openServiceModal(serviceId = null) {
             // Проверяем, инициализировано ли модальное окно
@@ -622,12 +817,12 @@
                 alert('Не удалось открыть модальное окно. Проблема с Bootstrap.');
                 return;
             }
-            
+
             // Очищаем форму
             serviceForm.reset();
             serviceIdField.value = '';
             categoriesContainer.innerHTML = '';
-            
+
             // Список предложений для названия услуги
             const serviceSuggestions = [
                 'Квест по ПДД "Безопасные дороги"',
@@ -638,14 +833,14 @@
                 'Электронный квест "Звездные войны"',
                 'Мастер-класс по робототехнике'
             ];
-            
+
             // Получаем элементы для работы с предложениями
             const serviceNameInput = document.getElementById('serviceName');
             const suggestionsContainer = document.getElementById('serviceNameSuggestions');
-            
+
             // Очищаем выпадающий список перед добавлением предложений
             suggestionsContainer.innerHTML = '';
-            
+
             // Заполняем выпадающий список предложениями
             serviceSuggestions.forEach(suggestion => {
                 const suggestionItem = document.createElement('div');
@@ -654,7 +849,7 @@
                 suggestionItem.addEventListener('click', () => {
                     serviceNameInput.value = suggestion;
                     suggestionsContainer.classList.remove('show');
-                    
+
                     // Воспроизводим звук при выборе в теме Minecraft
                     if (document.body.classList.contains('minecraft-theme')) {
                         playMinecraftSound('click');
@@ -662,24 +857,24 @@
                 });
                 suggestionsContainer.appendChild(suggestionItem);
             });
-            
+
             // Показываем выпадающий список при фокусе на поле ввода
             serviceNameInput.addEventListener('focus', () => {
                 suggestionsContainer.classList.add('show');
-                
+
                 // Воспроизводим звук при фокусе в теме Minecraft
                 if (document.body.classList.contains('minecraft-theme')) {
                     playMinecraftSound('click');
                 }
             });
-            
+
             // Фильтруем предложения при вводе текста
             serviceNameInput.addEventListener('input', () => {
                 const inputValue = serviceNameInput.value.toLowerCase();
                 const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
-                
+
                 let hasVisibleItems = false;
-                
+
                 suggestionItems.forEach(item => {
                     const suggestionText = item.textContent.toLowerCase();
                     if (suggestionText.includes(inputValue)) {
@@ -689,7 +884,7 @@
                         item.style.display = 'none';
                     }
                 });
-                
+
                 // Показываем или скрываем выпадающий список в зависимости от наличия совпадений
                 if (hasVisibleItems) {
                     suggestionsContainer.classList.add('show');
@@ -697,14 +892,14 @@
                     suggestionsContainer.classList.remove('show');
                 }
             });
-            
+
             // Скрываем выпадающий список при клике вне поля ввода и списка
             document.addEventListener('click', (event) => {
                 if (!event.target.closest('.suggestions-container')) {
                     suggestionsContainer.classList.remove('show');
                 }
             });
-            
+
             if (serviceId) {
                 // Редактирование существующей услуги
                 const serviceCard = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
@@ -713,24 +908,23 @@
                     serviceIdField.value = serviceId;
                     serviceNameField.value = serviceCard.dataset.name || '';
                     serviceDateField.value = serviceCard.dataset.date || '';
-                    
+                    syncDatePickerToInput(serviceDateField._flatpickr);
+
                     // Добавляем категории
                     const categoryItems = serviceCard.querySelectorAll('.category-item');
-                    categoryItems.forEach(function(item) {
-                        const viewersText = item.querySelector('div:first-child').textContent.trim();
-                        const priceText = item.querySelector('div:last-child').textContent.trim();
-                        
-                        const viewers = parseInt(viewersText.replace(' чел.', ''));
-                        const price = parseFloat(priceText.replace(' руб.', ''));
-                        
+                    categoryItems.forEach(function (item) {
+                        const category = readCategoryValues(item);
+                        const viewers = parseInt(category.viewers, 10);
+                        const price = category.price;
+
                         addCategoryRow(viewers, price);
                     });
-                    
+
                     // Если нет категорий, добавляем пустую
                     if (categoryItems.length === 0) {
                         addCategoryRow();
                     }
-                    
+
                     // Меняем заголовок
                     document.getElementById('serviceModalLabel').textContent = 'Редактирование услуги';
                 }
@@ -740,15 +934,15 @@
                 // Добавляем пустую категорию
                 addCategoryRow();
             }
-            
+
             // Открываем модальное окно
             serviceModal.show();
         }
-        
+
         // Функция добавления строки категории
         function addCategoryRow(viewers = '', price = '') {
             const index = document.querySelectorAll('.category-form-row').length;
-            
+
             const row = document.createElement('div');
             row.className = 'category-form-row';
             row.innerHTML = `
@@ -770,11 +964,11 @@
                 </div>
                 <span class="remove-category"><i class="bi bi-x-circle"></i></span>
             `;
-            
+
             categoriesContainer.appendChild(row);
-            
+
             // Добавляем обработчик на кнопку удаления категории
-            row.querySelector('.remove-category').addEventListener('click', function() {
+            row.querySelector('.remove-category').addEventListener('click', function () {
                 // Не позволяем удалить последнюю категорию
                 if (document.querySelectorAll('.category-form-row').length > 1) {
                     row.remove();
@@ -783,34 +977,34 @@
                 }
             });
         }
-        
+
         // Обработчик на кнопку добавления категории
         if (addCategoryBtn) {
-            addCategoryBtn.addEventListener('click', function() {
+            addCategoryBtn.addEventListener('click', function () {
                 addCategoryRow();
             });
         }
-        
+
         // Обработчик на кнопку сохранения услуги
         if (saveServiceBtn) {
-            saveServiceBtn.addEventListener('click', function() {
+            saveServiceBtn.addEventListener('click', function () {
                 // Проверяем валидность формы
                 if (!serviceForm.checkValidity()) {
                     serviceForm.classList.add('was-validated');
                     return;
                 }
-                
+
                 // Собираем данные формы
                 const serviceId = serviceIdField.value;
                 const serviceName = serviceNameField.value;
                 const serviceDate = serviceDateField.value;
-                
+
                 const categories = [];
                 const categoryRows = document.querySelectorAll('.category-form-row');
-                categoryRows.forEach(function(row) {
+                categoryRows.forEach(function (row) {
                     const viewers = parseInt(row.querySelector('.category-viewers').value);
                     const price = parseFloat(row.querySelector('.category-price').value);
-                    
+
                     if (viewers >= 1 && price >= 0) {
                         categories.push({
                             viewers,
@@ -818,13 +1012,13 @@
                         });
                     }
                 });
-                
+
                 // Проверяем, что есть хотя бы одна категория
                 if (categories.length === 0) {
                     alert('Добавьте хотя бы одну категорию зрителей');
                     return;
                 }
-                
+
                 // Отправляем данные на сервер
                 const action = serviceId ? 'edit' : 'create';
                 const data = {
@@ -836,7 +1030,7 @@
                     },
                     categories
                 };
-                
+
                 // Отправляем AJAX-запрос
                 fetch('/service-ajax/', {
                     method: 'POST',
@@ -846,39 +1040,39 @@
                     },
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Сохраняем ID, чтобы выбрать после перезагрузки
-                        const idToSelect = data.service_id || (typeof serviceId !== 'undefined' ? serviceId : null);
-                        if (idToSelect) {
-                            localStorage.setItem('lastServiceToSelect', idToSelect);
-                        }
-                        // Перезагружаем страницу для обновления данных
-                        window.location.reload();
-                    } else {
-                        // Отображаем ошибки
-                        if (data.errors) {
-                            if (data.errors.name) {
-                                serviceNameField.classList.add('is-invalid');
-                                document.getElementById('serviceNameError').textContent = data.errors.name.join(', ');
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Сохраняем ID, чтобы выбрать после перезагрузки
+                            const idToSelect = data.service_id || (typeof serviceId !== 'undefined' ? serviceId : null);
+                            if (idToSelect) {
+                                localStorage.setItem('lastServiceToSelect', idToSelect);
                             }
-                            if (data.errors.date) {
-                                serviceDateField.classList.add('is-invalid');
-                                document.getElementById('serviceDateError').textContent = data.errors.date.join(', ');
-                            }
+                            // Перезагружаем страницу для обновления данных
+                            window.location.reload();
                         } else {
-                            alert('Произошла ошибка при сохранении услуги');
+                            // Отображаем ошибки
+                            if (data.errors) {
+                                if (data.errors.name) {
+                                    serviceNameField.classList.add('is-invalid');
+                                    document.getElementById('serviceNameError').textContent = data.errors.name.join(', ');
+                                }
+                                if (data.errors.date) {
+                                    serviceDateField.classList.add('is-invalid');
+                                    document.getElementById('serviceDateError').textContent = data.errors.date.join(', ');
+                                }
+                            } else {
+                                alert('Произошла ошибка при сохранении услуги: ' + (data.error || 'Неизвестная ошибка'));
+                            }
                         }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Произошла ошибка при сохранении услуги');
-                });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Произошла ошибка при сохранении услуги: ' + error.message);
+                    });
             });
         }
-        
+
         // Функция открытия модального окна подтверждения удаления
         function openDeleteModal(serviceId, serviceName) {
             // Проверяем, инициализировано ли модальное окно
@@ -886,17 +1080,17 @@
                 alert('Не удалось открыть модальное окно. Проблема с Bootstrap.');
                 return;
             }
-            
+
             document.getElementById('deleteServiceName').textContent = serviceName;
             confirmDeleteBtn.dataset.serviceId = serviceId;
             deleteServiceModal.show();
         }
-        
+
         // Обработчик на кнопку подтверждения удаления
         if (confirmDeleteBtn) {
-            confirmDeleteBtn.addEventListener('click', function() {
+            confirmDeleteBtn.addEventListener('click', function () {
                 const serviceId = this.dataset.serviceId;
-                
+
                 // Отправляем AJAX-запрос
                 fetch('/service-ajax/', {
                     method: 'POST',
@@ -909,38 +1103,45 @@
                         service_id: serviceId
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Сохраняем ID, чтобы выбрать после перезагрузки
-                        const idToSelect = data.service_id || (typeof serviceId !== 'undefined' ? serviceId : null);
-                        if (idToSelect) {
-                            localStorage.setItem('lastServiceToSelect', idToSelect);
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Сохраняем ID, чтобы выбрать после перезагрузки
+                            const idToSelect = data.service_id || (typeof serviceId !== 'undefined' ? serviceId : null);
+                            if (idToSelect) {
+                                localStorage.setItem('lastServiceToSelect', idToSelect);
+                            }
+                            // Перезагружаем страницу для обновления данных
+                            window.location.reload();
+                        } else {
+                            alert('Произошла ошибка при удалении услуги: ' + (data.error || 'Неизвестная ошибка'));
                         }
-                        // Перезагружаем страницу для обновления данных
-                        window.location.reload();
-                    } else {
-                        alert('Произошла ошибка при удалении услуги: ' + (data.error || 'Неизвестная ошибка'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Произошла ошибка при удалении услуги');
-                });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Произошла ошибка при удалении услуги');
+                    });
             });
         }
-        
+
         // Инициализируем flatpickr для даты услуги в модальном окне
         if (serviceDateField) {
             flatpickr(serviceDateField, {
                 dateFormat: "d.m.Y г.",
                 locale: "ru",
                 disableMobile: true,
+                allowInput: true,
                 position: "below",
-                static: true
+                static: true,
+                onOpen: function (selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                },
+                onReady: function (selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                }
             });
         }
     });
 </script>
 
-{% endblock %} 
+{% endblock %}

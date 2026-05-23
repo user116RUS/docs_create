@@ -26,25 +26,27 @@
                         <p class="mt-2">Обработка документа...</p>
                     </div>
                 </div>
-                
+
                 <!-- Результаты анализа документа -->
                 <div class="alert alert-success d-none" id="extractionResult">
                     <h5><i class="bi bi-check-circle-fill me-2"></i>Данные успешно извлечены!</h5>
-                    <p>Информация об организации была извлечена из документа. Вы можете использовать эти данные для создания новой организации.</p>
+                    <p>Информация об организации была извлечена из документа. Вы можете использовать эти данные для
+                        создания новой организации.</p>
                     <div class="mt-2">
                         <button type="button" id="createOrganisationBtn" class="btn btn-sm btn-success shadow-sm">
                             <i class="bi bi-plus-circle me-1"></i>Создать организацию из документа
                         </button>
                     </div>
                 </div>
-                
+
                 <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
-                    
+
                     <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle-fill me-2"></i>Заполните информацию для создания документов. После заполнения вы сможете скачать акт приемки, счет и договор.
+                        <i class="bi bi-info-circle-fill me-2"></i>Заполните информацию для создания документов. После
+                        заполнения вы сможете скачать акт приемки, счет и договор.
                     </div>
-                    
+
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
@@ -57,7 +59,7 @@
                                 </div>
                                 {% endif %}
                             </div>
-                            
+
                             <div class="form-group mb-3">
                                 <label for="{{ form.customer.id_for_label }}" class="form-label">{{ form.customer.label }}</label>
                                 {{ form.customer|addclass:"form-control select-sm" }}
@@ -69,7 +71,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }}</label>
@@ -82,7 +84,7 @@
                                 </div>
                                 {% endif %}
                             </div>
-                            
+
                             <div class="form-group mb-3">
                                 <label for="{{ form.time.id_for_label }}" class="form-label">{{ form.time.label }}</label>
                                 {{ form.time|addclass:"form-control input-sm" }}
@@ -95,7 +97,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
@@ -108,7 +110,7 @@
                                 </div>
                                 {% endif %}
                             </div>
-                            
+
                             <!-- Добавляем поле для количества зрителей -->
                             <div class="form-group mb-3">
                                 <label for="{{ form.viewers.id_for_label }}" class="form-label">
@@ -121,9 +123,16 @@
                                     {{ form.viewers.errors }}
                                 </div>
                                 {% endif %}
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="sumServiceViewers">
+                                    <label class="form-check-label" for="sumServiceViewers">
+                                        Суммировать кол-во зрителей у всех услуг.
+                                    </label>
+                                </div>
+                                <div class="form-text">По умолчанию берется максимальное количество зрителей среди выбранных услуг.</div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="{{ form.act_and_account_number.id_for_label }}" class="form-label">{{ form.act_and_account_number.label }}</label>
@@ -135,7 +144,7 @@
                                 </div>
                                 {% endif %}
                             </div>
-                            
+
                             <div class="form-group mb-3">
                                 <label for="{{ form.number_basis_of_the_contract.id_for_label }}" class="form-label">{{ form.number_basis_of_the_contract.label }}</label>
                                 {{ form.number_basis_of_the_contract|addclass:"form-control input-sm" }}
@@ -148,10 +157,10 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Скрытые поля для автоматически рассчитываемых значений -->
                     {{ form.price_in_figures.as_hidden }}
-                    
+
                     <!-- Раздел услуг -->
                     <div class="card mb-4">
                         <div class="card-header bg-light d-flex justify-content-between align-items-center">
@@ -163,11 +172,12 @@
                         <div class="card-body">
                             <!-- Скрытое поле для правильной обработки формы -->
                             {{ form.services.as_hidden }}
-                            
+
                             <div class="alert alert-info mb-3">
-                                <i class="bi bi-info-circle-fill me-2"></i>Выберите услуги, которые требуется включить в документы. Вы можете выбрать несколько услуг.
+                                <i class="bi bi-info-circle-fill me-2"></i>Выберите услуги, которые требуется включить в
+                                документы. Вы можете выбрать несколько услуг.
                             </div>
-                            
+
                             <!-- Отображение ошибок формы -->
                             {% if form.non_field_errors %}
                             <div class="alert alert-danger mb-3">
@@ -176,69 +186,73 @@
                                 {% endfor %}
                             </div>
                             {% endif %}
-                            
+
                             <div class="mt-3">
                                 {% if services %}
-                                    {% for service in services %}
-                                    <!-- Добавляем отладочную информацию -->
-                                    <!-- Debug: {{ service.name }} - viewers: {{ service.total_viewers }}, price: {{ service.total_price }} -->
-                                    <div class="service-card" data-service-id="{{ service.id }}" 
-                                         data-viewers="{{ service.total_viewers|default:'0' }}" 
-                                         data-price="{{ service.total_price|default:'0' }}"
-                                         data-name="{{ service.name }}"
-                                         data-date="{{ service.date }}">
-                                        <div class="service-header">
-                                            <div class="d-flex align-items-center">
-                                                <div class="form-check form-check-inline me-3">
-                                                    <input class="form-check-input service-checkbox" type="checkbox" name="service_checkbox" 
-                                                        id="service_{{ service.id }}" value="{{ service.id }}"
-                                                        {% if service in form.instance.services.all %}checked{% endif %}>
-                                                    <label class="form-check-label" for="service_{{ service.id }}">
-                                                        {{ service.name }} ({{ service.date }})
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <button type="button" class="btn btn-sm btn-outline-primary edit-service-btn">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger ms-2 delete-service-btn">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                {% for service in services %}
+                                <!-- Добавляем отладочную информацию -->
+                                <!-- Debug: {{ service.name }} - viewers: {{ service.total_viewers }}, price: {{ service.total_price }} -->
+                                <div class="service-card" data-service-id="{{ service.id }}"
+                                    data-viewers="{{ service.total_viewers|default:'0' }}"
+                                    data-price="{{ service.total_price|default:'0' }}" data-name="{{ service.name }}"
+                                    data-date="{{ service.date }}">
+                                    <div class="service-header">
+                                        <div class="d-flex align-items-center">
+                                            <div class="form-check form-check-inline me-3">
+                                                <input class="form-check-input service-checkbox" type="checkbox"
+                                                    name="service_checkbox" id="service_{{ service.id }}"
+                                                    value="{{ service.id }}" {% if service in form.instance.services.all %}checked{% endif %}>
+                                                <label class="form-check-label" for="service_{{ service.id }}">
+                                                    {{ service.name }} ({{ service.date }})
+                                                </label>
                                             </div>
                                         </div>
-                                        <div class="service-body">
-                                            {% with categories=service.viewer_categories.all %}
-                                                {% if categories %}
-                                                    <div class="mb-2"><strong>Категории зрителей:</strong></div>
-                                                    {% for category in categories %}
-                                                    <div class="category-item">
-                                                        <div class="d-flex justify-content-between">
-                                                            <div>{{ category.viewers }} чел.</div>
-                                                            <div>{{ category.price }} руб.</div>
-                                                        </div>
-                                                    </div>
-                                                    {% endfor %}
-                                                    <div class="mt-2 text-end">
-                                                        <span class="badge bg-info text-white">Всего: {{ service.total_viewers }} чел.</span>
-                                                        <span class="badge bg-success text-white">Итого: {{ service.total_price }} руб.</span>
-                                                    </div>
-                                                {% else %}
-                                                    <div class="text-muted">Нет добавленных категорий зрителей</div>
-                                                {% endif %}
-                                            {% endwith %}
+                                        <div>
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-primary edit-service-btn">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger ms-2 delete-service-btn">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                    {% endfor %}
+                                    <div class="service-body">
+                                        {% with categories=service.viewer_categories.all %}
+                                        {% if categories %}
+                                        <div class="mb-2"><strong>Категории зрителей:</strong></div>
+                                        {% for category in categories %}
+                                        <div class="category-item" data-viewers="{{ category.viewers }}"
+                                            data-price="{{ category.price }}">
+                                            <div class="d-flex justify-content-between">
+                                                <div>{{ category.viewers }} чел.</div>
+                                                <div>{{ category.price }} руб.</div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="mt-2 text-end">
+                                            <span class="badge bg-info text-white">Всего: {{ service.total_viewers }}
+                                                чел.</span>
+                                            <span class="badge bg-success text-white">Итого: {{ service.total_price }}
+                                                руб.</span>
+                                        </div>
+                                        {% else %}
+                                        <div class="text-muted">Нет добавленных категорий зрителей</div>
+                                        {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                                {% endfor %}
                                 {% else %}
-                                    <div class="alert alert-warning">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>Нет доступных услуг. Добавьте услугу с помощью кнопки выше.
-                                    </div>
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Нет доступных услуг. Добавьте услугу
+                                    с помощью кнопки выше.
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Перемещаем блок сводки сюда -->
                     <div class="selected-services-summary d-none" id="selectedServicesSummary">
                         <h6 class="mb-3"><i class="bi bi-check-circle-fill me-2"></i>Сводная информация:</h6>
@@ -263,19 +277,22 @@
                                 <div class="card bg-primary text-white h-100">
                                     <div class="card-body py-2 px-3">
                                         <h6 class="mb-2">Общая стоимость</h6>
-                                        <div class="h4"><span id="selectedServicesPrice" class="fw-bold">0 руб.</span></div>
+                                        <div class="h4"><span id="selectedServicesPrice" class="fw-bold">0 руб.</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="alert alert-success mb-0">
-                            <i class="bi bi-info-circle-fill me-2"></i>Цена будет автоматически вставлена в документы в числовом и текстовом формате.
+                            <i class="bi bi-info-circle-fill me-2"></i>Цена будет автоматически вставлена в документы в
+                            числовом и текстовом формате.
                         </div>
-                        
+
                         <!-- Добавляем поле для суммы прописью -->
                         <div class="form-group mt-3">
                             <div class="alert alert-warning">
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Внимание!</strong> Укажите сумму прописью для документов:
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Внимание!</strong> Укажите
+                                сумму прописью для документов:
                             </div>
                             <label for="{{ form.price_in_words.id_for_label }}" class="form-label">
                                 {{ form.price_in_words.label }} <span class="text-danger">*</span>
@@ -289,9 +306,10 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="d-flex justify-content-between mt-4">
-                        <button type="button" onclick="window.location.href='{% url 'main:index' %}'" class="btn btn-outline-secondary">
+                        <button type="button" onclick="window.location.href='{% url 'main:index' %}'"
+                            class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Вернуться
                         </button>
                         <button type="submit" id="submitButton" class="btn btn-primary">
@@ -315,13 +333,14 @@
             <div class="modal-body">
                 <form id="serviceForm">
                     <input type="hidden" id="serviceId" value="">
-                    
+
                     <div class="row mb-4">
                         <div class="col-md-8">
                             <div class="form-group mb-3">
                                 <label for="serviceName" class="form-label">Название услуги</label>
                                 <div class="suggestions-container">
-                                    <input type="text" class="form-control" id="serviceName" required autocomplete="off">
+                                    <input type="text" class="form-control" id="serviceName" required
+                                        autocomplete="off">
                                     <div class="suggestions-dropdown" id="serviceNameSuggestions">
                                         <!-- Здесь будут отображаться предложения -->
                                     </div>
@@ -337,10 +356,10 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <h5 class="mb-3">Категории зрителей</h5>
                     <div id="categoriesContainer"></div>
-                    
+
                     <button type="button" id="addCategoryBtn" class="btn btn-outline-success mb-4">
                         <i class="bi bi-plus-circle me-1"></i>Добавить категорию
                     </button>
@@ -355,7 +374,8 @@
 </div>
 
 <!-- Модальное окно подтверждения удаления -->
-<div class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteServiceModal" tabindex="-1" aria-labelledby="deleteServiceModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -380,754 +400,904 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Получаем форму и кнопку отправки
-    const form = document.querySelector('form');
-    const submitButton = document.getElementById('submitButton');
-    
-    // Инициализируем выпадающий список предложений для поля "Название услуги"
-    function initServiceNameSuggestions() {
-        // Список предложений для названия услуги
-        const serviceSuggestions = [
-            'Квест по ПДД "Безопасные дороги"',
-            'Квест "Команда первых"',
-            'Квест "Джуманджи"',
-            'Квест "Школьный спасатель"',
-            'Мастер-класс по инженерии',
-            'Электронный квест "Звездные войны"',
-            'Мастер-класс по робототехнике'
-        ];
-        
-        // Получаем элементы для работы с предложениями
-        const serviceNameInput = document.getElementById('serviceName');
-        const suggestionsContainer = document.getElementById('serviceNameSuggestions');
-        
-        if (serviceNameInput && suggestionsContainer) {
-            // Очищаем выпадающий список
-            suggestionsContainer.innerHTML = '';
-            
-            // Заполняем выпадающий список предложениями
-            serviceSuggestions.forEach(suggestion => {
-                const suggestionItem = document.createElement('div');
-                suggestionItem.className = 'suggestion-item';
-                suggestionItem.textContent = suggestion;
-                suggestionItem.addEventListener('click', () => {
-                    serviceNameInput.value = suggestion;
-                    suggestionsContainer.classList.remove('show');
-                    
-                    // Воспроизводим звук при выборе в теме Minecraft
+    document.addEventListener('DOMContentLoaded', function () {
+        // Получаем форму и кнопку отправки
+        const form = document.querySelector('form');
+        const submitButton = document.getElementById('submitButton');
+
+        // Инициализируем выпадающий список предложений для поля "Название услуги"
+        function initServiceNameSuggestions() {
+            // Список предложений для названия услуги
+            const serviceSuggestions = [
+                'Квест по ПДД "Безопасные дороги"',
+                'Квест "Команда первых"',
+                'Квест "Джуманджи"',
+                'Квест "Школьный спасатель"',
+                'Мастер-класс по инженерии',
+                'Электронный квест "Звездные войны"',
+                'Мастер-класс по робототехнике'
+            ];
+
+            // Получаем элементы для работы с предложениями
+            const serviceNameInput = document.getElementById('serviceName');
+            const suggestionsContainer = document.getElementById('serviceNameSuggestions');
+
+            if (serviceNameInput && suggestionsContainer) {
+                // Очищаем выпадающий список
+                suggestionsContainer.innerHTML = '';
+
+                // Заполняем выпадающий список предложениями
+                serviceSuggestions.forEach(suggestion => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'suggestion-item';
+                    suggestionItem.textContent = suggestion;
+                    suggestionItem.addEventListener('click', () => {
+                        serviceNameInput.value = suggestion;
+                        suggestionsContainer.classList.remove('show');
+
+                        // Воспроизводим звук при выборе в теме Minecraft
+                        if (document.body.classList.contains('minecraft-theme')) {
+                            playMinecraftSound('click');
+                        }
+                    });
+                    suggestionsContainer.appendChild(suggestionItem);
+                });
+
+                // Показываем выпадающий список при фокусе на поле ввода
+                serviceNameInput.addEventListener('focus', () => {
+                    suggestionsContainer.classList.add('show');
+
+                    // Воспроизводим звук при фокусе в теме Minecraft
                     if (document.body.classList.contains('minecraft-theme')) {
                         playMinecraftSound('click');
                     }
                 });
-                suggestionsContainer.appendChild(suggestionItem);
-            });
-            
-            // Показываем выпадающий список при фокусе на поле ввода
-            serviceNameInput.addEventListener('focus', () => {
-                suggestionsContainer.classList.add('show');
-                
-                // Воспроизводим звук при фокусе в теме Minecraft
-                if (document.body.classList.contains('minecraft-theme')) {
-                    playMinecraftSound('click');
-                }
-            });
-            
-            // Фильтруем предложения при вводе текста
-            serviceNameInput.addEventListener('input', () => {
-                const inputValue = serviceNameInput.value.toLowerCase();
-                const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
-                
-                let hasVisibleItems = false;
-                
-                suggestionItems.forEach(item => {
-                    const suggestionText = item.textContent.toLowerCase();
-                    if (suggestionText.includes(inputValue)) {
-                        item.style.display = 'block';
-                        hasVisibleItems = true;
+
+                // Фильтруем предложения при вводе текста
+                serviceNameInput.addEventListener('input', () => {
+                    const inputValue = serviceNameInput.value.toLowerCase();
+                    const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
+
+                    let hasVisibleItems = false;
+
+                    suggestionItems.forEach(item => {
+                        const suggestionText = item.textContent.toLowerCase();
+                        if (suggestionText.includes(inputValue)) {
+                            item.style.display = 'block';
+                            hasVisibleItems = true;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    // Показываем или скрываем выпадающий список в зависимости от наличия совпадений
+                    if (hasVisibleItems) {
+                        suggestionsContainer.classList.add('show');
                     } else {
-                        item.style.display = 'none';
+                        suggestionsContainer.classList.remove('show');
                     }
                 });
-                
-                // Показываем или скрываем выпадающий список в зависимости от наличия совпадений
-                if (hasVisibleItems) {
-                    suggestionsContainer.classList.add('show');
-                } else {
-                    suggestionsContainer.classList.remove('show');
-                }
-            });
-            
-            // Скрываем выпадающий список при клике вне поля ввода и списка
-            document.addEventListener('click', (event) => {
-                if (!event.target.closest('.suggestions-container')) {
-                    suggestionsContainer.classList.remove('show');
-                }
-            });
-        }
-    }
-    
-    // Функция для воспроизведения звуков Minecraft
-    function playMinecraftSound(type) {
-        // Звуки Minecraft (можно заменить на реальные звуки из игры)
-        const sounds = {
-            click: 'https://www.myinstants.com/media/sounds/minecraft-click.mp3',
-            success: 'https://www.myinstants.com/media/sounds/minecraft_xp.mp3'
-        };
-        
-        if (sounds[type]) {
-            const audio = new Audio(sounds[type]);
-            audio.volume = 0.5;
-            audio.play();
-        }
-    }
-    
-    // Получаем элементы для автозаполнения address_and_time
-    const customerSelect = document.getElementById('id_customer');
-    const timeInput = document.getElementById('id_time');
-    const addressAndTimeInput = document.getElementById('id_address_and_time');
-    
-    // Добавляем обработчик для автозаполнения цены прописью
-    const priceInFiguresField = document.getElementById('id_price_in_figures');
-    const priceInWordsField = document.getElementById('id_price_in_words');
-    
-    // Автозаполнение цены прописью на основе цены цифрами
-    if (priceInFiguresField && priceInWordsField) {
-        // Используем глобальную функцию numberToWords из wrapper.html
-        priceInFiguresField.addEventListener('input', function() {
-            if (typeof numberToWords === 'function') {
-                const numericValue = this.value.replace(/[^\d.,]/g, '').replace(',', '.');
-                if (numericValue) {
-                    priceInWordsField.value = numberToWords(numericValue);
-                } else {
-                    priceInWordsField.value = '';
-                }
-            }
-        });
-        
-        // Также вызываем функцию при загрузке страницы, если поле уже содержит значение
-        if (priceInFiguresField.value && typeof numberToWords === 'function') {
-            priceInWordsField.value = numberToWords(priceInFiguresField.value);
-        }
-    }
-    
-    // Функция для автоматического заполнения поля address_and_time
-    function updateAddressAndTime() {
-        if (customerSelect && timeInput && addressAndTimeInput) {
-            // Получаем выбранный элемент select
-            const selectedOption = customerSelect.options[customerSelect.selectedIndex];
-            // Получаем значение времени
-            const timeValue = timeInput.value;
-            
-            // Если выбран заказчик и указано время
-            if (selectedOption && selectedOption.value && timeValue) {
-                // Получаем адрес из атрибута data-address, если он есть
-                const customerAddress = selectedOption.getAttribute('data-address');
-                if (customerAddress) {
-                    // Извлекаем первое время из диапазона (например, из "09:30-10:30" берем "09:30")
-                    const startTime = timeValue.split('-')[0].trim();
-                    // Формируем строку адреса с временем
-                    addressAndTimeInput.value = `${customerAddress}. Время проведения: с ${startTime}`;
-                }
+
+                // Скрываем выпадающий список при клике вне поля ввода и списка
+                document.addEventListener('click', (event) => {
+                    if (!event.target.closest('.suggestions-container')) {
+                        suggestionsContainer.classList.remove('show');
+                    }
+                });
             }
         }
-    }
-    
-    // Добавляем атрибуты data-address к опциям списка заказчиков
-    if (customerSelect) {
-        fetch('/get-organisations-data/')
-            .then(response => response.json())
-            .then(data => {
-                // Для каждой организации добавляем data-атрибуты в соответствующую опцию
-                for (const option of customerSelect.options) {
-                    if (option.value && data[option.value]) {
-                        option.setAttribute('data-address', data[option.value].address);
+
+        // Функция для воспроизведения звуков Minecraft
+        function playMinecraftSound(type) {
+            // Звуки Minecraft (можно заменить на реальные звуки из игры)
+            const sounds = {
+                click: 'https://www.myinstants.com/media/sounds/minecraft-click.mp3',
+                success: 'https://www.myinstants.com/media/sounds/minecraft_xp.mp3'
+            };
+
+            if (sounds[type]) {
+                const audio = new Audio(sounds[type]);
+                audio.volume = 0.5;
+                audio.play();
+            }
+        }
+
+        // Получаем элементы для автозаполнения address_and_time
+        const doerSelect = document.getElementById('id_doer');
+        const customerSelect = document.getElementById('id_customer');
+        const timeInput = document.getElementById('id_time');
+        const addressAndTimeInput = document.getElementById('id_address_and_time');
+        const sumViewersCheckbox = document.getElementById('sumServiceViewers');
+
+        // Добавляем обработчик для автозаполнения цены прописью
+        const priceInFiguresField = document.getElementById('id_price_in_figures');
+        const priceInWordsField = document.getElementById('id_price_in_words');
+
+        function normalizeSearchText(value) {
+            return String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+
+        function enhanceOrganisationSelect(selectElement, placeholderText) {
+            if (!selectElement || selectElement.dataset.searchEnhanced === 'true') {
+                return;
+            }
+
+            selectElement.dataset.searchEnhanced = 'true';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'organisation-search';
+            const input = document.createElement('input');
+            input.type = 'search';
+            input.className = 'form-control organisation-search-input';
+            input.placeholder = placeholderText;
+            input.autocomplete = 'off';
+            const list = document.createElement('div');
+            list.className = 'suggestions-dropdown organisation-search-results';
+
+            selectElement.parentNode.insertBefore(wrapper, selectElement);
+            wrapper.appendChild(input);
+            wrapper.appendChild(list);
+            selectElement.classList.add('organisation-search-select');
+
+            const options = Array.from(selectElement.options).filter(option => option.value);
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                input.value = selectedOption.textContent;
+            }
+
+            function renderResults() {
+                const query = normalizeSearchText(input.value);
+                list.innerHTML = '';
+
+                if (!query) {
+                    list.classList.remove('show');
+                    return;
+                }
+
+                const matches = options
+                    .filter(option => normalizeSearchText(option.textContent).includes(query))
+                    .sort((a, b) => {
+                        const aText = normalizeSearchText(a.textContent);
+                        const bText = normalizeSearchText(b.textContent);
+                        const aStarts = aText.startsWith(query) ? 0 : 1;
+                        const bStarts = bText.startsWith(query) ? 0 : 1;
+                        return aStarts - bStarts || aText.localeCompare(bText, 'ru');
+                    })
+                    .slice(0, 20);
+
+                matches.forEach(option => {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'suggestion-item organisation-search-item';
+                    item.textContent = option.textContent;
+                    item.addEventListener('click', () => {
+                        selectElement.value = option.value;
+                        input.value = option.textContent;
+                        list.classList.remove('show');
+                        selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                    list.appendChild(item);
+                });
+
+                list.classList.toggle('show', matches.length > 0);
+            }
+
+            input.addEventListener('input', renderResults);
+            input.addEventListener('focus', () => {
+                input.select();
+                renderResults();
+            });
+            selectElement.addEventListener('change', () => {
+                const option = selectElement.options[selectElement.selectedIndex];
+                input.value = option && option.value ? option.textContent : '';
+            });
+            document.addEventListener('click', event => {
+                if (!wrapper.contains(event.target)) {
+                    list.classList.remove('show');
+                }
+            });
+        }
+
+        enhanceOrganisationSelect(doerSelect, 'Поиск исполнителя');
+        enhanceOrganisationSelect(customerSelect, 'Поиск заказчика');
+
+        // Автозаполнение цены прописью на основе цены цифрами
+        if (priceInFiguresField && priceInWordsField) {
+            // Используем глобальную функцию numberToWords из wrapper.html
+            priceInFiguresField.addEventListener('input', function () {
+                if (typeof numberToWords === 'function') {
+                    const numericValue = this.value.replace(/[^\d.,]/g, '').replace(',', '.');
+                    if (numericValue) {
+                        priceInWordsField.value = numberToWords(numericValue);
+                    } else {
+                        priceInWordsField.value = '';
                     }
                 }
-                // После загрузки данных вызываем функцию обновления поля
-                updateAddressAndTime();
-            })
-            .catch(error => console.error('Error loading organisations data:', error));
-    }
-    
-    // Добавляем обработчики событий для автозаполнения
-    if (customerSelect) {
-        customerSelect.addEventListener('change', updateAddressAndTime);
-    }
-    
-    if (timeInput) {
-        timeInput.addEventListener('input', updateAddressAndTime);
-        timeInput.addEventListener('change', updateAddressAndTime);
-    }
-    
-    // Инициализируем календарь Minecraft
-    const dateInput = document.querySelector('.minecraft-datepicker');
-    if (dateInput) {
-        // Загружаем шрифт Minecraft
-        const fontLink = document.createElement('link');
-        fontLink.href = 'https://fonts.cdnfonts.com/css/minecraft-4';
-        fontLink.rel = 'stylesheet';
-        document.head.appendChild(fontLink);
-        
-        // Инициализируем flatpickr (если используем его вместо нативного)
-        const fp = flatpickr(dateInput, {
-            dateFormat: "d.m.Y",
-            locale: "ru",
-            disableMobile: true,
-            position: "below",
-            onChange: function(selectedDates, dateStr) {
-                // Преобразуем дату в формат "день месяц год" (например, "15 июня 2023")
-                if (selectedDates.length > 0) {
-                    const months = [
-                        'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-                        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
-                    ];
-                    const date = selectedDates[0];
-                    const day = date.getDate();
-                    const month = months[date.getMonth()];
-                    const year = date.getFullYear();
-                    
-                    // Устанавливаем отформатированное значение в поле
-                    dateInput.value = `${day} ${month} ${year}`;
+            });
+
+            // Также вызываем функцию при загрузке страницы, если поле уже содержит значение
+            if (priceInFiguresField.value && typeof numberToWords === 'function') {
+                priceInWordsField.value = numberToWords(priceInFiguresField.value);
+            }
+        }
+
+        // Функция для автоматического заполнения поля address_and_time
+        function updateAddressAndTime() {
+            if (customerSelect && timeInput && addressAndTimeInput) {
+                // Получаем выбранный элемент select
+                const selectedOption = customerSelect.options[customerSelect.selectedIndex];
+                // Получаем значение времени
+                const timeValue = timeInput.value;
+
+                // Если выбран заказчик и указано время
+                if (selectedOption && selectedOption.value && timeValue) {
+                    // Получаем адрес из атрибута data-address, если он есть
+                    const customerAddress = selectedOption.getAttribute('data-address');
+                    if (customerAddress) {
+                        // Извлекаем первое время из диапазона (например, из "09:30-10:30" берем "09:30")
+                        const startTime = timeValue.split('-')[0].trim();
+                        // Формируем строку адреса с временем
+                        addressAndTimeInput.value = `${customerAddress}. Время проведения: с ${startTime}`;
+                    }
                 }
-            },
-            onOpen: function(selectedDates, dateStr, instance) {
-                // Добавляем класс темы к календарю при открытии
-                if (document.body.classList.contains('dark-theme')) {
-                    instance.calendarContainer.classList.add('dark-theme');
-                } else if (document.body.classList.contains('minecraft-theme')) {
-                    instance.calendarContainer.classList.add('minecraft-theme');
+            }
+        }
+
+        // Добавляем атрибуты data-address к опциям списка заказчиков
+        if (customerSelect) {
+            fetch('/get-organisations-data/')
+                .then(response => response.json())
+                .then(data => {
+                    // Для каждой организации добавляем data-атрибуты в соответствующую опцию
+                    for (const option of customerSelect.options) {
+                        if (option.value && data[option.value]) {
+                            option.setAttribute('data-address', data[option.value].address);
+                        }
+                    }
+                    // После загрузки данных вызываем функцию обновления поля
+                    updateAddressAndTime();
+                })
+                .catch(error => console.error('Error loading organisations data:', error));
+        }
+
+        // Добавляем обработчики событий для автозаполнения
+        if (customerSelect) {
+            customerSelect.addEventListener('change', updateAddressAndTime);
+        }
+
+        if (timeInput) {
+            timeInput.addEventListener('input', updateAddressAndTime);
+            timeInput.addEventListener('change', updateAddressAndTime);
+        }
+
+        // Инициализируем календарь Minecraft
+        const dateInput = document.querySelector('.minecraft-datepicker');
+        if (dateInput) {
+            // Загружаем шрифт Minecraft
+            const fontLink = document.createElement('link');
+            fontLink.href = 'https://fonts.cdnfonts.com/css/minecraft-4';
+            fontLink.rel = 'stylesheet';
+            document.head.appendChild(fontLink);
+
+            // Инициализируем flatpickr (если используем его вместо нативного)
+            const fp = flatpickr(dateInput, {
+                dateFormat: "d.m.Y",
+                locale: "ru",
+                disableMobile: true,
+                allowInput: true,
+                position: "below",
+                onChange: function (selectedDates, dateStr) {
+                    // Преобразуем дату в формат "день месяц год" (например, "15 июня 2023")
+                    if (selectedDates.length > 0) {
+                        const months = [
+                            'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                            'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+                        ];
+                        const date = selectedDates[0];
+                        const day = date.getDate();
+                        const month = months[date.getMonth()];
+                        const year = date.getFullYear();
+
+                        // Устанавливаем отформатированное значение в поле
+                        dateInput.value = `${day} ${month} ${year}`;
+                    }
+                },
+                onOpen: function (selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                    // Добавляем класс темы к календарю при открытии
+                    if (document.body.classList.contains('dark-theme')) {
+                        instance.calendarContainer.classList.add('dark-theme');
+                    } else if (document.body.classList.contains('minecraft-theme')) {
+                        instance.calendarContainer.classList.add('minecraft-theme');
+                    }
+
+                    // Проигрываем звук клика Minecraft
+                    if (document.body.classList.contains('minecraft-theme')) {
+                        playMinecraftSound('click');
+                    }
+                },
+                onReady: function (selectedDates, dateStr, instance) {
+                    syncDatePickerToInput(instance);
+                },
+                onClose: function () {
+                    // Проигрываем звук успеха Minecraft
+                    if (document.body.classList.contains('minecraft-theme')) {
+                        playMinecraftSound('success');
+                    }
                 }
-                
-                // Проигрываем звук клика Minecraft
+            });
+
+            // Отслеживаем изменение темы для обновления стилей календаря
+            document.addEventListener('themeChanged', function (e) {
+                if (fp && fp.calendarContainer) {
+                    // Удаляем все классы тем
+                    fp.calendarContainer.classList.remove('dark-theme', 'minecraft-theme');
+
+                    // Добавляем соответствующий класс темы
+                    if (e.detail.theme === 'dark-theme') {
+                        fp.calendarContainer.classList.add('dark-theme');
+                    } else if (e.detail.theme === 'minecraft-theme') {
+                        fp.calendarContainer.classList.add('minecraft-theme');
+                    }
+
+                    // Перерисовываем календарь
+                    fp.redraw();
+                }
+            });
+
+            // Добавляем звуки в стиле Minecraft при взаимодействии с календарем
+            dateInput.addEventListener('focus', function () {
                 if (document.body.classList.contains('minecraft-theme')) {
                     playMinecraftSound('click');
                 }
-            },
-            onClose: function() {
-                // Проигрываем звук успеха Minecraft
+            });
+
+            dateInput.addEventListener('change', function () {
                 if (document.body.classList.contains('minecraft-theme')) {
                     playMinecraftSound('success');
                 }
+            });
+        }
+
+        // Элементы для загрузки файла и обработки результатов
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const processingSpinner = document.getElementById('processingSpinner');
+        const extractionResult = document.getElementById('extractionResult');
+        const createOrganisationBtn = document.getElementById('createOrganisationBtn');
+
+        // Храним полученные данные из документа
+        let extractedOrganisationData = null;
+
+        // Обработчики для Drag and Drop
+        if (dropZone) {
+            // Предотвращаем стандартное поведение браузера для events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
             }
-        });
-        
-        // Отслеживаем изменение темы для обновления стилей календаря
-        document.addEventListener('themeChanged', function(e) {
-            if (fp && fp.calendarContainer) {
-                // Удаляем все классы тем
-                fp.calendarContainer.classList.remove('dark-theme', 'minecraft-theme');
-                
-                // Добавляем соответствующий класс темы
-                if (e.detail.theme === 'dark-theme') {
-                    fp.calendarContainer.classList.add('dark-theme');
-                } else if (e.detail.theme === 'minecraft-theme') {
-                    fp.calendarContainer.classList.add('minecraft-theme');
+
+            // Добавляем визуальный эффект при перетаскивании файла
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropZone.classList.add('dragover');
+            }
+
+            function unhighlight() {
+                dropZone.classList.remove('dragover');
+            }
+
+            // Обработка события сброса файла в зоне
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files.length > 0) {
+                    processFile(files[0]);
                 }
-                
-                // Перерисовываем календарь
-                fp.redraw();
             }
-        });
-        
-        // Добавляем звуки в стиле Minecraft при взаимодействии с календарем
-        dateInput.addEventListener('focus', function() {
-            if (document.body.classList.contains('minecraft-theme')) {
-                playMinecraftSound('click');
-            }
-        });
-        
-        dateInput.addEventListener('change', function() {
-            if (document.body.classList.contains('minecraft-theme')) {
-                playMinecraftSound('success');
-            }
-        });
-    }
-    
-    // Элементы для загрузки файла и обработки результатов
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const processingSpinner = document.getElementById('processingSpinner');
-    const extractionResult = document.getElementById('extractionResult');
-    const createOrganisationBtn = document.getElementById('createOrganisationBtn');
-    
-    // Храним полученные данные из документа
-    let extractedOrganisationData = null;
-    
-    // Обработчики для Drag and Drop
-    if (dropZone) {
-        // Предотвращаем стандартное поведение браузера для events
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
-        
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
+
+            // Обработчик клика по зоне загрузки
+            dropZone.addEventListener('click', function () {
+                fileInput.click();
+            });
+
+            // Обработчик выбора файла через диалог
+            fileInput.addEventListener('change', function () {
+                if (fileInput.files.length > 0) {
+                    processFile(fileInput.files[0]);
+                }
+            });
         }
-        
-        // Добавляем визуальный эффект при перетаскивании файла
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
-        });
-        
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
-        });
-        
-        function highlight() {
-            dropZone.classList.add('dragover');
-        }
-        
-        function unhighlight() {
-            dropZone.classList.remove('dragover');
-        }
-        
-        // Обработка события сброса файла в зоне
-        dropZone.addEventListener('drop', handleDrop, false);
-        
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            
-            if (files.length > 0) {
-                processFile(files[0]);
-            }
-        }
-        
-        // Обработчик клика по зоне загрузки
-        dropZone.addEventListener('click', function() {
-            fileInput.click();
-        });
-        
-        // Обработчик выбора файла через диалог
-        fileInput.addEventListener('change', function() {
-            if (fileInput.files.length > 0) {
-                processFile(fileInput.files[0]);
-            }
-        });
-    }
-    
-    // Функция обработки файла
-    function processFile(file) {
-        // Проверяем, что это документ Word
-        if (!file.name.endsWith('.docx')) {
-            alert('Пожалуйста, загрузите файл в формате .docx');
-            return;
-        }
-        
-        // Показываем спиннер загрузки
-        processingSpinner.style.display = 'block';
-        
-        // Создаем объект FormData для отправки файла
-        const formData = new FormData();
-        formData.append('document', file);
-        
-        // Добавляем CSRF-токен для Django
-        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-        
-        // Отправляем запрос на сервер
-        fetch('{% url "main:extract_organisation_data" %}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': csrfToken
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Скрываем спиннер
-            processingSpinner.style.display = 'none';
-            
-            if (data.success) {
-                // Сохраняем данные организации
-                extractedOrganisationData = data.data;
-                
-                // Показываем результат
-                extractionResult.classList.remove('d-none');
-                
-                console.log('Extracted data:', extractedOrganisationData);
-            } else {
-                // Показываем ошибку
-                alert('Ошибка при обработке документа: ' + data.error);
-            }
-        })
-        .catch(error => {
-            // Скрываем спиннер
-            processingSpinner.style.display = 'none';
-            
-            console.error('Error:', error);
-            alert('Произошла ошибка при обработке документа');
-        });
-    }
-    
-    // Обработчик кнопки создания организации из извлеченных данных
-    if (createOrganisationBtn) {
-        createOrganisationBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            if (!extractedOrganisationData) {
-                alert('Данные организации не найдены');
+
+        // Функция обработки файла
+        function processFile(file) {
+            // Проверяем, что это документ Word
+            if (!file.name.endsWith('.docx')) {
+                alert('Пожалуйста, загрузите файл в формате .docx');
                 return;
             }
-            
-            // Сохраняем данные в localStorage для использования на странице создания организации
-            localStorage.setItem('extractedOrganisationData', JSON.stringify(extractedOrganisationData));
-            
-            // Переходим на страницу создания организации
-            window.location.href = '{% url "main:create_organisation" %}';
-        });
-    }
-    
-    // Обработчик отправки формы для предотвращения двойной отправки
-    if (form && submitButton) {
-        form.addEventListener('submit', function(e) {
-            // Проверяем, есть ли выбранные услуги
-            const selectedServices = document.querySelectorAll('.hidden-service-input');
-            if (selectedServices.length === 0) {
+
+            // Показываем спиннер загрузки
+            processingSpinner.style.display = 'block';
+
+            // Создаем объект FormData для отправки файла
+            const formData = new FormData();
+            formData.append('document', file);
+
+            // Добавляем CSRF-токен для Django
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+            // Отправляем запрос на сервер
+            fetch('{% url "main:extract_organisation_data" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Скрываем спиннер
+                    processingSpinner.style.display = 'none';
+
+                    if (data.success) {
+                        // Сохраняем данные организации
+                        extractedOrganisationData = data.data;
+
+                        // Показываем результат
+                        extractionResult.classList.remove('d-none');
+
+                        console.log('Extracted data:', extractedOrganisationData);
+                    } else {
+                        // Показываем ошибку
+                        alert('Ошибка при обработке документа: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    // Скрываем спиннер
+                    processingSpinner.style.display = 'none';
+
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при обработке документа');
+                });
+        }
+
+        // Обработчик кнопки создания организации из извлеченных данных
+        if (createOrganisationBtn) {
+            createOrganisationBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                alert('Пожалуйста, выберите хотя бы одну услугу.');
-                return false;
+
+                if (!extractedOrganisationData) {
+                    alert('Данные организации не найдены');
+                    return;
+                }
+
+                // Сохраняем данные в localStorage для использования на странице создания организации
+                localStorage.setItem('extractedOrganisationData', JSON.stringify(extractedOrganisationData));
+
+                // Переходим на страницу создания организации
+                window.location.href = '{% url "main:create_organisation" %}';
+            });
+        }
+
+        // Обработчик отправки формы для предотвращения двойной отправки
+        if (form && submitButton) {
+            form.addEventListener('submit', function (e) {
+                // Проверяем, есть ли выбранные услуги
+                const selectedServices = document.querySelectorAll('.hidden-service-input');
+                if (selectedServices.length === 0) {
+                    e.preventDefault();
+                    alert('Пожалуйста, выберите хотя бы одну услугу.');
+                    return false;
+                }
+
+                // Блокируем кнопку отправки
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Создание...';
+            });
+        }
+
+        // Получаем скрытое поле и все чекбоксы услуг
+        const servicesField = document.getElementById('id_services');
+        let serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+        const serviceCards = document.querySelectorAll('.service-card');
+        const selectedServicesSummary = document.getElementById('selectedServicesSummary');
+
+        // Функция для обновления списка чекбоксов после добавления новой услуги
+        function updateCheckboxesList() {
+            // Обновляем коллекцию чекбоксов
+            serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+            console.log('Updated checkboxes list:', serviceCheckboxes.length);
+        }
+
+        // Получаем элементы для обновления информации, проверяя их существование
+        let selectedServicesCount = null;
+        let selectedServicesTotal = null;
+        let selectedServicesPrice = null;
+
+        if (selectedServicesSummary) {
+            selectedServicesCount = document.getElementById('selectedServicesCount');
+            selectedServicesTotal = document.getElementById('selectedServicesTotal');
+            selectedServicesPrice = document.getElementById('selectedServicesPrice');
+
+            console.log('Found elements:', {
+                count: selectedServicesCount,
+                total: selectedServicesTotal,
+                price: selectedServicesPrice
+            });
+        }
+
+        // Для доступа к этим переменным в функции updateServicesSummary
+        const priceInFigures = priceInFiguresField;
+        const priceInWords = priceInWordsField;
+
+        // Обновляем сводку по выбранным услугам
+        function updateServicesSummary() {
+            let count = 0;
+            let totalViewersSum = 0;
+            let maxViewers = 0;
+            let totalPrice = 0;
+
+            serviceCheckboxes.forEach(function (checkbox) {
+                if (checkbox.checked) {
+                    count++;
+                    const card = checkbox.closest('.service-card');
+                    if (card) {
+                        // Добавляем отладочную информацию
+                        console.log('Card data:', {
+                            id: card.dataset.serviceId,
+                            viewers: card.dataset.viewers,
+                            price: card.dataset.price
+                        });
+
+                        // Преобразуем строковые значения в числа
+                        const viewers = parseInt(card.dataset.viewers) || 0;
+                        const price = parseFloat(card.dataset.price) || 0;
+
+                        console.log(`Service ${card.dataset.serviceId}: viewers=${viewers}, price=${price}`);
+
+                        totalViewersSum += viewers;
+                        maxViewers = Math.max(maxViewers, viewers);
+                        totalPrice += price;
+                    }
+                }
+            });
+
+            const totalViewers = sumViewersCheckbox && sumViewersCheckbox.checked ? totalViewersSum : maxViewers;
+            console.log(`Total: count=${count}, viewers=${totalViewers}, price=${totalPrice}`);
+
+            // Обновляем информацию в сводке
+            if (selectedServicesCount) {
+                selectedServicesCount.textContent = count;
+                console.log('Updated count:', count);
             }
-            
-            // Блокируем кнопку отправки
-            submitButton.disabled = true;
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Создание...';
+            if (selectedServicesTotal) {
+                selectedServicesTotal.textContent = totalViewers;
+                console.log('Updated viewers:', totalViewers);
+            }
+            if (selectedServicesPrice) {
+                selectedServicesPrice.textContent = totalPrice.toFixed(2) + ' руб.';
+                console.log('Updated price:', totalPrice);
+            }
+
+            // Автоматически заполняем поля с ценой в форме
+            if (priceInFigures) {
+                priceInFigures.value = count > 0 ? totalPrice.toFixed(2) : '';
+
+                // Автоматически заполняем поле цены прописью при расчете из выбранных услуг
+                if (priceInWords && typeof numberToWords === 'function') {
+                    priceInWords.value = count > 0 ? numberToWords(totalPrice.toFixed(2)) : '';
+                }
+            }
+            const viewersField = document.getElementById('id_viewers');
+            if (viewersField) {
+                viewersField.value = count > 0 ? totalViewers : '';
+            }
+
+            // Показываем или скрываем блок сводки
+            if (selectedServicesSummary) {
+                if (count > 0) {
+                    selectedServicesSummary.classList.remove('d-none');
+                    console.log('Showing summary block');
+                } else {
+                    selectedServicesSummary.classList.add('d-none');
+                    console.log('Hiding summary block');
+                }
+            }
+        }
+
+        // Обновляем скрытое поле формы при изменении чекбокса
+        function updateServicesField() {
+            const selectedServices = [];
+
+            // Собираем все выбранные ID услуг
+            serviceCheckboxes.forEach(function (checkbox) {
+                if (checkbox.checked) {
+                    selectedServices.push(checkbox.value);
+                }
+            });
+
+            // Создаем скрытые поля для каждой выбранной услуги
+            // Сначала удаляем существующие скрытые поля
+            document.querySelectorAll('.hidden-service-input').forEach(function (input) {
+                input.remove();
+            });
+
+            // Создаем новые скрытые поля для каждого выбранного сервиса
+            if (form) {
+                selectedServices.forEach(function (serviceId) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'services';
+                    hiddenInput.value = serviceId;
+                    hiddenInput.className = 'hidden-service-input';
+                    form.appendChild(hiddenInput);
+                });
+            }
+        }
+
+        // Устанавливаем обработчики на чекбоксы
+        serviceCheckboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                console.log('Checkbox changed:', this.checked);
+                updateServicesField();
+                updateServiceCardSelection(this);
+                updateServicesSummary();
+            });
         });
-    }
-    
-    // Получаем скрытое поле и все чекбоксы услуг
-    const servicesField = document.getElementById('id_services');
-    let serviceCheckboxes = document.querySelectorAll('.service-checkbox');
-    const serviceCards = document.querySelectorAll('.service-card');
-    const selectedServicesSummary = document.getElementById('selectedServicesSummary');
-    
-    // Функция для обновления списка чекбоксов после добавления новой услуги
-    function updateCheckboxesList() {
-        // Обновляем коллекцию чекбоксов
-        serviceCheckboxes = document.querySelectorAll('.service-checkbox');
-        console.log('Updated checkboxes list:', serviceCheckboxes.length);
-    }
-    
-    // Получаем элементы для обновления информации, проверяя их существование
-    let selectedServicesCount = null;
-    let selectedServicesTotal = null;
-    let selectedServicesPrice = null;
-    
-    if (selectedServicesSummary) {
-        selectedServicesCount = document.getElementById('selectedServicesCount');
-        selectedServicesTotal = document.getElementById('selectedServicesTotal');
-        selectedServicesPrice = document.getElementById('selectedServicesPrice');
-        
-        console.log('Found elements:', {
-            count: selectedServicesCount,
-            total: selectedServicesTotal,
-            price: selectedServicesPrice
+        if (sumViewersCheckbox) {
+            sumViewersCheckbox.addEventListener('change', updateServicesSummary);
+        }
+
+        // Добавляем обработчик клика на карточку услуги
+        serviceCards.forEach(function (card) {
+            card.addEventListener('click', function (e) {
+                // Проверяем, что клик не был на кнопке редактирования или чекбоксе
+                if (!e.target.closest('a') && !e.target.closest('.form-check-input')) {
+                    const checkbox = this.querySelector('.service-checkbox');
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+
+                        // Имитируем событие change на чекбоксе
+                        const event = new Event('change');
+                        checkbox.dispatchEvent(event);
+                    }
+                }
+            });
         });
-    }
-    
-    // Для доступа к этим переменным в функции updateServicesSummary
-    const priceInFigures = priceInFiguresField;
-    const priceInWords = priceInWordsField;
-    
-    // Обновляем сводку по выбранным услугам
-    function updateServicesSummary() {
-        let count = 0;
-        let totalViewers = 0;
-        let totalPrice = 0;
-        
-        serviceCheckboxes.forEach(function(checkbox) {
+
+        // Обновляем классы карточек при выборе/отмене
+        function updateServiceCardSelection(checkbox) {
+            const card = checkbox.closest('.service-card');
+            if (card) {
+                if (checkbox.checked) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            }
+        }
+
+        // Инициализируем поле и стили при загрузке страницы
+        updateServicesField();
+
+        // Инициализируем стили выбранных карточек
+        serviceCheckboxes.forEach(function (checkbox) {
             if (checkbox.checked) {
-                count++;
                 const card = checkbox.closest('.service-card');
                 if (card) {
-                    // Добавляем отладочную информацию
-                    console.log('Card data:', {
+                    card.classList.add('selected');
+                    // Добавляем отладочную информацию при инициализации
+                    console.log('Initial card data:', {
                         id: card.dataset.serviceId,
                         viewers: card.dataset.viewers,
                         price: card.dataset.price
                     });
-                    
-                    // Преобразуем строковые значения в числа
-                    const viewers = parseInt(card.dataset.viewers) || 0;
-                    const price = parseFloat(card.dataset.price) || 0;
-                    
-                    console.log(`Service ${card.dataset.serviceId}: viewers=${viewers}, price=${price}`);
-                    
-                    totalViewers += viewers;
-                    totalPrice += price;
                 }
             }
         });
-        
-        console.log(`Total: count=${count}, viewers=${totalViewers}, price=${totalPrice}`);
-        
-        // Обновляем информацию в сводке
-        if (selectedServicesCount) {
-            selectedServicesCount.textContent = count;
-            console.log('Updated count:', count);
-        }
-        if (selectedServicesTotal) {
-            selectedServicesTotal.textContent = totalViewers;
-            console.log('Updated viewers:', totalViewers);
-        }
-        if (selectedServicesPrice) {
-            selectedServicesPrice.textContent = totalPrice.toFixed(2) + ' руб.';
-            console.log('Updated price:', totalPrice);
-        }
-        
-        // Автоматически заполняем поля с ценой в форме
-        if (priceInFigures && totalPrice > 0) {
-            priceInFigures.value = totalPrice.toFixed(2);
-            
-            // Автоматически заполняем поле цены прописью при расчете из выбранных услуг
-            if (priceInWords && typeof numberToWords === 'function') {
-                priceInWords.value = numberToWords(totalPrice.toFixed(2));
+
+        // Инициализируем сводку
+        updateServicesSummary();
+
+        // Функции для модального окна услуг
+        const serviceModalElement = document.getElementById('serviceModal');
+        const deleteServiceModalElement = document.getElementById('deleteServiceModal');
+
+        // Проверяем, что элементы существуют и bootstrap доступен
+        let serviceModal, deleteServiceModal;
+        if (typeof bootstrap !== 'undefined') {
+            if (serviceModalElement) {
+                serviceModal = new bootstrap.Modal(serviceModalElement);
             }
-        }
-        
-        // Показываем или скрываем блок сводки
-        if (selectedServicesSummary) {
-            if (count > 0) {
-                selectedServicesSummary.classList.remove('d-none');
-                console.log('Showing summary block');
-            } else {
-                selectedServicesSummary.classList.add('d-none');
-                console.log('Hiding summary block');
-            }
-        }
-    }
-    
-    // Обновляем скрытое поле формы при изменении чекбокса
-    function updateServicesField() {
-        const selectedServices = [];
-        
-        // Собираем все выбранные ID услуг
-        serviceCheckboxes.forEach(function(checkbox) {
-            if (checkbox.checked) {
-                selectedServices.push(checkbox.value);
-            }
-        });
-        
-        // Создаем скрытые поля для каждой выбранной услуги
-        // Сначала удаляем существующие скрытые поля
-        document.querySelectorAll('.hidden-service-input').forEach(function(input) {
-            input.remove();
-        });
-        
-        // Создаем новые скрытые поля для каждого выбранного сервиса
-        if (form) {
-            selectedServices.forEach(function(serviceId) {
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'services';
-                hiddenInput.value = serviceId;
-                hiddenInput.className = 'hidden-service-input';
-                form.appendChild(hiddenInput);
-            });
-        }
-    }
-    
-    // Устанавливаем обработчики на чекбоксы
-    serviceCheckboxes.forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            console.log('Checkbox changed:', this.checked);
-            updateServicesField();
-            updateServiceCardSelection(this);
-            updateServicesSummary();
-        });
-    });
-    
-    // Добавляем обработчик клика на карточку услуги
-    serviceCards.forEach(function(card) {
-        card.addEventListener('click', function(e) {
-            // Проверяем, что клик не был на кнопке редактирования или чекбоксе
-            if (!e.target.closest('a') && !e.target.closest('.form-check-input')) {
-                const checkbox = this.querySelector('.service-checkbox');
-                if (checkbox) {
-                    checkbox.checked = !checkbox.checked;
-                    
-                    // Имитируем событие change на чекбоксе
-                    const event = new Event('change');
-                    checkbox.dispatchEvent(event);
-                }
-            }
-        });
-    });
-    
-    // Обновляем классы карточек при выборе/отмене
-    function updateServiceCardSelection(checkbox) {
-        const card = checkbox.closest('.service-card');
-        if (card) {
-            if (checkbox.checked) {
-                card.classList.add('selected');
-            } else {
-                card.classList.remove('selected');
-            }
-        }
-    }
-    
-    // Инициализируем поле и стили при загрузке страницы
-    updateServicesField();
-    
-    // Инициализируем стили выбранных карточек
-    serviceCheckboxes.forEach(function(checkbox) {
-        if (checkbox.checked) {
-            const card = checkbox.closest('.service-card');
-            if (card) {
-                card.classList.add('selected');
-                // Добавляем отладочную информацию при инициализации
-                console.log('Initial card data:', {
-                    id: card.dataset.serviceId,
-                    viewers: card.dataset.viewers,
-                    price: card.dataset.price
-                });
-            }
-        }
-    });
-    
-    // Инициализируем сводку
-    updateServicesSummary();
-    
-    // Функции для модального окна услуг
-    const serviceModalElement = document.getElementById('serviceModal');
-    const deleteServiceModalElement = document.getElementById('deleteServiceModal');
-    
-    // Проверяем, что элементы существуют и bootstrap доступен
-    let serviceModal, deleteServiceModal;
-    if (typeof bootstrap !== 'undefined') {
-        if (serviceModalElement) {
-            serviceModal = new bootstrap.Modal(serviceModalElement);
-        }
-        if (deleteServiceModalElement) {
-            deleteServiceModal = new bootstrap.Modal(deleteServiceModalElement);
-        }
-    } else {
-        console.error('Bootstrap не найден! Убедитесь, что библиотека правильно подключена.');
-    }
-    
-    const serviceForm = document.getElementById('serviceForm');
-    const serviceIdField = document.getElementById('serviceId');
-    const serviceNameField = document.getElementById('serviceName');
-    const serviceDateField = document.getElementById('serviceDate');
-    const categoriesContainer = document.getElementById('categoriesContainer');
-    const addCategoryBtn = document.getElementById('addCategoryBtn');
-    const saveServiceBtn = document.getElementById('saveServiceBtn');
-    const deleteServiceName = document.getElementById('deleteServiceName');
-    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-    
-    // Добавляем обработчик на кнопку "Добавить новую услугу"
-    const createServiceBtn = document.getElementById('createServiceBtn');
-    if (createServiceBtn) {
-        createServiceBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            openServiceModal();
-        });
-    }
-    
-    // Модифицируем кнопки редактирования услуг
-    const editButtons = document.querySelectorAll('.service-header .edit-service-btn');
-    editButtons.forEach(function(button) {
-        // Удаляем атрибут href
-        button.removeAttribute('href');
-        // Добавляем класс edit-service-btn для идентификации
-        button.classList.add('edit-service-btn');
-    });
-    
-    // Обработчик на кнопки редактирования услуг
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.edit-service-btn')) {
-            e.preventDefault();
-            const serviceCard = e.target.closest('.service-card');
-            const serviceId = serviceCard.dataset.serviceId;
-            openServiceModal(serviceId);
-        }
-    });
-    
-    // Добавляем кнопки удаления услуг
-    const serviceHeaders = document.querySelectorAll('.service-header');
-    serviceHeaders.forEach(function(header) {
-        const buttonsContainer = header.querySelector('div:last-child');
-        if (buttonsContainer) {
-            // Проверяем, нет ли уже кнопки удаления
-            if (!buttonsContainer.querySelector('.delete-service-btn')) {
-                const deleteButton = document.createElement('button');
-                deleteButton.className = 'btn btn-sm btn-outline-danger ms-2 delete-service-btn';
-                deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
-                buttonsContainer.appendChild(deleteButton);
-            }
-        }
-    });
-    
-    // Обработчик на кнопки удаления услуг
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.delete-service-btn')) {
-            e.preventDefault();
-            const serviceCard = e.target.closest('.service-card');
-            const serviceId = serviceCard.dataset.serviceId;
-            const serviceName = serviceCard.querySelector('.form-check-label').textContent.trim();
-            openDeleteModal(serviceId, serviceName);
-        }
-    });
-    
-    // Функция открытия модального окна услуги
-    function openServiceModal(serviceId = null) {
-        // Проверяем, инициализировано ли модальное окно
-        if (!serviceModal) {
-            alert('Не удалось открыть модальное окно. Проблема с Bootstrap.');
-            return;
-        }
-        
-        // Очищаем форму
-        serviceForm.reset();
-        serviceIdField.value = '';
-        categoriesContainer.innerHTML = '';
-        
-        if (serviceId) {
-            // Редактирование существующей услуги
-            const serviceCard = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
-            if (serviceCard) {
-                // Заполняем поля формы
-                serviceIdField.value = serviceId;
-                serviceNameField.value = serviceCard.dataset.name || '';
-                serviceDateField.value = serviceCard.dataset.date || '';
-                
-                // Добавляем категории
-                const categoryItems = serviceCard.querySelectorAll('.category-item');
-                categoryItems.forEach(function(item) {
-                    const viewersText = item.querySelector('div:first-child').textContent.trim();
-                    const priceText = item.querySelector('div:last-child').textContent.trim();
-                    
-                    const viewers = parseInt(viewersText.replace(' чел.', ''));
-                    const price = parseFloat(priceText.replace(' руб.', ''));
-                    
-                    addCategoryRow(viewers, price);
-                });
-                
-                // Меняем заголовок
-                document.getElementById('serviceModalLabel').textContent = 'Редактирование услуги';
+            if (deleteServiceModalElement) {
+                deleteServiceModal = new bootstrap.Modal(deleteServiceModalElement);
             }
         } else {
-            // Создание новой услуги
-            document.getElementById('serviceModalLabel').textContent = 'Создание новой услуги';
-            // Добавляем пустую категорию
-            addCategoryRow();
+            console.error('Bootstrap не найден! Убедитесь, что библиотека правильно подключена.');
         }
-        
-        // Открываем модальное окно
-        serviceModal.show();
-        
-        // Инициализируем выпадающий список предложений
-        initServiceNameSuggestions();
-    }
-    
-    // Функция добавления строки категории
-    function addCategoryRow(viewers = '', price = '') {
-        const index = document.querySelectorAll('.category-form-row').length;
-        
-        const row = document.createElement('div');
-        row.className = 'category-form-row';
-        row.innerHTML = `
+
+        const serviceForm = document.getElementById('serviceForm');
+        const serviceIdField = document.getElementById('serviceId');
+        const serviceNameField = document.getElementById('serviceName');
+        const serviceDateField = document.getElementById('serviceDate');
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const addCategoryBtn = document.getElementById('addCategoryBtn');
+        const saveServiceBtn = document.getElementById('saveServiceBtn');
+        const deleteServiceName = document.getElementById('deleteServiceName');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        function parseServiceDate(value) {
+            const dateText = String(value || '').toLowerCase();
+            const match = dateText.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+            if (match) {
+                return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+            }
+
+            const textMatch = dateText.match(/(\d{1,2})\s+([а-яё]+)\s+(\d{4})/i);
+            if (!textMatch) {
+                return null;
+            }
+
+            const monthIndex = [
+                'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+            ].indexOf(textMatch[2]);
+            if (monthIndex === -1) {
+                return null;
+            }
+            return new Date(Number(textMatch[3]), monthIndex, Number(textMatch[1]));
+        }
+
+        function syncDatePickerToInput(picker) {
+            if (!picker || !picker.input) {
+                return;
+            }
+            const parsedDate = parseServiceDate(picker.input.value);
+            if (parsedDate) {
+                picker.setDate(parsedDate, false);
+            } else if (!String(picker.input.value || '').trim()) {
+                picker.clear();
+            }
+        }
+
+        function parseCategoryNumber(value) {
+            return parseFloat(String(value || '').replace(',', '.').replace(/[^\d.-]/g, ''));
+        }
+
+        function readCategoryValues(item) {
+            const valueNodes = item.querySelectorAll('.d-flex > div');
+            const fallbackNodes = valueNodes.length >= 2 ? valueNodes : item.children;
+            return {
+                viewers: parseCategoryNumber(item.dataset.viewers || (fallbackNodes[0] ? fallbackNodes[0].textContent : '')),
+                price: parseCategoryNumber(item.dataset.price || (fallbackNodes[1] ? fallbackNodes[1].textContent : ''))
+            };
+        }
+
+        // Добавляем обработчик на кнопку "Добавить новую услугу"
+        const createServiceBtn = document.getElementById('createServiceBtn');
+        if (createServiceBtn) {
+            createServiceBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                openServiceModal();
+            });
+        }
+
+        // Модифицируем кнопки редактирования услуг
+        const editButtons = document.querySelectorAll('.service-header .edit-service-btn');
+        editButtons.forEach(function (button) {
+            // Удаляем атрибут href
+            button.removeAttribute('href');
+            // Добавляем класс edit-service-btn для идентификации
+            button.classList.add('edit-service-btn');
+        });
+
+        // Обработчик на кнопки редактирования услуг
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.edit-service-btn')) {
+                e.preventDefault();
+                const serviceCard = e.target.closest('.service-card');
+                const serviceId = serviceCard.dataset.serviceId;
+                openServiceModal(serviceId);
+            }
+        });
+
+        // Добавляем кнопки удаления услуг
+        const serviceHeaders = document.querySelectorAll('.service-header');
+        serviceHeaders.forEach(function (header) {
+            const buttonsContainer = header.querySelector('div:last-child');
+            if (buttonsContainer) {
+                // Проверяем, нет ли уже кнопки удаления
+                if (!buttonsContainer.querySelector('.delete-service-btn')) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'btn btn-sm btn-outline-danger ms-2 delete-service-btn';
+                    deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
+                    buttonsContainer.appendChild(deleteButton);
+                }
+            }
+        });
+
+        // Обработчик на кнопки удаления услуг
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.delete-service-btn')) {
+                e.preventDefault();
+                const serviceCard = e.target.closest('.service-card');
+                const serviceId = serviceCard.dataset.serviceId;
+                const serviceName = serviceCard.querySelector('.form-check-label').textContent.trim();
+                openDeleteModal(serviceId, serviceName);
+            }
+        });
+
+        // Функция открытия модального окна услуги
+        function openServiceModal(serviceId = null) {
+            // Проверяем, инициализировано ли модальное окно
+            if (!serviceModal) {
+                alert('Не удалось открыть модальное окно. Проблема с Bootstrap.');
+                return;
+            }
+
+            // Очищаем форму
+            serviceForm.reset();
+            serviceIdField.value = '';
+            categoriesContainer.innerHTML = '';
+
+            if (serviceId) {
+                // Редактирование существующей услуги
+                const serviceCard = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
+                if (serviceCard) {
+                    // Заполняем поля формы
+                    serviceIdField.value = serviceId;
+                    serviceNameField.value = serviceCard.dataset.name || '';
+                    serviceDateField.value = serviceCard.dataset.date || '';
+                    syncDatePickerToInput(serviceDateField._flatpickr);
+
+                    // Добавляем категории
+                    const categoryItems = serviceCard.querySelectorAll('.category-item');
+                    categoryItems.forEach(function (item) {
+                        const category = readCategoryValues(item);
+                        const viewers = parseInt(category.viewers, 10);
+                        const price = category.price;
+
+                        addCategoryRow(viewers, price);
+                    });
+
+                    // Меняем заголовок
+                    document.getElementById('serviceModalLabel').textContent = 'Редактирование услуги';
+                }
+            } else {
+                // Создание новой услуги
+                document.getElementById('serviceModalLabel').textContent = 'Создание новой услуги';
+                // Добавляем пустую категорию
+                addCategoryRow();
+            }
+
+            // Открываем модальное окно
+            serviceModal.show();
+
+            // Инициализируем выпадающий список предложений
+            initServiceNameSuggestions();
+        }
+
+        // Функция добавления строки категории
+        function addCategoryRow(viewers = '', price = '') {
+            const index = document.querySelectorAll('.category-form-row').length;
+
+            const row = document.createElement('div');
+            row.className = 'category-form-row';
+            row.innerHTML = `
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group mb-3">
@@ -1146,207 +1316,207 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <span class="remove-category"><i class="bi bi-x-circle"></i></span>
         `;
-        
-        categoriesContainer.appendChild(row);
-        
-        // Добавляем обработчик на кнопку удаления категории
-        row.querySelector('.remove-category').addEventListener('click', function() {
-            // Не позволяем удалить последнюю категорию
-            if (document.querySelectorAll('.category-form-row').length > 1) {
-                row.remove();
-            } else {
-                alert('Должна быть как минимум одна категория зрителей');
-            }
-        });
-    }
-    
-    // Обработчик на кнопку добавления категории
-    addCategoryBtn.addEventListener('click', function() {
-        addCategoryRow();
-    });
-    
-    // Обработчик на кнопку сохранения услуги
-    saveServiceBtn.addEventListener('click', function() {
-        // Проверяем валидность формы
-        if (!serviceForm.checkValidity()) {
-            serviceForm.classList.add('was-validated');
-            return;
+
+            categoriesContainer.appendChild(row);
+
+            // Добавляем обработчик на кнопку удаления категории
+            row.querySelector('.remove-category').addEventListener('click', function () {
+                // Не позволяем удалить последнюю категорию
+                if (document.querySelectorAll('.category-form-row').length > 1) {
+                    row.remove();
+                } else {
+                    alert('Должна быть как минимум одна категория зрителей');
+                }
+            });
         }
-        
-        // Собираем данные формы
-        const serviceId = serviceIdField.value;
-        const serviceName = serviceNameField.value;
-        const serviceDate = serviceDateField.value;
-        
-        const categories = [];
-        const categoryRows = document.querySelectorAll('.category-form-row');
-        categoryRows.forEach(function(row) {
-            const viewers = parseInt(row.querySelector('.category-viewers').value);
-            const price = parseFloat(row.querySelector('.category-price').value);
-            
-            if (viewers >= 1 && price >= 0) {
-                categories.push({
-                    viewers,
-                    price
+
+        // Обработчик на кнопку добавления категории
+        addCategoryBtn.addEventListener('click', function () {
+            addCategoryRow();
+        });
+
+        // Обработчик на кнопку сохранения услуги
+        saveServiceBtn.addEventListener('click', function () {
+            // Проверяем валидность формы
+            if (!serviceForm.checkValidity()) {
+                serviceForm.classList.add('was-validated');
+                return;
+            }
+
+            // Собираем данные формы
+            const serviceId = serviceIdField.value;
+            const serviceName = serviceNameField.value;
+            const serviceDate = serviceDateField.value;
+
+            const categories = [];
+            const categoryRows = document.querySelectorAll('.category-form-row');
+            categoryRows.forEach(function (row) {
+                const viewers = parseInt(row.querySelector('.category-viewers').value);
+                const price = parseFloat(row.querySelector('.category-price').value);
+
+                if (viewers >= 1 && price >= 0) {
+                    categories.push({
+                        viewers,
+                        price
+                    });
+                }
+            });
+
+            // Проверяем, что есть хотя бы одна категория
+            if (categories.length === 0) {
+                alert('Добавьте хотя бы одну категорию зрителей');
+                return;
+            }
+
+            // Отправляем данные на сервер
+            const action = serviceId ? 'edit' : 'create';
+            const data = {
+                action,
+                service_id: serviceId,
+                service: {
+                    name: serviceName,
+                    date: serviceDate
+                },
+                categories
+            };
+
+            // Отправляем AJAX-запрос
+            fetch('{% url "main:service_ajax" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Закрываем модальное окно (проверяем инициализацию)
+                        if (serviceModal) {
+                            serviceModal.hide();
+                        }
+
+                        // Вместо перезагрузки страницы, добавляем новую услугу динамически
+                        const serviceData = data.service;
+
+                        // Проверка существует ли уже такая услуга
+                        const existingCard = document.querySelector(`.service-card[data-service-id="${serviceData.id}"]`);
+
+                        if (existingCard) {
+                            // Обновляем существующую карточку
+                            updateServiceCard(existingCard, serviceData);
+                        } else {
+                            // Создаем новую карточку услуги
+                            const servicesList = document.querySelector('.card-body > .mt-3');
+                            if (servicesList) {
+                                // Удаляем предупреждение об отсутствии услуг, если оно есть
+                                const warningAlert = servicesList.querySelector('.alert-warning');
+                                if (warningAlert) {
+                                    warningAlert.remove();
+                                }
+
+                                // Добавляем новую карточку
+                                const newCard = createServiceCard(serviceData);
+                                servicesList.appendChild(newCard);
+
+                                // Добавляем обработчики событий к новой карточке
+                                initServiceCard(newCard);
+
+                                // Автоматически выбираем новую услугу
+                                const newCheckbox = newCard.querySelector('.service-checkbox');
+                                if (newCheckbox) {
+                                    newCheckbox.checked = true;
+                                    // Имитируем событие change
+                                    const event = new Event('change');
+                                    newCheckbox.dispatchEvent(event);
+                                }
+
+                                // Обновляем список всех чекбоксов после добавления новой услуги
+                                updateCheckboxesList();
+                            }
+                        }
+
+                        // Автоматически выбираем услугу после создания или редактирования
+                        const idToCheck = data.service_id || serviceId;
+                        if (idToCheck) {
+                            const cardElement = document.querySelector(`.service-card[data-service-id="${idToCheck}"]`);
+                            if (cardElement) {
+                                const checkbox = cardElement.querySelector('.service-checkbox');
+                                if (checkbox && !checkbox.checked) {
+                                    checkbox.checked = true;
+                                    // Имитируем событие change для обновления сводки и скрытых полей
+                                    const event = new Event('change');
+                                    checkbox.dispatchEvent(event);
+
+                                    // Визуальное обновление
+                                    updateServiceCardSelection(checkbox);
+                                }
+                            }
+                        }
+
+                        // Обновляем поля формы и сводку в любом случае
+                        updateServicesField();
+                        updateServicesSummary();
+                    } else {
+                        // Отображаем ошибки
+                        if (data.errors) {
+                            if (data.errors.name) {
+                                serviceNameField.classList.add('is-invalid');
+                                document.getElementById('serviceNameError').textContent = data.errors.name.join(', ');
+                            }
+                            if (data.errors.date) {
+                                serviceDateField.classList.add('is-invalid');
+                                document.getElementById('serviceDateError').textContent = data.errors.date.join(', ');
+                            }
+                        } else {
+                            alert('Произошла ошибка при сохранении услуги: ' + (data.error || 'Неизвестная ошибка'));
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при сохранении услуги: ' + error.message);
                 });
-            }
         });
-        
-        // Проверяем, что есть хотя бы одна категория
-        if (categories.length === 0) {
-            alert('Добавьте хотя бы одну категорию зрителей');
-            return;
-        }
-        
-        // Отправляем данные на сервер
-        const action = serviceId ? 'edit' : 'create';
-        const data = {
-            action,
-            service_id: serviceId,
-            service: {
-                name: serviceName,
-                date: serviceDate
-            },
-            categories
-        };
-        
-        // Отправляем AJAX-запрос
-        fetch('{% url "main:service_ajax" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Закрываем модальное окно (проверяем инициализацию)
-                if (serviceModal) {
-                    serviceModal.hide();
-                }
-                
-                // Вместо перезагрузки страницы, добавляем новую услугу динамически
-                const serviceData = data.service;
-                
-                // Проверка существует ли уже такая услуга
-                const existingCard = document.querySelector(`.service-card[data-service-id="${serviceData.id}"]`);
-                
-                if (existingCard) {
-                    // Обновляем существующую карточку
-                    updateServiceCard(existingCard, serviceData);
-                } else {
-                    // Создаем новую карточку услуги
-                    const servicesList = document.querySelector('.card-body > .mt-3');
-                    if (servicesList) {
-                        // Удаляем предупреждение об отсутствии услуг, если оно есть
-                        const warningAlert = servicesList.querySelector('.alert-warning');
-                        if (warningAlert) {
-                            warningAlert.remove();
-                        }
-                        
-                        // Добавляем новую карточку
-                        const newCard = createServiceCard(serviceData);
-                        servicesList.appendChild(newCard);
-                        
-                        // Добавляем обработчики событий к новой карточке
-                        initServiceCard(newCard);
-                        
-                        // Автоматически выбираем новую услугу
-                        const newCheckbox = newCard.querySelector('.service-checkbox');
-                        if (newCheckbox) {
-                            newCheckbox.checked = true;
-                            // Имитируем событие change
-                            const event = new Event('change');
-                            newCheckbox.dispatchEvent(event);
-                        }
-                        
-                        // Обновляем список всех чекбоксов после добавления новой услуги
-                        updateCheckboxesList();
-                    }
-                }
-                
-                // Автоматически выбираем услугу после создания или редактирования
-                const idToCheck = data.service_id || serviceId;
-                if (idToCheck) {
-                    const cardElement = document.querySelector(`.service-card[data-service-id="${idToCheck}"]`);
-                    if (cardElement) {
-                        const checkbox = cardElement.querySelector('.service-checkbox');
-                        if (checkbox && !checkbox.checked) {
-                            checkbox.checked = true;
-                            // Имитируем событие change для обновления сводки и скрытых полей
-                            const event = new Event('change');
-                            checkbox.dispatchEvent(event);
-                            
-                            // Визуальное обновление
-                            updateServiceCardSelection(checkbox);
-                        }
-                    }
-                }
-                
-                // Обновляем поля формы и сводку в любом случае
-                updateServicesField();
-                updateServicesSummary();
-            } else {
-                // Отображаем ошибки
-                if (data.errors) {
-                    if (data.errors.name) {
-                        serviceNameField.classList.add('is-invalid');
-                        document.getElementById('serviceNameError').textContent = data.errors.name.join(', ');
-                    }
-                    if (data.errors.date) {
-                        serviceDateField.classList.add('is-invalid');
-                        document.getElementById('serviceDateError').textContent = data.errors.date.join(', ');
-                    }
-                } else {
-                    alert('Произошла ошибка при сохранении услуги');
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Произошла ошибка при сохранении услуги');
-        });
-    });
-    
-    // Создаем функцию для создания новой карточки услуги
-    function createServiceCard(serviceData) {
-        const card = document.createElement('div');
-        card.className = 'service-card';
-        card.dataset.serviceId = serviceData.id;
-        card.dataset.viewers = serviceData.total_viewers || 0;
-        card.dataset.price = serviceData.total_price || 0;
-        card.dataset.name = serviceData.name;
-        card.dataset.date = serviceData.date;
-        
-        // Создаем HTML содержимое карточки
-        let categoriesHTML = '';
-        if (serviceData.categories && serviceData.categories.length > 0) {
-            categoriesHTML += '<div class="mb-2"><strong>Категории зрителей:</strong></div>';
-            
-            serviceData.categories.forEach(category => {
-                categoriesHTML += `
-                    <div class="category-item">
+
+        // Создаем функцию для создания новой карточки услуги
+        function createServiceCard(serviceData) {
+            const card = document.createElement('div');
+            card.className = 'service-card';
+            card.dataset.serviceId = serviceData.id;
+            card.dataset.viewers = serviceData.total_viewers || 0;
+            card.dataset.price = serviceData.total_price || 0;
+            card.dataset.name = serviceData.name;
+            card.dataset.date = serviceData.date;
+
+            // Создаем HTML содержимое карточки
+            let categoriesHTML = '';
+            if (serviceData.categories && serviceData.categories.length > 0) {
+                categoriesHTML += '<div class="mb-2"><strong>Категории зрителей:</strong></div>';
+
+                serviceData.categories.forEach(category => {
+                    categoriesHTML += `
+                    <div class="category-item" data-viewers="${category.viewers}" data-price="${category.price}">
                         <div class="d-flex justify-content-between">
                             <div>${category.viewers} чел.</div>
                             <div>${category.price} руб.</div>
                         </div>
                     </div>
                 `;
-            });
-            
-            categoriesHTML += `
+                });
+
+                categoriesHTML += `
                 <div class="mt-2 text-end">
                     <span class="badge bg-info text-white">Всего: ${serviceData.total_viewers} чел.</span>
                     <span class="badge bg-success text-white">Итого: ${serviceData.total_price} руб.</span>
                 </div>
             `;
-        } else {
-            categoriesHTML = '<div class="text-muted">Нет добавленных категорий зрителей</div>';
-        }
-        
-        card.innerHTML = `
+            } else {
+                categoriesHTML = '<div class="text-muted">Нет добавленных категорий зрителей</div>';
+            }
+
+            card.innerHTML = `
             <div class="service-header">
                 <div class="d-flex align-items-center">
                     <div class="form-check form-check-inline me-3">
@@ -1370,186 +1540,193 @@ document.addEventListener('DOMContentLoaded', function() {
                 ${categoriesHTML}
             </div>
         `;
-        
-        return card;
-    }
-    
-    // Функция для обновления существующей карточки услуги
-    function updateServiceCard(card, serviceData) {
-        card.dataset.viewers = serviceData.total_viewers || 0;
-        card.dataset.price = serviceData.total_price || 0;
-        card.dataset.name = serviceData.name;
-        card.dataset.date = serviceData.date;
-        
-        // Обновляем заголовок
-        const label = card.querySelector('.form-check-label');
-        if (label) {
-            label.textContent = `${serviceData.name} (${serviceData.date})`;
+
+            return card;
         }
-        
-        // Обновляем категории
-        const serviceBody = card.querySelector('.service-body');
-        if (serviceBody) {
-            let categoriesHTML = '';
-            
-            if (serviceData.categories && serviceData.categories.length > 0) {
-                categoriesHTML += '<div class="mb-2"><strong>Категории зрителей:</strong></div>';
-                
-                serviceData.categories.forEach(category => {
-                    categoriesHTML += `
-                        <div class="category-item">
+
+        // Функция для обновления существующей карточки услуги
+        function updateServiceCard(card, serviceData) {
+            card.dataset.viewers = serviceData.total_viewers || 0;
+            card.dataset.price = serviceData.total_price || 0;
+            card.dataset.name = serviceData.name;
+            card.dataset.date = serviceData.date;
+
+            // Обновляем заголовок
+            const label = card.querySelector('.form-check-label');
+            if (label) {
+                label.textContent = `${serviceData.name} (${serviceData.date})`;
+            }
+
+            // Обновляем категории
+            const serviceBody = card.querySelector('.service-body');
+            if (serviceBody) {
+                let categoriesHTML = '';
+
+                if (serviceData.categories && serviceData.categories.length > 0) {
+                    categoriesHTML += '<div class="mb-2"><strong>Категории зрителей:</strong></div>';
+
+                    serviceData.categories.forEach(category => {
+                        categoriesHTML += `
+                        <div class="category-item" data-viewers="${category.viewers}" data-price="${category.price}">
                             <div class="d-flex justify-content-between">
                                 <div>${category.viewers} чел.</div>
                                 <div>${category.price} руб.</div>
                             </div>
                         </div>
                     `;
-                });
-                
-                categoriesHTML += `
+                    });
+
+                    categoriesHTML += `
                     <div class="mt-2 text-end">
                         <span class="badge bg-info text-white">Всего: ${serviceData.total_viewers} чел.</span>
                         <span class="badge bg-success text-white">Итого: ${serviceData.total_price} руб.</span>
                     </div>
                 `;
-            } else {
-                categoriesHTML = '<div class="text-muted">Нет добавленных категорий зрителей</div>';
-            }
-            
-            serviceBody.innerHTML = categoriesHTML;
-        }
-        
-        // Если карточка была выбрана раньше, обновим расчеты
-        updateServicesField();
-        updateServicesSummary();
-    }
-    
-    // Функция для инициализации обработчиков событий карточки
-    function initServiceCard(card) {
-        // Добавляем обработчик клика на карточку
-        card.addEventListener('click', function(e) {
-            // Проверяем, что клик не был на кнопке редактирования или чекбоксе
-            if (!e.target.closest('a') && !e.target.closest('.form-check-input') && !e.target.closest('button')) {
-                const checkbox = this.querySelector('.service-checkbox');
-                if (checkbox) {
-                    checkbox.checked = !checkbox.checked;
-                    
-                    // Имитируем событие change на чекбоксе
-                    const event = new Event('change');
-                    checkbox.dispatchEvent(event);
+                } else {
+                    categoriesHTML = '<div class="text-muted">Нет добавленных категорий зрителей</div>';
                 }
+
+                serviceBody.innerHTML = categoriesHTML;
             }
-        });
-        
-        // Добавляем обработчик на чекбокс
-        const checkbox = card.querySelector('.service-checkbox');
-        if (checkbox) {
-            checkbox.addEventListener('change', function() {
-                updateServicesField();
-                updateServiceCardSelection(this);
-                updateServicesSummary();
+
+            // Если карточка была выбрана раньше, обновим расчеты
+            updateServicesField();
+            updateServicesSummary();
+        }
+
+        // Функция для инициализации обработчиков событий карточки
+        function initServiceCard(card) {
+            // Добавляем обработчик клика на карточку
+            card.addEventListener('click', function (e) {
+                // Проверяем, что клик не был на кнопке редактирования или чекбоксе
+                if (!e.target.closest('a') && !e.target.closest('.form-check-input') && !e.target.closest('button')) {
+                    const checkbox = this.querySelector('.service-checkbox');
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+
+                        // Имитируем событие change на чекбоксе
+                        const event = new Event('change');
+                        checkbox.dispatchEvent(event);
+                    }
+                }
             });
+
+            // Добавляем обработчик на чекбокс
+            const checkbox = card.querySelector('.service-checkbox');
+            if (checkbox) {
+                checkbox.addEventListener('change', function () {
+                    updateServicesField();
+                    updateServiceCardSelection(this);
+                    updateServicesSummary();
+                });
+            }
+
+            // Добавляем обработчик на кнопку редактирования
+            const editBtn = card.querySelector('.edit-service-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const serviceId = card.dataset.serviceId;
+                    openServiceModal(serviceId);
+                });
+            }
+
+            // Добавляем обработчик на кнопку удаления
+            const deleteBtn = card.querySelector('.delete-service-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const serviceId = card.dataset.serviceId;
+                    const serviceName = card.querySelector('.form-check-label').textContent.trim();
+                    openDeleteModal(serviceId, serviceName);
+                });
+            }
         }
-        
-        // Добавляем обработчик на кнопку редактирования
-        const editBtn = card.querySelector('.edit-service-btn');
-        if (editBtn) {
-            editBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const serviceId = card.dataset.serviceId;
-                openServiceModal(serviceId);
-            });
+
+        // Функция открытия модального окна подтверждения удаления
+        function openDeleteModal(serviceId, serviceName) {
+            // Проверяем, инициализировано ли модальное окно
+            if (!deleteServiceModal) {
+                alert('Не удалось открыть модальное окно. Проблема с Bootstrap.');
+                return;
+            }
+
+            document.getElementById('deleteServiceName').textContent = serviceName;
+            confirmDeleteBtn.dataset.serviceId = serviceId;
+            deleteServiceModal.show();
         }
-        
-        // Добавляем обработчик на кнопку удаления
-        const deleteBtn = card.querySelector('.delete-service-btn');
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const serviceId = card.dataset.serviceId;
-                const serviceName = card.querySelector('.form-check-label').textContent.trim();
-                openDeleteModal(serviceId, serviceName);
-            });
-        }
-    }
-    
-    // Функция открытия модального окна подтверждения удаления
-    function openDeleteModal(serviceId, serviceName) {
-        // Проверяем, инициализировано ли модальное окно
-        if (!deleteServiceModal) {
-            alert('Не удалось открыть модальное окно. Проблема с Bootstrap.');
-            return;
-        }
-        
-        document.getElementById('deleteServiceName').textContent = serviceName;
-        confirmDeleteBtn.dataset.serviceId = serviceId;
-        deleteServiceModal.show();
-    }
-    
-    // Обработчик на кнопку подтверждения удаления
-    confirmDeleteBtn.addEventListener('click', function() {
-        const serviceId = this.dataset.serviceId;
-        
-        // Отправляем AJAX-запрос
-        fetch('{% url "main:service_ajax" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
-            },
-            body: JSON.stringify({
-                action: 'delete',
-                service_id: serviceId
+
+        // Обработчик на кнопку подтверждения удаления
+        confirmDeleteBtn.addEventListener('click', function () {
+            const serviceId = this.dataset.serviceId;
+
+            // Отправляем AJAX-запрос
+            fetch('{% url "main:service_ajax" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+                },
+                body: JSON.stringify({
+                    action: 'delete',
+                    service_id: serviceId
+                })
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Закрываем модальное окно (проверяем инициализацию)
-                if (deleteServiceModal) {
-                    deleteServiceModal.hide();
-                }
-                
-                // Удаляем карточку услуги из DOM
-                const serviceCard = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
-                if (serviceCard) {
-                    serviceCard.remove();
-                    
-                    // Если удалена последняя услуга, показываем предупреждение
-                    const serviceCards = document.querySelectorAll('.service-card');
-                    if (serviceCards.length === 0) {
-                        const servicesList = document.querySelector('.card-body > .mt-3');
-                        if (servicesList) {
-                            servicesList.innerHTML = `
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Закрываем модальное окно (проверяем инициализацию)
+                        if (deleteServiceModal) {
+                            deleteServiceModal.hide();
+                        }
+
+                        // Удаляем карточку услуги из DOM
+                        const serviceCard = document.querySelector(`.service-card[data-service-id="${serviceId}"]`);
+                        if (serviceCard) {
+                            serviceCard.remove();
+
+                            // Если удалена последняя услуга, показываем предупреждение
+                            const serviceCards = document.querySelectorAll('.service-card');
+                            if (serviceCards.length === 0) {
+                                const servicesList = document.querySelector('.card-body > .mt-3');
+                                if (servicesList) {
+                                    servicesList.innerHTML = `
                                 <div class="alert alert-warning">
                                     <i class="bi bi-exclamation-triangle me-2"></i>Нет доступных услуг. Добавьте услугу с помощью кнопки выше.
                                 </div>
                             `;
+                                }
+                            }
                         }
+
+                        // Обновляем выбранные услуги
+                        updateServicesField();
+                        updateServicesSummary();
+                    } else {
+                        alert('Произошла ошибка при удалении услуги: ' + (data.error || 'Неизвестная ошибка'));
                     }
-                }
-                
-                // Обновляем выбранные услуги
-                updateServicesField();
-                updateServicesSummary();
-            } else {
-                alert('Произошла ошибка при удалении услуги: ' + (data.error || 'Неизвестная ошибка'));
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при удалении услуги');
+                });
+        });
+
+        // Инициализируем flatpickr для даты услуги в модальном окне
+        flatpickr('#serviceDate', {
+            dateFormat: "d.m.Y г.",
+            locale: "ru",
+            disableMobile: true,
+            allowInput: true,
+            position: "below",
+            static: true,
+            onOpen: function (selectedDates, dateStr, instance) {
+                syncDatePickerToInput(instance);
+            },
+            onReady: function (selectedDates, dateStr, instance) {
+                syncDatePickerToInput(instance);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Произошла ошибка при удалении услуги');
         });
     });
-    
-    // Инициализируем flatpickr для даты услуги в модальном окне
-    flatpickr('#serviceDate', {
-        dateFormat: "d.m.Y г.",
-        locale: "ru",
-        disableMobile: true,
-        position: "below",
-        static: true
-    });
-});
 </script>
 {% endblock %}

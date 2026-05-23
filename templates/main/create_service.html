@@ -16,16 +16,18 @@
     <div class="col-lg-10 mx-auto">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-tag me-2"></i>{% if service %}Редактирование{% else %}Добавление новой{% endif %} услуги</h4>
+                <h4 class="mb-0"><i class="bi bi-tag me-2"></i>{% if service %}Редактирование{% else %}Добавление
+                    новой{% endif %} услуги</h4>
             </div>
             <div class="card-body p-4">
                 <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
-                    
+
                     <div class="alert alert-info mb-4">
-                        <i class="bi bi-info-circle-fill me-2"></i>Укажите информацию об услуге, а затем добавьте категории зрителей с их ценами.
+                        <i class="bi bi-info-circle-fill me-2"></i>Укажите информацию об услуге, а затем добавьте
+                        категории зрителей с их ценами.
                     </div>
-                    
+
                     <h5 class="mb-3">Информация об услуге</h5>
                     <div class="row mb-4">
                         <div class="col-md-8">
@@ -58,25 +60,25 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <h5 class="mb-3">Категории зрителей</h5>
                     {{ formset.management_form }}
-                    
+
                     <div id="viewer-categories">
                         {% for form in formset.forms %}
                         <div class="viewer-category">
                             {% if form.instance.pk %}
                             {{ form.id }}
                             {% endif %}
-                            
+
                             <div class="category-header">
                                 <strong>Категория #{{ forloop.counter }}</strong>
                                 <div class="delete-container">
-                                    {{ form.DELETE|addclass:"form-check-input" }} 
+                                    {{ form.DELETE|addclass:"form-check-input" }}
                                     <label class="form-check-label">Удалить</label>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
@@ -106,13 +108,14 @@
                         </div>
                         {% endfor %}
                     </div>
-                    
+
                     <button type="button" id="add-category" class="btn btn-outline-success mb-4">
                         <i class="bi bi-plus-circle me-1"></i>Добавить еще категорию
                     </button>
-                    
+
                     <div class="d-flex justify-content-between mt-4">
-                        <button type="button" onclick="window.location.href='{% url 'main:create_docs' %}'" class="btn btn-outline-secondary">
+                        <button type="button" onclick="window.location.href='{% url 'main:create_docs' %}'"
+                            class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i>Вернуться
                         </button>
                         <button type="submit" class="btn btn-primary">
@@ -127,15 +130,40 @@
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Инициализируем календарь для поля даты
-        flatpickr('.date-picker', {
+        function parseServiceDate(value) {
+            const match = String(value || '').match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+            if (!match) {
+                return null;
+            }
+            return new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
+        }
+
+        function syncDatePickerToInput(picker) {
+            if (!picker || !picker.input) {
+                return;
+            }
+            const parsedDate = parseServiceDate(picker.input.value);
+            if (parsedDate) {
+                picker.setDate(parsedDate, false);
+            } else if (!String(picker.input.value || '').trim()) {
+                picker.clear();
+            }
+        }
+
+        const datePickers = flatpickr('.date-picker', {
             dateFormat: "d.m.Y г.",
             locale: "ru",
             disableMobile: true,
-            position: "below"
+            allowInput: true,
+            position: "below",
+            onOpen: function (selectedDates, dateStr, instance) {
+                syncDatePickerToInput(instance);
+            }
         });
-        
+        (Array.isArray(datePickers) ? datePickers : [datePickers]).forEach(syncDatePickerToInput);
+
         // Список предложений для названия услуги
         const serviceSuggestions = [
             'Квест по ПДД "Безопасные дороги"',
@@ -146,11 +174,11 @@
             'Электронный квест "Звездные войны"',
             'Мастер-класс по робототехнике'
         ];
-        
+
         // Получаем элементы для работы с предложениями
         const serviceNameInput = document.getElementById('id_name');
         const suggestionsContainer = document.getElementById('serviceNameSuggestions');
-        
+
         // Заполняем выпадающий список предложениями
         serviceSuggestions.forEach(suggestion => {
             const suggestionItem = document.createElement('div');
@@ -159,7 +187,7 @@
             suggestionItem.addEventListener('click', () => {
                 serviceNameInput.value = suggestion;
                 suggestionsContainer.classList.remove('show');
-                
+
                 // Воспроизводим звук при выборе в теме Minecraft
                 if (document.body.classList.contains('minecraft-theme') && typeof playMinecraftSound === 'function') {
                     playMinecraftSound('click');
@@ -167,24 +195,24 @@
             });
             suggestionsContainer.appendChild(suggestionItem);
         });
-        
+
         // Показываем выпадающий список при фокусе на поле ввода
         serviceNameInput.addEventListener('focus', () => {
             suggestionsContainer.classList.add('show');
-            
+
             // Воспроизводим звук при фокусе в теме Minecraft
             if (document.body.classList.contains('minecraft-theme') && typeof playMinecraftSound === 'function') {
                 playMinecraftSound('click');
             }
         });
-        
+
         // Фильтруем предложения при вводе текста
         serviceNameInput.addEventListener('input', () => {
             const inputValue = serviceNameInput.value.toLowerCase();
             const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
-            
+
             let hasVisibleItems = false;
-            
+
             suggestionItems.forEach(item => {
                 const suggestionText = item.textContent.toLowerCase();
                 if (suggestionText.includes(inputValue)) {
@@ -194,7 +222,7 @@
                     item.style.display = 'none';
                 }
             });
-            
+
             // Показываем или скрываем выпадающий список в зависимости от наличия совпадений
             if (hasVisibleItems) {
                 suggestionsContainer.classList.add('show');
@@ -202,14 +230,14 @@
                 suggestionsContainer.classList.remove('show');
             }
         });
-        
+
         // Скрываем выпадающий список при клике вне поля ввода и списка
         document.addEventListener('click', (event) => {
             if (!event.target.closest('.suggestions-container')) {
                 suggestionsContainer.classList.remove('show');
             }
         });
-        
+
         // Функция для воспроизведения звуков Minecraft
         function playMinecraftSound(type) {
             // Звуки Minecraft (можно заменить на реальные звуки из игры)
@@ -217,33 +245,33 @@
                 click: 'https://www.myinstants.com/media/sounds/minecraft-click.mp3',
                 success: 'https://www.myinstants.com/media/sounds/minecraft_xp.mp3'
             };
-            
+
             if (sounds[type]) {
                 const audio = new Audio(sounds[type]);
                 audio.volume = 0.5;
                 audio.play();
             }
         }
-        
+
         const addCategoryBtn = document.getElementById('add-category');
         const categoryContainer = document.getElementById('viewer-categories');
         const totalForms = document.getElementById('id_viewer_categories-TOTAL_FORMS');
-        
+
         // Функция для добавления новой категории
-        addCategoryBtn.addEventListener('click', function() {
+        addCategoryBtn.addEventListener('click', function () {
             const formCount = parseInt(totalForms.value);
-            
+
             // Клонируем первую форму
             const firstForm = categoryContainer.querySelector('.viewer-category');
             const newForm = firstForm.cloneNode(true);
-            
+
             // Обновляем ID и имена полей
             const inputs = newForm.querySelectorAll('input, select');
-            inputs.forEach(function(input) {
+            inputs.forEach(function (input) {
                 const name = input.getAttribute('name').replace('-0-', `-${formCount}-`);
                 input.setAttribute('name', name);
                 input.setAttribute('id', `id_${name}`);
-                
+
                 // Очищаем значения
                 if (input.type !== 'checkbox') {
                     input.value = '';
@@ -251,18 +279,18 @@
                     input.checked = false;
                 }
             });
-            
+
             // Обновляем номер категории
             const categoryHeader = newForm.querySelector('.category-header strong');
             categoryHeader.textContent = `Категория #${formCount + 1}`;
-            
+
             // Добавляем новую форму в DOM
             categoryContainer.appendChild(newForm);
-            
+
             // Увеличиваем счетчик форм
             totalForms.value = formCount + 1;
         });
     });
 </script>
 {% endblock %}
-{% endblock %} 
+{% endblock %}
